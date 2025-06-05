@@ -9,87 +9,61 @@
 #define GLFW_INCLUDE_NONE
 #include "include/win64_gl/GLFW/glfw3.h"
 
+/* Resizing the window when the user trys to resize the window */
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
 
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+int main() {
+    glfwInit(); // Starting up GLFW
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // For GL version 3.x
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // For GL version 3.3
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Open GL core
 
-int main()
-{
-    // glfw: initialize and configure
-    // ------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // Initial variables
+    GLFWmonitor* monitor(glfwGetPrimaryMonitor()); // Current monitor being used
+    int width(0), height(0); // Current width & height
 
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+    /* Finding the total physical size of the current monitor being used */
+    glfwGetMonitorWorkarea(monitor, NULL, NULL, &width, &height); 
 
-    // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
+    /* Changing the width and height to match the ratio 800 x 600 */
+    width = width/10 * 4;
+    height = height/20 * 11;
+    
+    /* Creation of the window variable */
+    GLFWwindow* window = glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
+    if (window == NULL) { // Checking whether the window is valid or not
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwMakeContextCurrent(window); // Initialize the window
 
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
+    /* Initialize OpenGL functions for the program */    
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }    
 
-    // render loop
-    // -----------
-    while (!glfwWindowShouldClose(window))
-    {
-        // input
-        // -----
-        processInput(window);
+    glViewport(0, 0, width, height); // Give OpenGL the rendering size of the window
 
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // For every resize request
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+    /* GLFW checks for whether the window is still open; Does a render loop */
+    while(!glfwWindowShouldClose(window)) {
+        glfwSwapBuffers(window); // Constantly updates each color pixel in the window
+        glfwPollEvents(); // Checks whether event or inputs are happening
     }
 
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
     glfwTerminate();
+
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-}
+}  
 
 /*
 int main() {
