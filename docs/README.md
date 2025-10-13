@@ -6,13 +6,13 @@ A cross-platform C++ fan game inspired by the Touhou Project, built with **SDL2*
 ---
 
 ## Table of Contents
-* [Features](#-features)
-* [Getting Started](#-getting-started)
-  * [Prerequisites](#-prerequisites)
-  * [Building the Project](#-building-the-project)
-* [How to Run](#️-how-to-run)
-* [Contributing](#-contributing)
-* [license](#-license)
+* [Features](#features)
+* [Getting Started](#getting-started)
+  * [Prerequisites](#prerequisites)
+  * [Building the Project](#building-the-project)
+* [How to Run](#️how-to-run)
+* [Authors](#authors)
+* [license](#license)
 
 ---
 
@@ -41,6 +41,7 @@ You'll need a C++ compiler, CMake, and the SDL2 development libraries. On Debian
 ```bash
 sudo apt update
 sudo apt install build-essential cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
+```
 
 ---
 
