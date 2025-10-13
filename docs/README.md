@@ -45,6 +45,44 @@ sudo apt install build-essential cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf
 
 ---
 
+### Building the Project
+The project uses CMake and a helper batch script.
+
+#### Windows
+On Windows you can use the 'build.bat' helper.
+```
+# Debug build (default)
+.\build.bat
+
+# Release build
+.\build.bat release
+
+# Clean build artifacts
+.\build.bat clean
+
+# Remove build and bin completely
+.\build.bat clean-all
+```
+
+#### Linux
+
+On Linux you can use the `build.sh` helper.
+```
+# Debug build (default)
+./build.sh
+
+# Release build
+./build.sh release
+
+# Clean build artifacts
+./build.sh clean
+
+# Remove build and bin completely
+.\build.bat clean-all
+```
+
+---
+
 ## How to Run
 Once the project is built successfully, the final executable and all necessary assets and DLLs will be placed in the bin/ directory.
 
@@ -62,9 +100,9 @@ On Linux, run the following command from the project's root directory:
 ## Authors
 
 Touhou Rainbow Team
-    * [Mango182](https://github.com/Mango182)
-    * [Chrisfantasy](https://github.com/christM103)
-    * Keymaster
+* [Mango182](https://github.com/Mango182)
+* [Chrisfantasy](https://github.com/christM103)
+* Keymaster
 
 ---
 
