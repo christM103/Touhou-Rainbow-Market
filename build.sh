@@ -14,6 +14,7 @@ fi
 if [ "$1" == "clean-all" ]; then
     echo "Removing entire build directory..."
     rm -rf build
+    rm -rf bin
     echo "Full clean complete."
     exit 0
 fi

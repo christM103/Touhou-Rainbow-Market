@@ -8,12 +8,16 @@ if "%1"=="clean" (
     ) else (
         echo No build directory found.
     )
+    if exist bin (
+        del /q bin\*.exe >nul 2>&1
+    )
     exit /b
 )
 
 if "%1"=="clean-all" (
     echo Removing entire build directory...
     rmdir /s /q build
+    rmdir /s /q bin
     echo Full clean complete.
     exit /b
 )
@@ -31,7 +35,17 @@ if "%1"=="release" (
 )
 
 if not exist build mkdir build
-cmake -S . -B build -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+
+echo Configuring project with CMake for %BUILD_TYPE%...
+cmake -G "MinGW Makefiles" -S . -B build -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+
+if errorlevel 1 (
+    echo [ERROR] CMake configuration failed!
+    pause
+    exit /b
+)
+
+echo Building project...
 cmake --build build --config %BUILD_TYPE%
 
-pause
+echo Build complete.

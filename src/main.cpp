@@ -25,6 +25,16 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if (!renderer) {
+        std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+
+    SDL_SetRenderDrawColor(renderer, 0x21, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+
     while (true) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
