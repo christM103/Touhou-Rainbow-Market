@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/mango/projects/cpp/sdl2/TouhouRainbowMarket/build",
+  "command": "/usr/bin/g++  -isystem /usr/include/SDL2 -g -std=gnu++17 -o CMakeFiles/TRM.dir/src/main.cpp.o -c /home/mango/projects/cpp/sdl2/TouhouRainbowMarket/src/main.cpp",
+  "file": "/home/mango/projects/cpp/sdl2/TouhouRainbowMarket/src/main.cpp",
+  "output": "CMakeFiles/TRM.dir/src/main.cpp.o"
+}
+]
