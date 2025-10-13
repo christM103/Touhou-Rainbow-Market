@@ -78,7 +78,7 @@ On Linux you can use the `build.sh` helper.
 ./build.sh clean
 
 # Remove build and bin completely
-.\build.bat clean-all
+./build.sh clean-all
 ```
 
 ---
