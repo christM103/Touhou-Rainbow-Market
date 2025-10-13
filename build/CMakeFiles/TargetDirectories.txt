@@ -1,4 +1,0 @@
-/home/mango/projects/cpp/sdl2/TouhouRainbowMarket/build/CMakeFiles/TRM.dir
-/home/mango/projects/cpp/sdl2/TouhouRainbowMarket/build/CMakeFiles/lint.dir
-/home/mango/projects/cpp/sdl2/TouhouRainbowMarket/build/CMakeFiles/edit_cache.dir
-/home/mango/projects/cpp/sdl2/TouhouRainbowMarket/build/CMakeFiles/rebuild_cache.dir

@@ -1,1 +1,0 @@
-/usr/bin/g++ -g CMakeFiles/TRM.dir/src/main.cpp.o -o /home/mango/projects/cpp/sdl2/TouhouRainbowMarket/bin/TRM  /usr/lib/x86_64-linux-gnu/libSDL2.so 
