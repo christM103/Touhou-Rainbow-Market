@@ -24,32 +24,36 @@ add_executable(TRM ${SRC_FILES})
 
 # SDL setup (cross-platform)
 if(WIN32)
-    # On Windows, use the SDL folder you included (minGW-w64 64-bit)
-    set(SDL2_DIR ${CMAKE_SOURCE_DIR}/SDL2/x86_64-w64-mingw32)
-    set(SDL2_ttf_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_ttf/SDL2_ttf-2.24.0/x86_64-w64-mingw32)
-    set(SDL2_image_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_image/SDL2_image-2.8.8/x86_64-w64-mingw32)
-    target_include_directories(TRM PRIVATE ${SDL2_DIR}/include ${SDL2_DIR}/include/SDL2 ${SDL2_ttf_DIR}/include ${SDL2_image_DIR}/include)
-    target_link_directories(TRM PRIVATE ${SDL2_DIR}/lib ${SDL2_ttf_DIR}/lib ${SDL2_image_DIR}/lib)
-    target_link_libraries(TRM PRIVATE mingw32 SDL2main SDL2 SDL2_ttf SDL2_image)
+    if(MSVC)
+        message(FATAL_ERROR "MSVC is not supported. Please use MinGW-w64.")
+    else ()
+        # On Windows, use the SDL folder you included (minGW-w64 64-bit)
+        set(SDL2_DIR ${CMAKE_SOURCE_DIR}/SDL2/x86_64-w64-mingw32)
+        set(SDL2_ttf_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_ttf/SDL2_ttf-2.24.0/x86_64-w64-mingw32)
+        set(SDL2_image_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_image/SDL2_image-2.8.8/x86_64-w64-mingw32)
+        target_include_directories(TRM PRIVATE ${SDL2_DIR}/include ${SDL2_DIR}/include/SDL2 ${SDL2_ttf_DIR}/include ${SDL2_image_DIR}/include)
+        target_link_directories(TRM PRIVATE ${SDL2_DIR}/lib ${SDL2_ttf_DIR}/lib ${SDL2_image_DIR}/lib)
+        target_link_libraries(TRM PRIVATE mingw32 SDL2main SDL2 SDL2_ttf SDL2_image)
 
-    # Copy SDL2.dll automatically to bin/
-    add_custom_command(TARGET TRM POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${SDL2_DIR}/bin/SDL2.dll"
-            "$<TARGET_FILE_DIR:TRM>/SDL2.dll"
-    )
+        # Copy SDL2.dll automatically to bin/
+        add_custom_command(TARGET TRM POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${SDL2_DIR}/bin/SDL2.dll"
+                "$<TARGET_FILE_DIR:TRM>/SDL2.dll"
+        )
 
         add_custom_command(TARGET TRM POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${SDL2_ttf_DIR}/bin/SDL2_ttf.dll"
             "$<TARGET_FILE_DIR:TRM>/SDL2_ttf.dll"
-    )
+        )
 
         add_custom_command(TARGET TRM POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${SDL2_image_DIR}/bin/SDL2_image.dll"
             "$<TARGET_FILE_DIR:TRM>/SDL2_image.dll"
-    )
+        )
+    endif()
 
 else()
     # On Linux rely on system-installed SDL2
