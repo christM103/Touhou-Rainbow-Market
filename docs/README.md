@@ -90,7 +90,7 @@ On Windows, you can either:
 
 Double-click TRM.exe inside the bin/ folder.
 
-Run it from the terminal: .\bin\TRM.exe
+Run it from the terminal: .\bin\debug\TRM.exe
 
 On Linux, run the following command from the project's root directory:
 ./bin/TRM

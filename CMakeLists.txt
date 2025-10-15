@@ -25,34 +25,73 @@ add_executable(TRM ${SRC_FILES})
 # SDL setup (cross-platform)
 if(WIN32)
     if(MSVC)
-        message(FATAL_ERROR "MSVC is not supported. Please use MinGW-w64.")
+        message(STATUS "Using MSVC toolchain")
+        # On Windows, use the SDL folder you included (Visual Studio 64-bit)
+        set(SDL2_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2-devel-2.32.8-VC/SDL2-2.32.8)
+        set(SDL2_ttf_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_ttf-devel-2.24.0-VC/SDL2_ttf-2.24.0)
+        set(SDL2_image_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_image-devel-2.8.6-VC/SDL2_image-2.8.6)
+
+        # Include SDL2 headers
+        target_include_directories(TRM PRIVATE
+            ${SDL2_DIR}/include
+            ${SDL2_DIR}/include/SDL2
+            ${SDL2_ttf_DIR}/include
+            ${SDL2_image_DIR}/include
+        )
+
+        # Link SDL2 libraries
+        target_link_directories(TRM PRIVATE
+            ${SDL2_DIR}/lib/x64
+            ${SDL2_ttf_DIR}/lib/x64
+            ${SDL2_image_DIR}/lib/x64
+        )
+
+        # Link against SDL2 libraries
+        target_link_libraries(TRM PRIVATE SDL2main SDL2 SDL2_ttf SDL2_image)
+
+        # Copy SDL2.dll automatically to bin/
+        add_custom_command(TARGET TRM POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${SDL2_DIR}/lib/x64/SDL2.dll"
+                "${SDL2_ttf_DIR}/lib/x64/SDL2_ttf.dll"
+                "${SDL2_image_DIR}/lib/x64/SDL2_image.dll"
+                "$<TARGET_FILE_DIR:TRM>/"
+        )
+
     else ()
+        message(STATUS "Using MinGW toolchain")
         # On Windows, use the SDL folder you included (minGW-w64 64-bit)
-        set(SDL2_DIR ${CMAKE_SOURCE_DIR}/SDL2/x86_64-w64-mingw32)
-        set(SDL2_ttf_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_ttf/SDL2_ttf-2.24.0/x86_64-w64-mingw32)
-        set(SDL2_image_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_image/SDL2_image-2.8.8/x86_64-w64-mingw32)
-        target_include_directories(TRM PRIVATE ${SDL2_DIR}/include ${SDL2_DIR}/include/SDL2 ${SDL2_ttf_DIR}/include ${SDL2_image_DIR}/include)
-        target_link_directories(TRM PRIVATE ${SDL2_DIR}/lib ${SDL2_ttf_DIR}/lib ${SDL2_image_DIR}/lib)
+        set(SDL2_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2-devel-2.32.8-mingw/SDL2-2.32.8/x86_64-w64-mingw32)
+        set(SDL2_ttf_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_ttf-devel-2.24.0-mingw/SDL2_ttf-2.24.0/x86_64-w64-mingw32)
+        set(SDL2_image_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_image-devel-2.8.6-mingw/SDL2_image-2.8.6/x86_64-w64-mingw32)
+
+        # Include SDL2 headers
+        target_include_directories(TRM PRIVATE
+            ${SDL2_DIR}/include
+            ${SDL2_DIR}/include/SDL2
+            ${SDL2_ttf_DIR}/include
+            ${SDL2_image_DIR}/include
+        )
+
+        # Link SDL2 libraries
+        target_link_directories(TRM PRIVATE
+            ${SDL2_DIR}/lib
+            ${SDL2_ttf_DIR}/lib
+            ${SDL2_image_DIR}/lib
+        )
+
+        # Link against SDL2 libraries
         target_link_libraries(TRM PRIVATE mingw32 SDL2main SDL2 SDL2_ttf SDL2_image)
 
         # Copy SDL2.dll automatically to bin/
         add_custom_command(TARGET TRM POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 "${SDL2_DIR}/bin/SDL2.dll"
-                "$<TARGET_FILE_DIR:TRM>/SDL2.dll"
+                "${SDL2_ttf_DIR}/bin/SDL2_ttf.dll"
+                "${SDL2_image_DIR}/bin/SDL2_image.dll"
+                "$<TARGET_FILE_DIR:TRM>/"
         )
 
-        add_custom_command(TARGET TRM POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${SDL2_ttf_DIR}/bin/SDL2_ttf.dll"
-            "$<TARGET_FILE_DIR:TRM>/SDL2_ttf.dll"
-        )
-
-        add_custom_command(TARGET TRM POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${SDL2_image_DIR}/bin/SDL2_image.dll"
-            "$<TARGET_FILE_DIR:TRM>/SDL2_image.dll"
-        )
     endif()
 
 else()
