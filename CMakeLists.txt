@@ -17,10 +17,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
 # Source files
-file(GLOB SRC_FILES src/*.cpp)
+file(GLOB_RECURSE SRC_FILES src/*.cpp)
 
 # Create executable
 add_executable(TRM ${SRC_FILES})
+
+target_include_directories(TRM PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # SDL setup (cross-platform)
 if(WIN32)
