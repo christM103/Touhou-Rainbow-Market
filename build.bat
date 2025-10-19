@@ -26,6 +26,7 @@ if "%1"=="clean-all" (
     echo Removing entire build directory and binaries...
     rmdir /s /q build
     rmdir /s /q bin
+    rmdir /s /q lib
     echo Full clean complete.
     exit /b
 )

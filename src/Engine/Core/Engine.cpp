@@ -3,11 +3,16 @@
 
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Application.hpp"
+#include "Engine/Graphics/Window.hpp"
+#include "Engine/Graphics/AssetManager.hpp"
 
 namespace Engine {
     Engine::Engine() : deltaTime(0.0f), running(false) {}
 
     Engine::~Engine() {
+        if (assets) {
+            assets.get()->clear(); 
+        }
         SDL_Quit();
     }
 
@@ -19,8 +24,10 @@ namespace Engine {
 
         window = std::make_unique<Window>(title, width, height);
         input = std::make_unique<Input>();
+        assets = std::make_unique<AssetManager>();
 
         running = true;
+        lastFrameTime = SDL_GetPerformanceCounter();
         return true;
     }
 

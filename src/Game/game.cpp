@@ -3,6 +3,9 @@
 #include <SDL2/SDL.h>
 #include "Game/game.hpp"
 #include "Engine/Core/Engine.hpp"
+#include "Engine/Graphics/AssetManager.hpp"
+#include "Engine/Graphics/Sprite.hpp"
+
 extern Engine::Engine* gEngine;
 
 Game::Game() {
@@ -15,6 +18,9 @@ Game::~Game() {
 
 bool Game::create() {
     // Initialization code for the game
+    SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
+    gEngine->getAssetManager()->loadTexture("assets/player.png", "player", renderer);
+    playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
     return true;
 }
 
@@ -27,10 +33,9 @@ void Game::render() {
     SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
 
     // Example rendering code
-    SDL_SetRenderDrawColor(renderer, 6, 135, 255, 255);
-    SDL_Rect rect = { 50, 50, 200, 150 };
-    SDL_RenderDrawRect(renderer, &rect);
+    playerSprite->draw(renderer, 100, 100);
 }
 void Game::quit() {
     // Shutdown code for the game
+    delete playerSprite;
 }

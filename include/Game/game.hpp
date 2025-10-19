@@ -1,6 +1,7 @@
 // Copyright 2025 Chrisfantasy
 #pragma once
 #include "Engine/Core/Application.hpp"
+#include "Engine/Graphics/Sprite.hpp"
 
 class Game : public Engine::Application {
 public:
@@ -14,4 +15,5 @@ public:
 
 private:
     // Game-specific data and methods
+    Engine::Sprite* playerSprite = nullptr;
 };
