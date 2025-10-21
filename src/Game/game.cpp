@@ -33,7 +33,7 @@ void Game::render() {
     SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
 
     // Example rendering code
-    playerSprite->draw(renderer, 100, 100);
+    playerSprite->draw(renderer, Engine::Vector2i(300, 100));
 }
 void Game::quit() {
     // Shutdown code for the game

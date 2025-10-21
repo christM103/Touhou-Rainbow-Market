@@ -15,3 +15,7 @@ void Engine::Sprite::draw(SDL_Renderer* renderer, int x, int y) {
         SDL_RenderCopy(renderer, texture, nullptr, &dest);
     }
 }
+
+void Engine::Sprite::draw(SDL_Renderer* renderer, const Vector2i& position) {
+    draw(renderer, position.x, position.y);
+}

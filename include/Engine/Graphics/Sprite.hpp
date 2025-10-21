@@ -3,6 +3,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "Engine/Math/Vector2D.hpp"
+
 namespace Engine {
     class Sprite {
     public:
@@ -14,6 +16,11 @@ namespace Engine {
         /// @param x x position
         /// @param y y position
         void draw(SDL_Renderer* renderer, int x, int y);
+
+        /// @brief Draws the sprite at the specified position.
+        /// @param renderer SDL_Renderer to draw the sprite on
+        /// @param position Position as a Vector2i
+        void draw(SDL_Renderer* renderer, const Vector2i& position);
 
         /// @brief Gets the width of the sprite.
         /// @return Width of the sprite

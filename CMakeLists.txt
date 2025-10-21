@@ -8,7 +8,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Output directories
@@ -16,13 +16,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
-# Source files
-file(GLOB_RECURSE SRC_FILES src/*.cpp)
+# Engine library
+file(GLOB_RECURSE ENGINE_SRC_FILES src/Engine/*.cpp)
+add_library(EngineLib STATIC ${ENGINE_SRC_FILES})
+target_include_directories(EngineLib PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-# Create executable
-add_executable(TRM ${SRC_FILES})
-
+# Game executable
+file(GLOB_RECURSE GAME_SRC_FILES src/Game/*.cpp)
+add_executable(TRM ${GAME_SRC_FILES})
 target_include_directories(TRM PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+target_link_libraries(TRM PRIVATE EngineLib)
 
 # SDL setup (cross-platform)
 if(WIN32)
@@ -34,7 +38,7 @@ if(WIN32)
         set(SDL2_image_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_image-devel-2.8.6-VC/SDL2_image-2.8.6)
 
         # Include SDL2 headers
-        target_include_directories(TRM PRIVATE
+        target_include_directories(EngineLib PUBLIC
             ${SDL2_DIR}/include
             ${SDL2_DIR}/include/SDL2
             ${SDL2_ttf_DIR}/include
@@ -42,14 +46,14 @@ if(WIN32)
         )
 
         # Link SDL2 libraries
-        target_link_directories(TRM PRIVATE
+        target_link_directories(EngineLib PUBLIC
             ${SDL2_DIR}/lib/x64
             ${SDL2_ttf_DIR}/lib/x64
             ${SDL2_image_DIR}/lib/x64
         )
 
         # Link against SDL2 libraries
-        target_link_libraries(TRM PRIVATE SDL2main SDL2 SDL2_ttf SDL2_image)
+        target_link_libraries(EngineLib PUBLIC SDL2main SDL2 SDL2_ttf SDL2_image)
 
         # Copy SDL2.dll automatically to bin/
         add_custom_command(TARGET TRM POST_BUILD
@@ -68,7 +72,7 @@ if(WIN32)
         set(SDL2_image_DIR ${CMAKE_SOURCE_DIR}/SDL2/SDL2_image-devel-2.8.6-mingw/SDL2_image-2.8.6/x86_64-w64-mingw32)
 
         # Include SDL2 headers
-        target_include_directories(TRM PRIVATE
+        target_include_directories(EngineLib PUBLIC
             ${SDL2_DIR}/include
             ${SDL2_DIR}/include/SDL2
             ${SDL2_ttf_DIR}/include
@@ -76,14 +80,14 @@ if(WIN32)
         )
 
         # Link SDL2 libraries
-        target_link_directories(TRM PRIVATE
+        target_link_directories(EngineLib PUBLIC
             ${SDL2_DIR}/lib
             ${SDL2_ttf_DIR}/lib
             ${SDL2_image_DIR}/lib
         )
 
         # Link against SDL2 libraries
-        target_link_libraries(TRM PRIVATE mingw32 SDL2main SDL2 SDL2_ttf SDL2_image)
+        target_link_libraries(EngineLib PUBLIC mingw32 SDL2main SDL2 SDL2_ttf SDL2_image)
 
         # Copy SDL2.dll automatically to bin/
         add_custom_command(TARGET TRM POST_BUILD
@@ -95,12 +99,11 @@ if(WIN32)
         )
 
     endif()
-
 else()
     # On Linux rely on system-installed SDL2
     find_package(SDL2 REQUIRED)
     include_directories(${SDL2_INCLUDE_DIRS})
-    target_link_libraries(TRM PRIVATE ${SDL2_LIBRARIES})
+    target_link_libraries(EngineLib PUBLIC ${SDL2_LIBRARIES})
 endif()
 
 # Copy assets automatically
@@ -116,3 +119,13 @@ add_custom_target(lint
     COMMAND cpplint --recursive src include
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
+
+# Unit tests using Boost.Test
+# enable_testing()
+# find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+
+# if(Boost_FOUND)
+#     add_executable(TestRunner tests/test_vec2.cpp)
+#     target_link_libraries(TestRunner PRIVATE EngineLib Boost::unit_test_framework)
+#     add_test(NAME Vec2Tests COMMAND TestRunner)
+# endif()
