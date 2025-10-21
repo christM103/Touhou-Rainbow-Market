@@ -120,12 +120,14 @@ add_custom_target(lint
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
-# Unit tests using Boost.Test
+# # Unit tests using Boost.Test
+# cmake_policy(SET CMP0167 NEW)
 # enable_testing()
 # find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
 # if(Boost_FOUND)
-#     add_executable(TestRunner tests/test_vec2.cpp)
+#     file(GLOB_RECURSE TEST_SRC_FILES "src/Tests/*.cpp")
+#     add_executable(TestRunner ${TEST_SRC_FILES})
 #     target_link_libraries(TestRunner PRIVATE EngineLib Boost::unit_test_framework)
 #     add_test(NAME Vec2Tests COMMAND TestRunner)
 # endif()

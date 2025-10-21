@@ -67,4 +67,3 @@ echo Building project...
 cmake --build build --config %BUILD_TYPE%
 
 echo Build complete.
-pause

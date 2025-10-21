@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "Engine/Math/Vector2D.hpp"
+#include "Engine/Math/Vector2.hpp"
 
 namespace Engine {
     class Sprite {

@@ -1,4 +1,5 @@
 #include "Engine/Graphics/Sprite.hpp"
+#include "engine/Math/Vector2.hpp"
 
 Engine::Sprite::Sprite(SDL_Texture* texture, int width, int height)
  : texture(texture), width(width), height(height) {}

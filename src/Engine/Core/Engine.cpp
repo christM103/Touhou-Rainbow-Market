@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Application.hpp"
@@ -17,26 +18,40 @@ namespace Engine {
     }
 
     bool Engine::init(const char* title, int width, int height) {
+        // Initialize SDL
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
             std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
             return false;
         }
 
+        // Create window, input handler, and asset manager
         window = std::make_unique<Window>(title, width, height);
         input = std::make_unique<Input>();
         assets = std::make_unique<AssetManager>();
+        
+        // Set window icon
+        SDL_Surface* iconSurface = IMG_Load("assets/player.png");
+        if (iconSurface) {
+            SDL_SetWindowIcon(window.get()->getWindow(), iconSurface);
+            SDL_FreeSurface(iconSurface);
+        } else {
+            std::cerr << "Failed to load window icon: " << IMG_GetError() << std::endl;
+        }
 
+        // Initialization successful
         running = true;
         lastFrameTime = SDL_GetPerformanceCounter();
         return true;
     }
 
     void Engine::run(Application* game) {
+        // Ensure the game application is valid
         if (!game->create()) {
             std::cerr << "Game create() failed." << std::endl;
             return;
         }
 
+        // Main loop
         while (running) {
             input->pollEvent();
             if (input->isQuitRequested()) {
