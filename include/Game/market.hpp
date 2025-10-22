@@ -43,15 +43,15 @@ class Market{
     ~Market();
 
     // Accessors and Mutators
-    int getID();
-    int getLevel();
-    int getTier();
-    std::string getType();
-    float getSellPrice();
-    void setID(int id);
-    void setLevel(int lvl);
-    void setTier(int tier);
-    void setSellPrice(float sell);
+    inline int getID() { return _market_id; };
+    inline int getLevel() { return _market_lvl; };
+    inline int getTier() { return _market_tier; };
+    inline std::string getType() { return _market_type; };
+    inline float getSellPrice() { return _market_sell; };
+    inline void setID(int id) { _market_id = id; };
+    inline void setLevel(int lvl) { _market_lvl = lvl; };
+    inline void setTier(int tier) { _market_tier = tier; };
+    inline void setSellPrice(float sell) { _market_sell = sell; };
 
     // Other Functions
     float marketSell();
