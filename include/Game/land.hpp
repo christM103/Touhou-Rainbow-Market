@@ -36,7 +36,12 @@ class Land{
     std::string getMarketList();
     inline void setState(int ind, Land_States state) { _landMarkets[ind].first ^= state; };
     inline void remState(int ind, Land_States state) { _landMarkets[ind].first &= ~state; };
-    void setLand(int ind, Market&& mar);
+    template <class T> inline void setLand(int ind, T&& mar) {
+        if (_landMarkets[ind].first & LS_Free) {
+            _landMarkets[ind].second = std::make_shared<T>(std::forward<T>(mar));
+            _landMarkets[ind].first ^= LS_Free;
+        }
+    };
     void remLand(int ind);
     void swapLand(Land& lot);
 
@@ -44,11 +49,11 @@ class Land{
  private:
      // Market State and Storage
      std::map<int, std::pair<uint64_t, std::shared_ptr<Market>>> _landMarkets {
-         {1, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0)}}, 
-         {2, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0)}},
-         {3, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0)}},
-         {4, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0)}},
-         {5, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0)}} };
+         {0, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}}, 
+         {1, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}},
+         {2, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}},
+         {3, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}},
+         {4, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}} };
 
 };
 

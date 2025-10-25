@@ -43,8 +43,6 @@ Player_Marisa::Player_Marisa(Player_ID ID, int type) : Player_Data(ID) {
 Player_Marisa::~Player_Marisa() {}
 
 void Player_Marisa::MarisaMushroom(Player_Data& playerA, Player_Data& playerB) {
-    // std::random_device rd;
-    // std::minstd_rand i;
     _randMush = rand() * 6;
     std::cout << _randMush << "\n";
     if (_randMush % 2 == 0) {

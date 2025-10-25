@@ -11,15 +11,6 @@
 #include "Engine/Graphics/Sprite.hpp"
 
 
-#define MK_NULL 000000
-#define MK_SHUT_DOWN 000001
-#define MK_IMMUNITY 000010
-#define MK_PROFIT_R 000100
-#define MK_SELL 001000
-#define MK_DESTROY 010000
-#define MK_NEGATE 100000
-
-
 /*
 For context ~
 Every turn, each player is bombarded with 3 pop-ups of 3 different tiers starting at tier 1 on turn 1, that can be viewed in order to choose between 2 different open markets. 
@@ -50,8 +41,6 @@ namespace TR {
 enum Market_ID{MID_Null, MID_Wriggle, MID_Kisume, MID_Kogasa, MID_Nazrin};
 static const std::string Market_ID_Str[] = {"MID_Null", "MID_Wriggle", "MID_Kisume", "MID_Kogasa", "MID_Nazrin"};
 
-// 000000 = Null, 000001 = Shut Down, 000010 = Immunity, 000100 = Profit Rates, 001000 = Sell, 010000 = Destroy, 100000 = Negate
-
 class Market{
  public:
     // Constructor and Destuctor
@@ -66,12 +55,12 @@ class Market{
     Market& operator=(Market&& other) noexcept = default;
 
     // Accessors and Mutators
-    inline int getID() { return _market_id; };
-    inline int getLevel() { return _market_lvl; };
-    inline int getTier() { return _market_tier; };
-    inline float getSellPrice() { return _market_sell; };
-    inline std::string getType() { return _market_type; };
-    inline std::string getIDStr() { return Market_ID_Str[_market_id]; };
+    inline const int getID() { return _market_id; };
+    inline const int getLevel() { return _market_lvl; };
+    inline const int getTier() { return _market_tier; };
+    inline const float getSellPrice() { return _market_sell; };
+    inline const std::string getType() { return _market_type; };
+    inline const std::string getIDStr() { return Market_ID_Str[_market_id]; };
     inline void setID(int id) { _market_id = id; };
     inline void setLevel(int lvl) { _market_lvl = lvl; };
     inline void setTier(int tier) { _market_tier = tier; };

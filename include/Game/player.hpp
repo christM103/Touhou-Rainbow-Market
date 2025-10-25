@@ -8,18 +8,18 @@ namespace TR {
 
 // TODO: Replace enums w uint16s, try to combine Player_Data class w Character class
 
-enum Char_State {
+enum Char_State : uint8_t {
     S_Null_Char, S_Reimu, S_Marisa, S_Sanae, S_Flandre, S_Youmu, S_Tewi, S_Koishi
 };
 
 static const std::string Char_State_Str[] =
     {"Null", "Reimu", "Marisa", "Sanae", "Flandre", "Youmu", "Tewi", "Koishi"};
 
-enum Action_State {
+enum Action_State : uint8_t {
     A_Idle, A_Action_1, A_Action_2, A_Finished
 };
 
-enum Player_ID {
+enum Player_ID : uint8_t {
     PI_Player_Null, PI_Player_1, PI_Player_2, PI_Player_3, PI_Player_4
 };
 
@@ -37,15 +37,15 @@ class Player_Data{
     Player_Data& operator=(Player_Data&& other) noexcept = default;
 
     // Standard Accessors
+    inline Player_ID getPlayerID() { return _player_ID; };
+    inline int getCharState() { return _player_char_state; };
+    inline int getType() { return _style_type; };
+    std::string getPathway();
+    inline std::unique_ptr<Land>& getLand() { return _player_land; };
     inline float getBalance() { return _player_balance; };
     inline float getProfit() { return _player_profit; };
-    inline std::unique_ptr<Land>& getLand() { return _player_lot; };
-    inline std::string getActionState() { return std::to_string(_player_action_state); };
-    inline int getCharState() { return _player_char_state; };
-    inline Player_ID getPlayerID() { return _player_ID; };
-    inline int getType() { return _style_type; };
     inline int getTurn() { return _turn; };
-    std::string getPathway();
+    inline std::string getActionState() { return std::to_string(_player_action_state); };
 
     // Standard Mutators
     inline void setType(int type) { _style_type = type; };
@@ -60,15 +60,16 @@ class Player_Data{
     void turnInc();
 
  protected:
-    Player_ID _player_ID;
-    std::unique_ptr<Land> _player_lot {new Land()};
-    float _player_balance { 0 };
-    float _player_profit { 0 };
-    Action_State _player_action_state {Action_State::A_Idle};
-    Char_State _player_char_state {Char_State::S_Null_Char};
-    std::vector<Char_State> _player_pathway {Char_State::S_Null_Char};
-    std::string _char_desc {""};
-    int _style_type{ 0 }, _turn{ 0 };
+	 Player_ID _player_ID;                                                               // Player Identifier
+     Char_State _player_char_state{ Char_State::S_Null_Char };                           // Player's Current Character State
+     std::string _char_desc{ "" };                                                       // Player's Character Description
+     int _style_type{ 0 };                                                               // Player's Playstyle Type Number
+     std::vector<Char_State> _player_pathway{ Char_State::S_Null_Char };                 // Player's Character Progression Pathway
+	 std::unique_ptr<Land> _player_land{ new Land() };                                   // Player's Land Lot
+	 float _player_balance{ 0 };                                                         // Player's Current Balance
+	 float _player_profit{ 0 };                                                          // Player's Total Profit
+     int _turn{ 0 };                                                                     // Player's Current Turn Number
+	 Action_State _player_action_state{ Action_State::A_Idle };                          // Player's Current Action State
 };
 
 class Player_Null : public Player_Data {

@@ -21,7 +21,7 @@ bool Game::create() {
     SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
     gEngine->getAssetManager()->loadTexture("assets/player.png", "player", renderer);
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
-    terminalTest();
+    //terminalTest();
     return true;
 }
 
@@ -60,7 +60,7 @@ void Game::terminalTest() {
 
     // Testing land management for the player
 
-    //marketTransaction(current_player);
+    marketTransaction(current_player);
 
 }
 
@@ -107,7 +107,7 @@ void Game::marketTransaction(TR::Player_Data& Player_1) {
     std::cout << "Here is your current lot for Player 1: \n\n";
 
     std::cout << Player_1.getLand()->getMarketList();
-    std::cout << "Would you like to get this cool bug market? (y/n)\n";
+    std::cout << "\nWould you like to get this cool bug market? (y/n)\n";
 
     std::cin >> market_confirm;
     if (market_confirm == "y") {

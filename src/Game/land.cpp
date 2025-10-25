@@ -19,7 +19,7 @@ Market& Land::getMarket(int ind) {
 std::string Land::getMarketList() {
     std::string temp;
 
-    for (auto i : _landMarkets) {
+    for (auto const& i : _landMarkets) {
         temp += i.second.second.get()->getIDStr();
         temp += " ";
     }
@@ -27,15 +27,10 @@ std::string Land::getMarketList() {
     return temp;
 }
 
-void Land::setLand(int ind, Market&& mar) {
-    if (_landMarkets[ind].first & LS_Free) {
-        //_landMarkets[ind].second.swap(std::make_shared<Market>(std::move(mar)));
-        _landMarkets[ind].first ^= LS_Free;
-    }
-}
+
 
 void Land::remLand(int ind) {
-    if (_landMarkets[ind].first & !LS_Free) {
+    if (_landMarkets[ind].first & ~LS_Free) {
         _landMarkets[ind].second.reset();
         _landMarkets[ind].first &= ~(Land_States_Chars | LS_Immunity | LS_Active);
     }
