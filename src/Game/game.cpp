@@ -43,26 +43,24 @@ void Game::quit() {
 
 
 void Game::terminalTest() {
-    TR::Char_State player_char;
     
-    TR::Player_ID current_player = TR::Player_ID::PI_Player_1;
-
     // Testing the timer of the program
 
     timerTest();
     
     // Testing the character selection and player initilization
 
-    player_char = characterSelect();
-    
-    TR::Character Player_1(1, current_player, player_char);
-    Player_1.showDesc();
+    TR::Player_Data current_player = TR::Player_Data();
 
-    std::unique_ptr<TR::Land> nPC_1(new TR::Land());
+    characterSelect(current_player);
+    
+    current_player.showDesc();
+
+    //std::unique_ptr<TR::Land> nPC_1(new TR::Land());
 
     // Testing land management for the player
 
-    marketTransaction(Player_1);
+    //marketTransaction(current_player);
 
 }
 
@@ -82,43 +80,41 @@ void Game::timerTest() {
     }
 }
 
-TR::Char_State Game::characterSelect() {
+void Game::characterSelect(TR::Player_Data& Player_1) {
     int char_index;
-    TR::Char_State player_char;
 
     std::cout << "\nSelect your character \n{Reimu} {Marisa}\n(Type 1 or 2)\n";
     std::cin >> char_index;
 
     if (char_index == 1) {
-        player_char = TR::S_Reimu;
+        Player_1 = TR::Player_Reimu(Player_1.getPlayerID(), 1);
     }
     else if (char_index == 2) {
-        player_char = TR::S_Marisa;
+        Player_1 = TR::Player_Marisa(Player_1.getPlayerID(), 1);
     }
     else {
-        player_char = TR::S_Null_Char;
+        Player_1 = TR::Player_Null(Player_1.getPlayerID(), 1);
     }
     std::cout << "Ok cool ";
 
-    return player_char;
 }
 
-void Game::marketTransaction(TR::Character& Player_1) {
+void Game::marketTransaction(TR::Player_Data& Player_1) {
     int land_index;
     std::string market_confirm;
 
     std::cout << Player_1.getPathway() << "\n";
     std::cout << "Here is your current lot for Player 1: \n\n";
 
-    std::cout << Player_1.getLot()->getLotAll();
+    std::cout << Player_1.getLand()->getMarketList();
     std::cout << "Would you like to get this cool bug market? (y/n)\n";
 
     std::cin >> market_confirm;
     if (market_confirm == "y") {
         std::cout << "Where do you want to put it? (lot 1 - 5) \n";
         std::cin >> land_index;
-        Player_1.getLot()->setLot(land_index - 1, TR::Wriggle());
+        Player_1.getLand()->setLand(land_index - 1, TR::Wriggle());
     }
 
-    std::cout << Player_1.getLot()->getLotAll();
+    std::cout << Player_1.getLand()->getMarketList();
 }

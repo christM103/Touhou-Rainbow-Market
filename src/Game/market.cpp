@@ -1,26 +1,17 @@
 // Copyright 2025 chrisfantasy
+
 #include "Game/market.hpp"
-#include <vector>
-#include <iostream>
-#include <sstream>
-#include <string>
 
 namespace TR {
 
 Market::Market() {}
 
-Market::Market(int id, int tier, float sell) :
-    _market_id(id), _market_tier(tier), _market_sell(sell) {}
+Market::Market(int id, int tier, float sell) : _market_id(id), _market_tier(tier), _market_sell(sell) {}
 
 Market::~Market() {}
 
 float Market::marketSell() {
-    if (this->_market_id != MID_Null) {
-        float sell = _market_sell;
-        *this = Market();
-        return sell;
-    }
-    return 0;
+    return _market_sell;
 }
 
 void Market::marketLvlUp() {

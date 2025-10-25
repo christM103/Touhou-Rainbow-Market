@@ -23,35 +23,33 @@ Once per turn you can choose to…
 
 */
 
-#include "Game/character.hpp"
+#include "Game/player.hpp"
 
 namespace TR {
-Reimu::Reimu(int type, Player_ID ID) : Character(type, ID) {
+Player_Reimu::Player_Reimu(Player_ID ID, int type) : Player_Data(ID) {
+    _style_type = type;
     _char_desc = "Reimu \nType Num " + std::to_string(_style_type);
-    this->setChar(S_Reimu);
+    _player_char_state = S_Reimu;
+    _player_pathway = { S_Tewi, S_Koishi, S_Sanae, S_Marisa, S_Flandre };
 }
 
-Reimu::~Reimu() {}
+Player_Reimu::~Player_Reimu() {}
 
-void Reimu::ReimuTreasure(Land& lot, int index) {
-    lot.setState(index, Lot_State::LS_Reimu_Orb);
+void Player_Reimu::ReimuTreasure(Land& lot, int index) {
+    lot.setState(index, LS_Reimu_Orb);
 }
 
-void Reimu::ReimuTalisA(Land& lot, int index) {
-    lot.setState(index, Lot_State::LS_Reimu_TalisA);
-    _rSealT++;
-    if (_rSealT == 3) {
-        lot.remState(index, Lot_State::LS_Reimu_TalisA);
-        _rSealT = 0;
+void Player_Reimu::ReimuTalisA(Land& lot, int index) {
+    if (_rSealT > 0) {
+        lot.setState(index, LS_Reimu_TalisA);
+        _rSealT--;
     }
 }
 
-void Reimu::ReimuTalisB(Land& lot, int index) {
-    lot.setState(index, Lot_State::LS_Reimu_TalisB);
-    _rBarrierT++;
-    if (_rBarrierT == 3) {
-        lot.remState(index, Lot_State::LS_Reimu_TalisB);
-        _rBarrierT = 0;
+void Player_Reimu::ReimuTalisB(Land& lot, int index) {
+    if (_rBarrierT > 0) {
+        lot.setState(index, LS_Reimu_TalisB);
+        _rBarrierT--;
     }
 }
 

@@ -17,8 +17,8 @@ public:
 
     void terminalTest();
     void timerTest();
-    TR::Char_State characterSelect();
-    void marketTransaction(TR::Character& Player_1);
+    void characterSelect(TR::Player_Data& Player_1);
+    void marketTransaction(TR::Player_Data& Player_1);
 
 private:
     // Game-specific data and methods

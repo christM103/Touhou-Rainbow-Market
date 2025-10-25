@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-#include "Game/character.hpp"
+#include "Game/player.hpp"
 //#include "Game/event.hpp"
 
 using namespace std::chrono_literals;

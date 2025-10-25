@@ -11,25 +11,6 @@ Player_Data::Player_Data(Player_ID ID) : _player_ID(ID) {}
 Player_Data::~Player_Data() {}
 
 // Accessors and Mutators
-float Player_Data::getBalance() {
-    return _player_balance;
-}
-
-float Player_Data::getProfit() {
-    return _player_profit;
-}
-
-std::unique_ptr<Land>& Player_Data::getLot() {
-    return _player_lot;
-}
-
-std::string Player_Data::getActionState() {
-    return std::to_string(_player_action_state);
-}
-
-Char_State Player_Data::getCharState() {
-    return _player_char_state;
-}
 
 std::string Player_Data::getPathway() {
     std::string temp;
@@ -39,9 +20,6 @@ std::string Player_Data::getPathway() {
     return temp;
 }
 
-Player_ID Player_Data::getPlayerID() {
-    return _player_ID;
-}
 
 void Player_Data::balanceChange(float change) {
     _player_balance += change;
@@ -73,6 +51,15 @@ void Player_Data::setPathway() {
         default:
             break;
     }
+}
+
+// Other char functions
+void Player_Data::showDesc() {
+    std::cout << _char_desc << "\n";
+}
+
+void Player_Data::turnInc() {
+    _turn++;
 }
 
 }  // namespace TR

@@ -26,21 +26,23 @@ Once per turn you can choose to…
     Unlucky (4, 9): Shut down a select open market in your possession for 1 turn. 
 */
 
-#include "Game/character.hpp"
+#include "Game/player.hpp"
 #include <random>
 
 
 
 namespace TR {
 
-Marisa::Marisa(int type, Player_ID ID) : Character(type, ID) {
+Player_Marisa::Player_Marisa(Player_ID ID, int type) : Player_Data(ID) {
+    _style_type = type;
     _char_desc = "Marisa \nType Num " + std::to_string(_style_type);
-    this->setChar(S_Marisa);
+    _player_char_state = S_Marisa;
+    _player_pathway = { S_Tewi, S_Sanae, S_Koishi, S_Reimu, S_Flandre };
 }
 
-Marisa::~Marisa() {}
+Player_Marisa::~Player_Marisa() {}
 
-void Marisa::MarisaMushroom(Player_Data& playerA, Player_Data& playerB) {
+void Player_Marisa::MarisaMushroom(Player_Data& playerA, Player_Data& playerB) {
     // std::random_device rd;
     // std::minstd_rand i;
     _randMush = rand() * 6;
@@ -56,6 +58,6 @@ void Marisa::MarisaMushroom(Player_Data& playerA, Player_Data& playerB) {
     }
 }
 
-void Marisa::MarisaMagicA(Player_Data& playerA, Player_Data& playerB) {}
+void Player_Marisa::MarisaMagicA(Player_Data& playerA, Player_Data& playerB) {}
 
 }  // namespace TR

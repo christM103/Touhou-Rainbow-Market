@@ -4,6 +4,21 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <sstream>
+#include <memory>
+
+#include "Engine/Graphics/Sprite.hpp"
+
+
+#define MK_NULL 000000
+#define MK_SHUT_DOWN 000001
+#define MK_IMMUNITY 000010
+#define MK_PROFIT_R 000100
+#define MK_SELL 001000
+#define MK_DESTROY 010000
+#define MK_NEGATE 100000
+
 
 /*
 For context ~
@@ -35,6 +50,8 @@ namespace TR {
 enum Market_ID{MID_Null, MID_Wriggle, MID_Kisume, MID_Kogasa, MID_Nazrin};
 static const std::string Market_ID_Str[] = {"MID_Null", "MID_Wriggle", "MID_Kisume", "MID_Kogasa", "MID_Nazrin"};
 
+// 000000 = Null, 000001 = Shut Down, 000010 = Immunity, 000100 = Profit Rates, 001000 = Sell, 010000 = Destroy, 100000 = Negate
+
 class Market{
  public:
     // Constructor and Destuctor
@@ -42,26 +59,37 @@ class Market{
     Market(int id, int tier, float sell);
     ~Market();
 
+    // Copy Constructor Handling
+    Market(const Market& other) = delete;
+    Market& operator=(const Market& other) = delete;
+    Market(Market&& other) noexcept = default;
+    Market& operator=(Market&& other) noexcept = default;
+
     // Accessors and Mutators
     inline int getID() { return _market_id; };
     inline int getLevel() { return _market_lvl; };
     inline int getTier() { return _market_tier; };
-    inline std::string getType() { return _market_type; };
     inline float getSellPrice() { return _market_sell; };
+    inline std::string getType() { return _market_type; };
+    inline std::string getIDStr() { return Market_ID_Str[_market_id]; };
     inline void setID(int id) { _market_id = id; };
     inline void setLevel(int lvl) { _market_lvl = lvl; };
     inline void setTier(int tier) { _market_tier = tier; };
     inline void setSellPrice(float sell) { _market_sell = sell; };
+    
 
     // Other Functions
-    float marketSell();
+    void marketReset();
+    virtual float marketSell();
     void marketLvlUp();
     virtual float marketProfit();
 
  protected:
     int _market_id{MID_Null}, _market_lvl{1}, _market_tier{1};
-    float _market_sell{0}, _market_profit{0};
-    std::string _market_type{"Null"};
+    float _market_sell{0.0}, _market_profit{0};
+    std::string _market_type{" "};
+
+    std::unique_ptr<Engine::Sprite> _market_sprite, _market_portrait_large, _market_portrait_small;
 };
 
 std::string& operator<<(std::string& str, Market& market);

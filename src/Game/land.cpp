@@ -1,72 +1,49 @@
 // Copyright 2025 chrisfantasy
 
 #include "Game/land.hpp"
-#include <iostream>
-#include <vector>
-#include <map>
 
 namespace TR {
 
 Land::Land() {
-    _lotMarkets.reserve(5);
-    for (unsigned x = 0; x < 5; x++) {
-        _lotStates[x] = {Lot_State::LS_free, Lot_State::LS_normal};
-        _lotMarkets.push_back(Market(Market_ID::MID_Null, 1, 0));
-        // std::cout << _lotMarkets.size() << "\n";
+    for (uint8_t x = 0; x < 5; x++) {
+        _landMarkets[x].first ^= LS_Free;
     }
-    // std::cout << _lotMarkets.size() << "\n";
-    // std::cout << _lotStates[1].size() << "\n";
 }
 
 Land::~Land() {}
 
-Market Land::getLot(int ind) {
-    return _lotMarkets[ind];
+Market& Land::getMarket(int ind) {
+    return *_landMarkets.at(ind).second.get();
 }
 
-std::string Land::getLotAll() {
+std::string Land::getMarketList() {
     std::string temp;
-    for (auto i : _lotMarkets) {
-        // std::cout << "FUCK3\n";
-        temp << i;
-        // std::cout << "FUCK4\n";
+
+    for (auto i : _landMarkets) {
+        temp += i.second.second.get()->getIDStr();
+        temp += " ";
     }
-    // std::cout << "FUCK5\n";
+
     return temp;
 }
 
-void Land::setLot(int ind, Market mar) {
-    if (_lotStates[ind].at(0) == Lot_State::LS_free) {
-        _lotMarkets[ind] = mar;
-        _lotStates[ind][0] = Lot_State::LS_occupied;
+void Land::setLand(int ind, Market&& mar) {
+    if (_landMarkets[ind].first & LS_Free) {
+        //_landMarkets[ind].second.swap(std::make_shared<Market>(std::move(mar)));
+        _landMarkets[ind].first ^= LS_Free;
     }
 }
 
-void Land::remLot(int ind) {
-    if (_lotStates[ind].at(0) == Lot_State::LS_occupied) {
-        _lotStates[ind].clear();
-        _lotStates[ind].insert(_lotStates[ind].begin(),
-            {Lot_State::LS_free, Lot_State::LS_normal});
-        _lotMarkets[ind].~Market();
+void Land::remLand(int ind) {
+    if (_landMarkets[ind].first & !LS_Free) {
+        _landMarkets[ind].second.reset();
+        _landMarkets[ind].first &= ~(Land_States_Chars | LS_Immunity | LS_Active);
     }
 }
 
-void Land::swapLot(Land& lot) {
-    _lotMarkets.swap(lot._lotMarkets);
-    _lotStates.swap(lot._lotStates);
+void Land::swapLand(Land& land) {
+    _landMarkets.swap(land._landMarkets);
 }
 
-void Land::setState(int ind, Lot_State state) {
-    _lotStates[ind].push_back(state);
-}
-
-void Land::remState(int ind, Lot_State state) {
-    for (unsigned i = 0; i < _lotStates[ind].size(); i++) {
-        if (_lotStates[ind].at(i) == state) {
-            _lotStates[ind].erase(_lotStates[ind].begin() + (i - 1));
-            return;
-        }
-    }
-}
 
 }  // namespace TR
