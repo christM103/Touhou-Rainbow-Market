@@ -2,7 +2,7 @@
 #pragma once
 #include "Engine/Core/Application.hpp"
 #include "Engine/Graphics/Sprite.hpp"
-#include "Game/mechanics.hpp"
+#include "Game/logic.hpp"
 
 class Game : public Engine::Application {
 public:
@@ -22,5 +22,12 @@ public:
 
 private:
     // Game-specific data and methods
+
+    std::unique_ptr<TR::Game_States> _game_state;
+    std::unique_ptr<Engine::Input> gInput;
     Engine::Sprite* playerSprite = nullptr;
 };
+
+/*
+
+*/
