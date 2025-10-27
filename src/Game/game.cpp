@@ -10,6 +10,7 @@ extern Engine::Engine* gEngine;
 
 Game::Game() {
     // Constructor implementation
+    _game_state.reset(new TR::Char_Select());
 }
 
 Game::~Game() {
@@ -17,16 +18,25 @@ Game::~Game() {
 }
 
 bool Game::create() {
-    // Initialization code for the game
+    // Initialization code for the game 
+    
     SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
+    /*
     gEngine->getAssetManager()->loadTexture("assets/player.png", "player", renderer);
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
-    //terminalTest();
+    */
+    _game_state->create(renderer, gEngine);
     return true;
 }
 
 void Game::update(float deltaTime) {
+
     // Update logic for the game
+    /*
+    if (gInput->isKeyPressed(SDL_SCANCODE_LEFT)) {
+        _game_state->move_state(std::make_unique<TR::Market_Game>());
+    }
+    */
 }
 
 void Game::render() {
@@ -34,11 +44,13 @@ void Game::render() {
     SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
 
     // Example rendering code
-    playerSprite->draw(renderer, Engine::Vector2i(300, 100));
+    //playerSprite->draw(renderer, Engine::Vector2i(0, 0));
+    _game_state->render(renderer);
 }
 void Game::quit() {
     // Shutdown code for the game
     delete playerSprite;
+
 }
 
 
@@ -46,7 +58,7 @@ void Game::terminalTest() {
     
     // Testing the timer of the program
 
-    timerTest();
+    //timerTest();
     
     // Testing the character selection and player initilization
 
@@ -55,8 +67,6 @@ void Game::terminalTest() {
     characterSelect(current_player);
     
     current_player.showDesc();
-
-    //std::unique_ptr<TR::Land> nPC_1(new TR::Land());
 
     // Testing land management for the player
 
