@@ -16,6 +16,10 @@ Market& Land::getMarket(int ind) {
     return *_landMarkets.at(ind).second.get();
 }
 
+std::string Land::getMarketStr(int ind) {
+    return _landMarkets.at(ind).second.get()->getIDStr();
+}
+
 std::string Land::getMarketList() {
     std::string temp;
 

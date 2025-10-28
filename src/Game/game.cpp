@@ -25,18 +25,29 @@ bool Game::create() {
     gEngine->getAssetManager()->loadTexture("assets/player.png", "player", renderer);
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
     */
-    _game_state->create(renderer, gEngine);
+    _game_state->create(renderer, gEngine, _sprite_set);
     return true;
 }
 
 void Game::update(float deltaTime) {
 
     // Update logic for the game
-    /*
-    if (gInput->isKeyPressed(SDL_SCANCODE_LEFT)) {
-        _game_state->move_state(std::make_unique<TR::Market_Game>());
+
+    if ((gEngine->getInput()->isKeyPressed(SDL_SCANCODE_LEFT)) && (_player_set.size() > 0)) {
+        move_state(std::make_unique<TR::Market_Game>());
     }
-    */
+    if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_RIGHT)) {
+        move_state(std::make_unique<TR::Char_Select>());
+    }
+    if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Q)) {
+		_player_set.insert(_player_set.end(), std::make_shared<TR::Player_Reimu>(TR::PI_Player_1, 1));
+		std::cin >> std::ws;
+    }
+    if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Z) && (_player_set.size() > 0)) {
+		_player_set.at(0)->getLand()->setLand(0, TR::Wriggle());
+        std::cin >> std::ws;
+    }
+    
 }
 
 void Game::render() {
@@ -45,13 +56,24 @@ void Game::render() {
 
     // Example rendering code
     //playerSprite->draw(renderer, Engine::Vector2i(0, 0));
-    _game_state->render(renderer);
+    _game_state->render(renderer, _sprite_set, _player_set);
 }
 void Game::quit() {
     // Shutdown code for the game
     delete playerSprite;
 
 }
+
+void Game::move_state(std::unique_ptr<TR::Game_States> newState) {
+    SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
+    _game_state = std::move(newState);
+
+	// Reset to current sprite set
+	_sprite_set.clear();
+	gEngine->getAssetManager()->clear();
+    _game_state->create(renderer, gEngine, _sprite_set);
+}
+
 
 
 void Game::terminalTest() {

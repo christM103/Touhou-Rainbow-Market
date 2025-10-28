@@ -9,6 +9,8 @@
 //#include "Game/event.hpp"
 
 using namespace std::chrono_literals;
+using Sprite_Map = std::map<std::string, std::unique_ptr<Engine::Sprite>>;
+using Player_Set = std::vector<std::shared_ptr<TR::Player_Data>>;
 
 typedef std::chrono::steady_clock::time_point current_time;
 typedef std::chrono::seconds seconds;
@@ -52,15 +54,11 @@ namespace TR {
         Game_States();
         virtual ~Game_States();
 
-        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine) = 0;
+        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set) = 0;
         virtual void update(float deltaTime) = 0;
-        virtual void render(SDL_Renderer* renderer) = 0;
-
-        void move_state(std::unique_ptr<Game_States> newState);
+        virtual void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
 
     protected:
-        std::map<std::string, std::unique_ptr<Engine::Sprite>> _sprite_set;
-        std::vector<std::shared_ptr<TR::Player_Data>> _player_set;
     };
 
     class Char_Select : public Game_States {
@@ -68,12 +66,9 @@ namespace TR {
         Char_Select();
         ~Char_Select() override;
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine) override;
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set) override;
         void update(float deltaTime) override;
-        void render(SDL_Renderer* renderer) override;
-        
-
-        inline TR::Player_Data& getPlayers(int index) { _player_set[index].get(); }
+        void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
 
     private:
@@ -86,9 +81,9 @@ namespace TR {
         explicit Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players);
         ~Market_Game() override;
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine);
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set);
         void update(float deltaTime) override;
-        void render(SDL_Renderer* renderer) override;
+        void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
     private:
         Main_Game_States _current_state{ Null_State };
