@@ -27,6 +27,7 @@ private:
     std::unique_ptr<TR::Game_States> _game_state;
     Sprite_Map _sprite_set;
     Player_Set _player_set;
+    int _beat{ 0 };
     Engine::Sprite* playerSprite = nullptr;
 };
 

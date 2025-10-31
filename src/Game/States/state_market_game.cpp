@@ -25,7 +25,12 @@ namespace TR {
 		return true;
 	}
 
-	void Market_Game::update(float deltaTime) {}
+	void Market_Game::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+		if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_UP)) {
+			sprite_set.at("MID_Null")->setAlpha(100);
+		}
+	
+	}
 
 	void Market_Game::render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) {
 		sprite_set.at("background")->draw(renderer, Engine::Vector2i(0, 0));

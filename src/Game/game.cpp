@@ -31,22 +31,30 @@ bool Game::create() {
 
 void Game::update(float deltaTime) {
 
-    // Update logic for the game
+    _beat++;
+    if (_beat % 5 == 0) {
+        // Update logic for the game
 
-    if ((gEngine->getInput()->isKeyPressed(SDL_SCANCODE_LEFT)) && (_player_set.size() > 0)) {
-        move_state(std::make_unique<TR::Market_Game>());
+        _game_state->update(gEngine, _sprite_set, _player_set);
+
+        if ((gEngine->getInput()->isKeyPressed(SDL_SCANCODE_LEFT)) && (_player_set.size() > 0)) {
+            move_state(std::make_unique<TR::Market_Game>());
+        }
+        if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_RIGHT)) {
+            move_state(std::make_unique<TR::Char_Select>());
+        }
+        if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Q)) {
+            _player_set.insert(_player_set.end(), std::make_shared<TR::Player_Reimu>(TR::PI_Player_1, 1));
+            std::cin >> std::ws;
+        }
+        if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Z) && (_player_set.size() > 0)) {
+            _player_set.at(0)->getLand()->setLand(0, TR::Wriggle());
+            std::cin >> std::ws;
+        }
+
+        _beat = 0;
     }
-    if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_RIGHT)) {
-        move_state(std::make_unique<TR::Char_Select>());
-    }
-    if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Q)) {
-		_player_set.insert(_player_set.end(), std::make_shared<TR::Player_Reimu>(TR::PI_Player_1, 1));
-		std::cin >> std::ws;
-    }
-    if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Z) && (_player_set.size() > 0)) {
-		_player_set.at(0)->getLand()->setLand(0, TR::Wriggle());
-        std::cin >> std::ws;
-    }
+    
     
 }
 

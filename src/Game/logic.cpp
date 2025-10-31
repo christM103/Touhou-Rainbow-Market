@@ -36,7 +36,7 @@ Game_States::Game_States() {}
 Game_States::~Game_States() {}
 
 
-void Game_States::update(float deltaTime) {}
+void Game_States::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {}
 
 
 }  // namespace TR

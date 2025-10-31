@@ -55,7 +55,7 @@ namespace TR {
         virtual ~Game_States();
 
         virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set) = 0;
-        virtual void update(float deltaTime) = 0;
+        virtual void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
         virtual void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
 
     protected:
@@ -67,7 +67,7 @@ namespace TR {
         ~Char_Select() override;
 
         bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set) override;
-        void update(float deltaTime) override;
+        void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
 
@@ -82,7 +82,7 @@ namespace TR {
         ~Market_Game() override;
 
         bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set);
-        void update(float deltaTime) override;
+        void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
     private:
