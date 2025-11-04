@@ -26,6 +26,19 @@ namespace Engine {
         /// @param renderer SDL_Renderer to draw the sprite on
         void draw(SDL_Renderer* renderer);
 
+        /// @brief Draws the sprite at the specified position.
+        /// @param renderer SDL_Renderer to draw the sprite on
+        /// @param x x position
+        /// @param y y position
+        /// @param crop The area that actually gets rendered on screen
+        void draw(SDL_Renderer* renderer, const Vector2i pos, const Vector2i size, const SDL_Rect& crop);
+
+        /// @brief Swaps the pre-existing texture with a different texture
+        /// @param tex The texture that will be swapped
+        /// @param x Width of the new texture
+        /// @param y Height of the new texture
+        void swapTexture(SDL_Texture* tex, int x, int y);
+
         /// @brief Updates the internal position of the object based on velocity and acceleration.
         void movement();
 
@@ -39,27 +52,27 @@ namespace Engine {
 
         /// @brief Gets the X Position of the sprite.
         /// @return X Position of the sprite
-        int getXPos() const { return pos.x; }
+        float getXPos() const { return pos.x; }
 
         /// @brief Gets the Y Position of the sprite.
         /// @return Y Position of the sprite
-        int getYPos() const { return pos.y; }
+        float getYPos() const { return pos.y; }
 
         /// @brief Gets the X Velocity of the sprite.
         /// @return X Velocity of the sprite
-        int getXVel() const { return vel.x; }
+        float getXVel() const { return vel.x; }
 
         /// @brief Gets the Y Velocity of the sprite.
         /// @return Y Velocity of the sprite
-        int getYVel() const { return vel.y; }
+        float getYVel() const { return vel.y; }
 
         /// @brief Gets the X Acceleration of the sprite.
         /// @return X Acceleration of the sprite
-        int getXAccel() const { return accel.x; }
+        float getXAccel() const { return accel.x; }
 
         /// @brief Gets the Y Acceleration of the sprite.
         /// @return Y Acceleration of the sprite
-        int getYAccel() const { return accel.y; }
+        float getYAccel() const { return accel.y; }
 
         /// @brief Gets the angle of the sprite.
         /// @return Angle of the sprite
@@ -83,27 +96,27 @@ namespace Engine {
 
         /// @brief Sets the X Position of the sprite.
         /// @param X Position of the sprite
-        void setXPos(int x) { pos.x = x; }
+        void setXPos(float x) { pos.x = x; }
 
         /// @brief Sets the Y Position of the sprite.
         /// @param Y Position of the sprite
-        void setYPos(int y) { pos.y = y; }
+        void setYPos(float y) { pos.y = y; }
 
         /// @brief Sets the X Velocity of the sprite.
         /// @param X Velocity of the sprite
-        void setXVel(int x) { vel.x = x; }
+        void setXVel(float x) { vel.x = x; }
 
         /// @brief Sets the Y Velocity of the sprite.
         /// @param Y Velocity of the sprite
-        void setYVel(int y) { vel.y = y; }
+        void setYVel(float y) { vel.y = y; }
 
         /// @brief Sets the X Acceleration of the sprite.
         /// @param X Acceleration of the sprite
-        void setXAccel(int x) { accel.x = x; }
+        void setXAccel(float x) { accel.x = x; }
 
         /// @brief Sets the Y Acceleration of the sprite.
         /// @param Y Acceleration of the sprite
-        void setYAccel(int y) { accel.y = y; }
+        void setYAccel(float y) { accel.y = y; }
 
         /// @brief Sets the angle of the sprite
         /// @param Updated angle value
@@ -116,7 +129,7 @@ namespace Engine {
     private:
         SDL_Texture* texture;
         float width, height;
-        Vector2i pos{ 0,0 }, vel{ 0,0 }, accel{ 0,0 };
+        Vector2f pos{ 0,0 }, vel{ 0,0 }, accel{ 0,0 };
         int angle{ 0 };
         uint8_t alpha { 255 };
         SDL_RendererFlip flip{ SDL_FLIP_NONE };

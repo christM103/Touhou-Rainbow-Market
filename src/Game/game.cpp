@@ -25,7 +25,7 @@ bool Game::create() {
     gEngine->getAssetManager()->loadTexture("assets/player.png", "player", renderer);
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
     */
-    _game_state->create(renderer, gEngine, _sprite_set);
+    _game_state->create(renderer, gEngine, _sprite_set, _player_set);
     return true;
 }
 
@@ -43,13 +43,35 @@ void Game::update(float deltaTime) {
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_RIGHT)) {
             move_state(std::make_unique<TR::Char_Select>());
         }
+
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Q)) {
-            _player_set.insert(_player_set.end(), std::make_shared<TR::Player_Reimu>(TR::PI_Player_1, 1));
-            std::cin >> std::ws;
+            if (!_input_pressed.at(SDL_SCANCODE_Q)) {
+                _player_set.insert(_player_set.end(), std::make_shared<TR::Player_Reimu>(TR::PI_Player_1, 1));
+                _input_pressed.at(SDL_SCANCODE_Q) = true;
+            }
         }
+        else {
+            _input_pressed.at(SDL_SCANCODE_Q) = false;
+        }
+
+        if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_W)) {
+            if (!_input_pressed.at(SDL_SCANCODE_W)) {
+                _player_set.insert(_player_set.end(), std::make_shared<TR::Player_Marisa>(TR::PI_Player_1, 1));
+                _input_pressed.at(SDL_SCANCODE_W) = true;
+            }
+        }
+        else {
+            _input_pressed.at(SDL_SCANCODE_W) = false;
+        }
+
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Z) && (_player_set.size() > 0)) {
-            _player_set.at(0)->getLand()->setLand(0, TR::Wriggle());
-            std::cin >> std::ws;
+            if (!_input_pressed.at(SDL_SCANCODE_Z)) {
+                _player_set.at(0)->getLand()->setLand(0, TR::Wriggle());
+                _input_pressed.at(SDL_SCANCODE_Z) = true;
+            }
+        }
+        else {
+            _input_pressed.at(SDL_SCANCODE_Z) = false;
         }
 
         _beat = 0;
@@ -79,7 +101,7 @@ void Game::move_state(std::unique_ptr<TR::Game_States> newState) {
 	// Reset to current sprite set
 	_sprite_set.clear();
 	gEngine->getAssetManager()->clear();
-    _game_state->create(renderer, gEngine, _sprite_set);
+    _game_state->create(renderer, gEngine, _sprite_set, _player_set);
 }
 
 

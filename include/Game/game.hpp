@@ -28,6 +28,8 @@ private:
     Sprite_Map _sprite_set;
     Player_Set _player_set;
     int _beat{ 0 };
+    std::unordered_map<SDL_Scancode, bool> _input_pressed{ 
+        {SDL_SCANCODE_Q, false }, {SDL_SCANCODE_W, false }, {SDL_SCANCODE_Z, false }, };
     Engine::Sprite* playerSprite = nullptr;
 };
 

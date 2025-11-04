@@ -18,6 +18,8 @@ typedef std::chrono::duration<double> timer;
 
 namespace TR {
 
+    constexpr Engine::Vector2i TXT_A = Engine::Vector2i(205, 219);
+
     enum Main_Game_States : uint16_t {
         Null_State = 0,
         Pause = 1 << 0,
@@ -54,11 +56,14 @@ namespace TR {
         Game_States();
         virtual ~Game_States();
 
-        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set) = 0;
+        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
         virtual void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
         virtual void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
 
+        void characterMapping();
+
     protected:
+        std::map<char, Engine::Vector2i> _char_map;
     };
 
     class Char_Select : public Game_States {
@@ -66,7 +71,7 @@ namespace TR {
         Char_Select();
         ~Char_Select() override;
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set) override;
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
@@ -81,12 +86,13 @@ namespace TR {
         explicit Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players);
         ~Market_Game() override;
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set);
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set);
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
     private:
         Main_Game_States _current_state{ Null_State };
+        std::string test_string = "The quick: brown; fox, jumps... OVER THE “LAZY” DOG!?!?!?!?";
     };
 
 }
