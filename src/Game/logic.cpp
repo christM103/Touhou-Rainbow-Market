@@ -69,6 +69,18 @@ void Game_States::characterMapping() {
         {'[', Engine::Vector2i(221, 34)},
         {']', Engine::Vector2i(238, 34)},
 
+        /* Numbers */
+        {'0', Engine::Vector2i(187, 204)},
+        {'1', Engine::Vector2i(204, 204)},
+        {'2', Engine::Vector2i(221, 204)},
+        {'3', Engine::Vector2i(238, 204)},
+        {'4', Engine::Vector2i(255, 204)},
+        {'5', Engine::Vector2i(0, 221)},
+        {'6', Engine::Vector2i(17, 221)},
+        {'7', Engine::Vector2i(34, 221)},
+        {'8', Engine::Vector2i(51, 221)},
+        {'9', Engine::Vector2i(68, 221)},
+
         /* Uppercase Letters */
         {'A', Engine::Vector2i(204, 221)},
         {'B', Engine::Vector2i(221, 221)},

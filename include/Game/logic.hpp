@@ -92,7 +92,7 @@ namespace TR {
 
     private:
         Main_Game_States _current_state{ Null_State };
-        std::string test_string = "The quick: brown; fox, jumps... OVER THE “LAZY” DOG!?!?!?!?";
+        std::string test_string = "THE QUICK BROWN FOX JUMPED OVER \nTHE LAZY DOG'S BACK 1234567890\nThe five boxing wizards jump quickly?";
     };
 
 }

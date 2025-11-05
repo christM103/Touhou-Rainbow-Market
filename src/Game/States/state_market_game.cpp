@@ -101,15 +101,24 @@ namespace TR {
 		for (int i = 0; i < 5; ++i) {
 			sprite_set.at(player_set[0]->getLand()->getMarketStr(i))->draw(renderer, Engine::Vector2i(275 + i * 150, 350 + 50 * (i % 2)));
 		}
+		int newLine = 0;
+		int offset = 0;
 
 		for (int i = 0; i < test_string.size(); i++) {
-			int offset = i * 16;
+			offset += 28;
 			char character = test_string.at(i);
-			sprite_set.at("Text")->draw(renderer, Engine::Vector2i(offset, 600),
-				Engine::Vector2i(16, 16), SDL_Rect(_char_map.at(test_string.at(i)).x, _char_map.at(test_string.at(i)).y, 16, 16));
+			if (character == '\n') {
+				newLine++;
+				offset = 0;
+			}
+			else {
+				if ((character >= 97 && character <= 122) || (character == ' ')) {
+					offset -= 8;
+				}
+				sprite_set.at("Text")->draw(renderer, Engine::Vector2i(offset, 600 + 34 * newLine),
+					Engine::Vector2i(32, 32), SDL_Rect(_char_map.at(test_string.at(i)).x, _char_map.at(test_string.at(i)).y, 16, 16));
+			}
 		}
-
-		sprite_set.at("Text")->draw(renderer, Engine::Vector2i(0, 400), Engine::Vector2i(32, 32), SDL_Rect(TXT_A.x, TXT_A.y, 16, 16));
 	}
 	/*
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketKisume.png", "MKT_KISU", renderer);
