@@ -64,6 +64,25 @@ if(WIN32)
                 "$<TARGET_FILE_DIR:TRM>/"
         )
 
+        # find_package(SDL2 REQUIRED)
+        # find_package(SDL2_image REQUIRED)
+        # find_package(SDL_ttf REQUIRED)
+
+        # target_link_libraries(EngineLib PUBLIC
+        #     SDL2::SDL2
+        #     SDL2::SDL2main
+        #     SDL2_image::SDL2_image
+        #     SDL2_ttf::SDL2_ttf
+        # )
+
+        # add_custom_command(TARGET TRM POST_BUILD
+        #     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        #         "${SDL2_DIR}/lib/x64/SDL2.dll"
+        #         "${SDL2_ttf_DIR}/lib/x64/SDL2_ttf.dll"
+        #         "${SDL2_image_DIR}/lib/x64/SDL2_image.dll"
+        #         "$<TARGET_FILE_DIR:TRM>/"
+        # )
+
     else ()
         message(STATUS "Using MinGW toolchain")
         # On Windows, use the SDL folder you included (minGW-w64 64-bit)

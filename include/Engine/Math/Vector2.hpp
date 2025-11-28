@@ -7,6 +7,7 @@ namespace Engine {
 
 template<typename T>
 struct Vector2 {
+    // Ensure T is an arithmetic type
     static_assert(std::is_arithmetic<T>::value, "Vector2 requires an arithmetic type");
 
     T x;

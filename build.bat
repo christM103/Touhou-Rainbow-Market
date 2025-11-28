@@ -1,69 +1,96 @@
 @echo off
-REM Simple CMake build script with MSVC or MinGW support
+REM ===============================================
+REM Simple CMake build script for TouhouRainbowMarket
+REM Supports MSVC, MinGW, Debug/Release, cleaning, and SDL2 setup
+REM ===============================================
 
-REM Usage:
-REM   build.bat          -> Debug build (default generator)
-REM   build.bat release  -> Release build
-REM   build.bat msvc     -> Debug build using Visual Studio (MSVC)
-REM   build.bat mingw    -> Debug build using MinGW
-REM   build.bat clean    -> Clean build files
-REM   build.bat clean-all -> Remove build + bin completely
+setlocal enabledelayedexpansion
 
+REM ---- Handle cleaning ----
 if "%1"=="clean" (
-    echo Running CMake clean...
+    echo [INFO] Cleaning build directory...
     if exist build (
         cmake --build build --target clean
     ) else (
-        echo No build directory found.
+        echo [WARN] No build directory found.
     )
-    if exist bin (
-        del /q bin\*.exe >nul 2>&1
-    )
+    if exist bin del /q bin\*.exe >nul 2>&1
     exit /b
 )
 
 if "%1"=="clean-all" (
-    echo Removing entire build directory and binaries...
-    rmdir /s /q build
-    rmdir /s /q bin
-    rmdir /s /q lib
-    echo Full clean complete.
+    echo [INFO] Removing build/, bin/, and lib/...
+    rmdir /s /q build 2>nul
+    rmdir /s /q bin 2>nul
+    rmdir /s /q lib 2>nul
+    echo [DONE] Full clean complete.
     exit /b
 )
 
 if "%1"=="lint" (
-    echo Running cpplint on all source files...
+    echo [INFO] Running cpplint on all source files...
     cmake --build build --target lint
-    echo Linting complete.
+    echo [DONE] Linting complete.
     exit /b
 )
 
-set BUILD_TYPE=Debug
-set GENERATOR=""
+REM ---- Default values ----
+set "BUILD_TYPE=Debug"
+set "GENERATOR="
+set "TARGET="
 
-if "%1"=="release" (
-    set BUILD_TYPE=Release
+REM ---- Parse arguments ----
+for %%A in (%*) do (
+    if /I "%%A"=="release" set "BUILD_TYPE=Release"
+    if /I "%%A"=="debug" set "BUILD_TYPE=Debug"
+    if /I "%%A"=="msvc" set "GENERATOR=Visual Studio 17 2022"
+    if /I "%%A"=="mingw" set "GENERATOR=MinGW Makefiles"
+    if /I "%%A"=="trm" set "TARGET=--target TRM"
 )
 
-if "%1"=="msvc" (
-    set GENERATOR=-G "Visual Studio 17 2022"
-)
-if "%1"=="mingw" (
-    set GENERATOR=-G "MinGW Makefiles"
+REM ---- Auto-detect compiler if not specified ----
+if "%GENERATOR%"=="" (
+    where cl >nul 2>nul
+    if %errorlevel%==0 (
+        set "GENERATOR=Visual Studio 17 2022"
+        echo [INFO] Detected MSVC.
+    ) else (
+        where gcc >nul 2>nul
+        if %errorlevel%==0 (
+            set "GENERATOR=MinGW Makefiles"
+            echo [INFO] Detected MinGW.
+        ) else (
+            echo [ERROR] Could not detect MSVC or MinGW! Please specify one.
+            exit /b 1
+        )
+    )
 )
 
+REM ---- Create build folder if missing ----
 if not exist build mkdir build
 
-echo Configuring project with CMake for %BUILD_TYPE%...
-cmake %GENERATOR% -S . -B build -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+REM ---- Configure project ----
+echo [INFO] Configuring project (%BUILD_TYPE%) with %GENERATOR%...
+cmake -G "%GENERATOR%" -S . -B build -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+    -DSDL2_DIR="%SDL2_DIR%" ^
+    -DSDL2_image_DIR="%SDL2_image_DIR%" ^
+    -DSDL2_ttf_DIR="%SDL2_ttf_DIR%"
 
 if errorlevel 1 (
     echo [ERROR] CMake configuration failed!
     pause
-    exit /b
+    exit /b 1
 )
 
-echo Building project...
-cmake --build build --config %BUILD_TYPE%
+REM ---- Build ----
+echo [INFO] Building project...
+cmake --build build --config %BUILD_TYPE% %TARGET%
 
-echo Build complete.
+if errorlevel 1 (
+    echo [ERROR] Build failed!
+    pause
+    exit /b 1
+)
+
+echo [SUCCESS] Build complete!
+exit /b 0
