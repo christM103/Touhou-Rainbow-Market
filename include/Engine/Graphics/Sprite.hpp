@@ -31,7 +31,7 @@ namespace Engine {
         /// @param x x position
         /// @param y y position
         /// @param crop The area that actually gets rendered on screen
-        void draw(SDL_Renderer* renderer, const Vector2i pos, const Vector2i size, const SDL_Rect& crop);
+        void drawCrop(SDL_Renderer* renderer, const Vector2i pos, const Vector2i size, const SDL_Rect& crop);
 
         /// @brief Swaps the pre-existing texture with a different texture
         /// @param tex The texture that will be swapped

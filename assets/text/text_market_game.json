@@ -1,0 +1,34 @@
+{
+    "Game Intro": {
+        "prompt": "none",
+        "text": "Welcome to the Touhou Rainbow Market Game Beta!"
+    },
+    "First Turn": {
+        "prompt": "y/n",
+        "text": "Is this your first time playing the game?"
+    },
+    "Prompt 1": {
+        "prompt": "y/n",
+        "text": "Would you like to know how to play the game?"
+    },
+    "Help Explanation": {
+        "prompt": "none",
+        "text": "Here's how to play the game.\nYour goal is to make as much profit as possible within the span of 10 turns.\nAt the beginining, you are given two minutes for your turn to do what you are able to do. But as the game progresses, the time speeds up, giving you less time for actions.\nThere are going to be a set number of markets to buy at the start of the round.\nEach market has their own special ability, whether it is the ability to attack markets from other players or protect your own. You can use a total of two market abilities per turn.\nYour player also have their own dedicated action. You can use only one player action per turn.\nEvents also happen between every turn, but they are not currently implemented lol.\nBy the end of the game, whoever has the largest profit is the winner. But beware, you also instantly lose if you go bankrupt."
+    },
+    "Help Prompt 2": {
+        "prompt": "y/n",
+        "text": "Would you like to hear that again?"
+    },
+    "Market Given Prompt": {
+        "prompt": "none",
+        "text": "Here are the current markets that are offered for this turn."
+    },
+    "Market Choice Prompt": {
+        "prompt": "y/n",
+        "text": "Would you like this market?"
+    },
+    "Market Deletion Prompt": {
+        "prompt": "y/n",
+        "text": "Do you want to delete a market that you currently have?"
+    }
+}

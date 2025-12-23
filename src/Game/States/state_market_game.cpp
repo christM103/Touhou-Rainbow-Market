@@ -11,7 +11,7 @@ namespace TR {
 
 	bool Market_Game::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
 
-		/* Render Creation */
+		/* Texture Initialization */
 
 		// Loading Background
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_BGLand.png", "BGO", renderer);
@@ -28,6 +28,7 @@ namespace TR {
 
 		// Loading HUD Decals
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Text.png", "TEXT", renderer);
+		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Box.png", "TEXT_BOX", renderer);
 
 
 		/* Sprite Creation */
@@ -69,6 +70,8 @@ namespace TR {
 		// Loading HUD Decals
 		sprite_set.insert({ "Text",
 			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT"), 561, 567) });
+		sprite_set.insert({ "Text_Box",
+			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT_BOX"), 561, 567) });
 
 
 		return true;
@@ -115,7 +118,7 @@ namespace TR {
 				if ((character >= 97 && character <= 122) || (character == ' ')) {
 					offset -= 8;
 				}
-				sprite_set.at("Text")->draw(renderer, Engine::Vector2i(offset, 600 + 34 * newLine),
+				sprite_set.at("Text")->drawCrop(renderer, Engine::Vector2i(offset, 600 + 34 * newLine),
 					Engine::Vector2i(32, 32), SDL_Rect(_char_map.at(test_string.at(i)).x, _char_map.at(test_string.at(i)).y, 16, 16));
 			}
 		}
@@ -133,4 +136,23 @@ namespace TR {
 
 		return true;
 	*/
+
+	// Timer Functions
+
+	Market_Game::Timer::Timer(seconds new_dur) {
+		_start = std::chrono::steady_clock::now();
+		_dur = new_dur;
+		_curr_left = _dur;
+	}
+
+	timer Market_Game::Timer::time_left() {
+		_curr_left = _dur - (std::chrono::steady_clock::now() - _start);
+		return _curr_left;
+	}
+
+	void Market_Game::Timer::timer_reset(seconds new_dur) {
+		*this = Timer(new_dur);
+	}
+
+
 }

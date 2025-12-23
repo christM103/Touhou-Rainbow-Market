@@ -26,7 +26,7 @@ void Engine::Sprite::draw(SDL_Renderer* renderer) {
     movement();
 }
 
-void Engine::Sprite::draw(SDL_Renderer* renderer, const Vector2i pos, const Vector2i size, const SDL_Rect& crop) {
+void Engine::Sprite::drawCrop(SDL_Renderer* renderer, const Vector2i pos, const Vector2i size, const SDL_Rect& crop) {
     if (renderer && texture) {
         SDL_Rect dest = { pos.x, pos.y, size.x, size.y };
         SDL_RenderCopyEx(renderer, texture, &crop, &dest, angle, nullptr, flip);

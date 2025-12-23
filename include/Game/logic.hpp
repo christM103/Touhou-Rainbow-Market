@@ -36,21 +36,6 @@ namespace TR {
         Market_Action = 1 << 11
     };
 
-    class Timer {
-    public:
-        explicit Timer(seconds new_dur);
-        timer time_left();
-        void timer_reset(seconds new_dur);
-
-
-    private:
-        current_time _start;
-        seconds _dur;
-        timer _curr_left;
-
-
-    };  // namespace TR
-
     class Game_States {
     public:
         Game_States();
@@ -90,9 +75,23 @@ namespace TR {
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
+        class Timer {
+        public:
+            explicit Timer(seconds new_dur);
+            timer time_left();
+            void timer_reset(seconds new_dur);
+
+
+        private:
+            current_time _start;
+            seconds _dur;
+            timer _curr_left;
+        };
+
     private:
         Main_Game_States _current_state{ Null_State };
         std::string test_string = "THE QUICK BROWN FOX JUMPED OVER \nTHE LAZY DOG'S BACK 1234567890\nThe five boxing wizards jump quickly?";
     };
 
 }
+// namespace TR

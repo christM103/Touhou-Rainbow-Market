@@ -127,6 +127,7 @@ void Game::terminalTest() {
 }
 
 void Game::timerTest() {
+    /*
     TR::Timer test_timer(2s);
     auto curr_time = test_timer.time_left();
     std::cout << "Welcome to the Touhou Rainbow Market Game! (Terminal Edition)";
@@ -140,6 +141,7 @@ void Game::timerTest() {
         curr_time = test_timer.time_left();
         std::cout << "\r";
     }
+    */
 }
 
 void Game::characterSelect(TR::Player_Data& Player_1) {
