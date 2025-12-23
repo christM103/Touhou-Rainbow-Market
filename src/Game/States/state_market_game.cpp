@@ -84,7 +84,9 @@ namespace TR {
 		if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_UP)) {
 			sprite_set.at("MID_Null")->setAlpha(100);
 		}
-	
+
+		test_string = std::to_string(gEngine->getInput()->getMousePosition().x) + " : x\n" + std::to_string(gEngine->getInput()->getMousePosition().y) + " : y";
+
 	}
 
 	void Market_Game::render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) {

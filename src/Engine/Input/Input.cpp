@@ -19,6 +19,9 @@ namespace Engine {
                 case SDL_KEYDOWN:
                     keyStates[event.key.keysym.scancode] = true;
                     break;
+                case SDL_MOUSEMOTION:
+                    mousePosition = Vector2i(event.motion.x, event.motion.y);
+                    break;
                 case SDL_QUIT:
                     quitRequested = true;
                     break;
@@ -35,4 +38,5 @@ namespace Engine {
         }
         return false;
     }
+
 } // namespace Engine
