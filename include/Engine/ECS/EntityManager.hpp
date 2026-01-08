@@ -5,7 +5,11 @@
 
 namespace Engine {
 
-using Entity = unsigned int;
+struct Entity {
+    Uint16 _id;
+    ComponentGroup<> _components;
+};
+
 class EntityManager {
 public:
     EntityManager() = default;
@@ -33,7 +37,9 @@ public:
     /// @return A reference to the added component
     template<typename Component, typename... Args>
     Component& addComponent(Entity entity, Args&&... args) {
-        assert()
+        auto& group = entity._components;
+        group.components.get<Component>() = Component(std::forward<Args>(args)...);
+        return group.components.get<Component>();
     }
 
     /// @brief Retrieves a component from an entity
@@ -42,7 +48,7 @@ public:
     /// @return A pointer to the component, or nullptr if the component does not exist
     template<typename Component>
     Component* getComponent(Entity entity) {
-
+        return std::get<Component>(entity._components.components);
     }
 
     bool hasComponent(Entity entity) {
