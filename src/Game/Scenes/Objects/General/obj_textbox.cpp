@@ -69,8 +69,8 @@ namespace TR {
 
     void TextBox::updateMask(Sprite_Map& sprite_set) {
         sprite_set.at("Text_Box")->setPos(Engine::Vector2f(static_cast<float>(_sprite_mask.position.x), static_cast<float>(_sprite_mask.position.y)));
-        sprite_set.at("Text")->setPos(Engine::Vector2f(static_cast<float>(_sprite_mask.position.x) + (20.0 * SCREEN_SCALE), 
-            static_cast<float>(_sprite_mask.position.y) + (20.0 * SCREEN_SCALE)));
+        sprite_set.at("Text")->setPos(Engine::Vector2f(static_cast<float>(_sprite_mask.position.x + (20.0 * SCREEN_SCALE)), 
+            static_cast<float>(_sprite_mask.position.y + (20.0 * SCREEN_SCALE))));
     }
 
     void TextBox::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
@@ -142,5 +142,6 @@ namespace TR {
             _time++;
         }
     }
+
     void TextBox::textContinue() {}
 }
