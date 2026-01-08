@@ -22,6 +22,12 @@ namespace Engine {
                 case SDL_MOUSEMOTION:
                     mousePosition = Vector2i(event.motion.x, event.motion.y);
                     break;
+                case SDL_MOUSEBUTTONUP:
+                    mouseStates[SDL_BUTTON(event.button.button)] = false;
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    mouseStates[SDL_BUTTON(event.button.button)] = true;
+                    break;
                 case SDL_QUIT:
                     quitRequested = true;
                     break;
@@ -34,6 +40,14 @@ namespace Engine {
     bool Input::isKeyPressed(SDL_Scancode key) const {
         auto it = keyStates.find(key);
         if (it != keyStates.end()) {
+            return it->second;
+        }
+        return false;
+    }
+
+    bool Input::isMouseClicked(int click) const {
+        auto it = mouseStates.find(click);
+        if (it != mouseStates.end()) {
             return it->second;
         }
         return false;

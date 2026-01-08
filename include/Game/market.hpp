@@ -39,7 +39,7 @@ Open markets can inflict a whole heap of buffs, debuffs, aliments and the like. 
 namespace TR {
 
 enum Market_ID{MID_Null, MID_Wriggle, MID_Kisume, MID_Kogasa, MID_Nazrin};
-static const std::string Market_ID_Str[] = {"MID_Null", "MID_Wriggle", "MID_Kisume", "MID_Kogasa", "MID_Nazrin"};
+static const char* Market_ID_Str[] = {"MID_Null", "MID_Wriggle", "MID_Kisume", "MID_Kogasa", "MID_Nazrin"};
 
 class Market{
  public:
@@ -60,7 +60,7 @@ class Market{
     inline const int getTier() { return _market_tier; };
     inline const float getSellPrice() { return _market_sell; };
     inline const std::string getType() { return _market_type; };
-    inline const std::string getIDStr() { return Market_ID_Str[_market_id]; };
+    inline const char* getIDStr() { return Market_ID_Str[_market_id]; };
     inline void setID(int id) { _market_id = id; };
     inline void setLevel(int lvl) { _market_lvl = lvl; };
     inline void setTier(int tier) { _market_tier = tier; };

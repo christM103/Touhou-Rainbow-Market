@@ -33,8 +33,8 @@ class Land{
 
     // Accessors and Mutators
     Market& getMarket(int ind);
-    std::string getMarketStr(int ind);
-    std::string getMarketList();
+    const char* getMarketStr(int ind);
+    const char* getMarketList();
     inline void setState(int ind, Land_States state) { _landMarkets[ind].first ^= state; };
     inline void remState(int ind, Land_States state) { _landMarkets[ind].first &= ~state; };
     template <class T> inline void setLand(int ind, T&& mar) {

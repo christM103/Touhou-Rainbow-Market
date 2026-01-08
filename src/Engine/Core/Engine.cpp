@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Application.hpp"
@@ -21,6 +22,12 @@ namespace Engine {
         // Initialize SDL
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
             std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
+            return false;
+        }
+
+        // Initialize TTF
+        if (TTF_Init() != 0) {
+            std::cerr << "Couldn't initialize TTF: " << SDL_GetError() << std::endl;
             return false;
         }
 

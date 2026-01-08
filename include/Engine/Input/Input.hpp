@@ -15,6 +15,9 @@ public:
     // Check if a key was pressed (transition from up to down)
     bool isKeyPressed(SDL_Scancode key) const;
 
+    // Checks if a mouse button was pressed
+    bool isMouseClicked(int click) const;
+
     /// @brief Track the current position of the mouse on the screen
     /// @return The current mouse position
     Vector2i getMousePosition() const { return mousePosition; }
@@ -25,6 +28,7 @@ public:
 
 private:
     std::unordered_map<SDL_Scancode, bool> keyStates;
+    std::unordered_map<int, bool> mouseStates;
     Vector2i mousePosition;
     bool quitRequested = false;
 };
