@@ -1,4 +1,5 @@
 #include "Game/logic.hpp"
+#include "Game/logic_obj.hpp"
 #include "Engine/Graphics/AssetManager.hpp"
 
 namespace TR {
@@ -19,16 +20,12 @@ namespace TR {
 		
 		// Loading Character Portraits
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_Null.png", "CHAR_NUL", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_R.png", "CHAR_REI", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_M.png", "CHAR_MAR", renderer);
+		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Portrait_R_S.png", "CHAR_REI", renderer);
+		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Portrait_M_S.png", "CHAR_MAR", renderer);
 
 		// Loading Markets
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketFree.png", "MKT_NULL", renderer);
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketWriggle.png", "MKT_WRIG", renderer);
-
-		// Loading HUD Decals
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Text.png", "TEXT", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Box.png", "TEXT_BOX", renderer);
 
 
 		/* Sprite Creation */
@@ -38,14 +35,14 @@ namespace TR {
 			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("BGO"), 1280, 720) });
 		sprite_set.insert({ "background_cloud",
 			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("BGOCloud"), 2444, 144) });
-		sprite_set.at("background_cloud")->setXPos(0);
-		sprite_set.at("background_cloud")->setYPos(0);
-		sprite_set.at("background_cloud")->setXVel(-.05);
+		sprite_set.at("background_cloud")->setX(0);
+		sprite_set.at("background_cloud")->setY(0);
+		sprite_set.at("background_cloud")->setXVel(-0.05);
 		sprite_set.insert({ "background_cloud1",
 			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("BGOCloud"), 2444, 72) });
-		sprite_set.at("background_cloud1")->setXPos(-611);
-		sprite_set.at("background_cloud1")->setYPos(150);
-		sprite_set.at("background_cloud1")->setXVel(-.1);
+		sprite_set.at("background_cloud1")->setX(-611);
+		sprite_set.at("background_cloud1")->setY(150);
+		sprite_set.at("background_cloud1")->setXVel(-0.1);
 
 		// Creating Character Portraits Sprites
 		sprite_set.insert({ "player",
@@ -67,12 +64,7 @@ namespace TR {
 		sprite_set.insert({ "MID_Null",
 			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("MKT_NULL"), 128, 128) });
 
-		// Loading HUD Decals
-		sprite_set.insert({ "Text",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT"), 561, 567) });
-		sprite_set.insert({ "Text_Box",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT_BOX"), 561, 567) });
-
+		test_textbox.init(renderer, gEngine, sprite_set, player_set);
 
 		return true;
 	}
@@ -85,18 +77,23 @@ namespace TR {
 			sprite_set.at("MID_Null")->setAlpha(100);
 		}
 
-		test_string = std::to_string(gEngine->getInput()->getMousePosition().x) + " : x\n" + std::to_string(gEngine->getInput()->getMousePosition().y) + " : y";
+		if (gEngine->getInput()->isMouseClicked(SDL_BUTTON_LEFT)) {
+			test_string = std::to_string(gEngine->getInput()->getMousePosition().x) + " : x\n" + 
+				std::to_string(gEngine->getInput()->getMousePosition().y) + " : y";
+		}
+
+		test_textbox.update(gEngine, sprite_set, player_set);
 
 	}
 
-	void Market_Game::render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) {
+	void Market_Game::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
 		sprite_set.at("background")->draw(renderer, Engine::Vector2i(0, 0));
-		if (sprite_set.at("background_cloud")->getXPos() < -1222) {
-			sprite_set.at("background_cloud")->setXPos(0);
+		if (sprite_set.at("background_cloud")->getX() < -1222) {
+			sprite_set.at("background_cloud")->setX(0);
 		}
 		sprite_set.at("background_cloud1")->draw(renderer);
-		if (sprite_set.at("background_cloud1")->getXPos() < -1222) {
-			sprite_set.at("background_cloud1")->setXPos(0);
+		if (sprite_set.at("background_cloud1")->getX() < -1222) {
+			sprite_set.at("background_cloud1")->setX(0);
 		}
 		sprite_set.at("background_cloud")->draw(renderer);
 		sprite_set.at("background_cloud1")->draw(renderer);
@@ -106,24 +103,8 @@ namespace TR {
 		for (int i = 0; i < 5; ++i) {
 			sprite_set.at(player_set[0]->getLand()->getMarketStr(i))->draw(renderer, Engine::Vector2i(275 + i * 150, 350 + 50 * (i % 2)));
 		}
-		int newLine = 0;
-		int offset = 0;
 
-		for (int i = 0; i < test_string.size(); i++) {
-			offset += 28;
-			char character = test_string.at(i);
-			if (character == '\n') {
-				newLine++;
-				offset = 0;
-			}
-			else {
-				if ((character >= 97 && character <= 122) || (character == ' ')) {
-					offset -= 8;
-				}
-				sprite_set.at("Text")->drawCrop(renderer, Engine::Vector2i(offset, 600 + 34 * newLine),
-					Engine::Vector2i(32, 32), SDL_Rect(_char_map.at(test_string.at(i)).x, _char_map.at(test_string.at(i)).y, 16, 16));
-			}
-		}
+		test_textbox.draw(renderer, gEngine, sprite_set, player_set);
 	}
 	/*
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketKisume.png", "MKT_KISU", renderer);

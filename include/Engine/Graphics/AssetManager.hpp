@@ -16,6 +16,13 @@ namespace Engine {
         /// @param renderer SDL_Renderer to create the texture
         /// @return True if the texture was loaded successfully, false otherwise
         bool loadTexture(const char* filePath, const char* assetName, SDL_Renderer* renderer);
+
+        /// @brief Stores a texture into the text manager.
+        /// @param texture texture that is used
+        /// @param assetName name to reference the asset
+        /// @param renderer SDL_Renderer to create the texture
+        /// @return True if the texture was loaded successfully, false otherwise
+        bool storeTexture(SDL_Texture* texture, const char* assetName, SDL_Renderer* renderer);
         
         /// @brief Get a texture by its asset name.
         /// @param assetName name of the asset

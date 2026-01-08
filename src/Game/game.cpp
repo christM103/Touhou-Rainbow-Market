@@ -86,7 +86,7 @@ void Game::render() {
 
     // Example rendering code
     //playerSprite->draw(renderer, Engine::Vector2i(0, 0));
-    _game_state->render(renderer, _sprite_set, _player_set);
+    _game_state->render(renderer, gEngine, _sprite_set, _player_set);
 }
 void Game::quit() {
     // Shutdown code for the game

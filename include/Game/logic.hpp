@@ -3,15 +3,10 @@
 #pragma once
 
 #include <chrono>
-#include "Engine/Core/Engine.hpp"
-#include "Engine/Graphics/Sprite.hpp"
-#include "Game/player.hpp"
+#include "Game/logic_obj.hpp"
 //#include "Game/event.hpp"
 
 using namespace std::chrono_literals;
-using Sprite_Map = std::map<std::string, std::unique_ptr<Engine::Sprite>>;
-using Player_Set = std::vector<std::shared_ptr<TR::Player_Data>>;
-
 typedef std::chrono::steady_clock::time_point current_time;
 typedef std::chrono::seconds seconds;
 typedef std::chrono::duration<double> timer;
@@ -20,22 +15,7 @@ namespace TR {
 
     constexpr Engine::Vector2i TXT_A = Engine::Vector2i(205, 219);
 
-    enum Main_Game_States : uint16_t {
-        Null_State = 0,
-        Pause = 1 << 0,
-        Intro_Sceen = 1 << 1,
-        Help_Screen = 1 << 2,
-        Market_Prompt = 1 << 3,
-        Turn_Intro = 1 << 4,
-        Text_Prompt = 1 << 5,
-        Highlight_Market = 1 << 6,
-        Highlight_Action = 1 << 7,
-        Choosing_Player_Land = 1 << 8,
-        Choosing_Enemy_Land = 1 << 9,
-        End_Of_Turn = 1 << 10,
-        Market_Action = 1 << 11
-    };
-
+    /// @brief Generic Game Scene
     class Game_States {
     public:
         Game_States();
@@ -43,7 +23,7 @@ namespace TR {
 
         virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
         virtual void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
-        virtual void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
+        virtual void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
 
         void characterMapping();
 
@@ -51,6 +31,7 @@ namespace TR {
         std::map<char, Engine::Vector2i> _char_map;
     };
 
+    /// @brief Character Select Scene
     class Char_Select : public Game_States {
     public:
         Char_Select();
@@ -58,23 +39,43 @@ namespace TR {
 
         bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
-        void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
+        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
 
     private:
         
     };
 
+    /// @brief Main Market Game Scene
     class Market_Game : public Game_States {
     public:
+
+        /// @brief List of possible game states
+        enum Main_Game_States : uint16_t {
+            MG_Null_State = 0,
+            MG_Pause = 1 << 0,
+            MG_Intro_Sceen = 1 << 1,
+            MG_Help_Screen = 1 << 2,
+            MG_Market_Prompt = 1 << 3,
+            MG_Turn_Intro = 1 << 4,
+            MG_Text_Prompt = 1 << 5,
+            MG_Highlight_Market = 1 << 6,
+            MG_Highlight_Action = 1 << 7,
+            MG_Choosing_Player_Land = 1 << 8,
+            MG_Choosing_Enemy_Land = 1 << 9,
+            MG_End_Of_Turn = 1 << 10,
+            MG_Market_Action = 1 << 11
+        };
+
         Market_Game();
         explicit Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players);
         ~Market_Game() override;
 
         bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set);
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
-        void render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) override;
+        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
+        /// @brief Timer used for the game
         class Timer {
         public:
             explicit Timer(seconds new_dur);
@@ -89,8 +90,10 @@ namespace TR {
         };
 
     private:
-        Main_Game_States _current_state{ Null_State };
+        Main_Game_States _current_state{ MG_Null_State };
         std::string test_string = "THE QUICK BROWN FOX JUMPED OVER \nTHE LAZY DOG'S BACK 1234567890\nThe five boxing wizards jump quickly?";
+        TextBox test_textbox{ "This is a test message use to see whether transitions work for the text.", 
+            true, {TextBox::TXT_NULL | TextBox::TXT_UP_DOWN, TextBox::TXT_NULL | TextBox::TXT_UP_DOWN} };
     };
 
 }

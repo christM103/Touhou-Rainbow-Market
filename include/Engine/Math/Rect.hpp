@@ -13,6 +13,7 @@ struct Rect {
 
     constexpr Rect() : position(0, 0), size(0, 0) {}
     constexpr Rect(T x, T y, T width, T height) : position(x, y), size(width, height) {}
+    constexpr Rect(Vector2<T> pos, Vector2<T> s) : position(pos), size(s) {}
 
     // Utility functions
 

@@ -15,7 +15,7 @@ namespace TR {
 
     void Char_Select::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {}
 
-    void Char_Select::render(SDL_Renderer* renderer, Sprite_Map& sprite_set, Player_Set& player_set) {
+    void Char_Select::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
         sprite_set.at("background")->draw(renderer, Engine::Vector2i(0, 0));
     }
 }

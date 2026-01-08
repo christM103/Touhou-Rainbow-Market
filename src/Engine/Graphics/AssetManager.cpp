@@ -27,6 +27,16 @@ namespace Engine {
         return true;
     }
 
+    bool AssetManager::storeTexture(SDL_Texture* texture, const char* assetName, SDL_Renderer* renderer) {
+
+        if (!texture) {
+            return false;
+        }
+
+        textures[assetName] = texture;
+        return true;
+    }
+
     SDL_Texture* AssetManager::getTexture(const char* assetName) {
         auto it = textures.find(assetName);
         if (it != textures.end()) {
