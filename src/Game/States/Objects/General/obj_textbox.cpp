@@ -97,6 +97,7 @@ namespace TR {
 
         // Text Entrance Transitions
         if (_text_trans.x & TXT_ACTIVE) {
+            _text_trans.y &= ~TXT_ACTIVE;
             if (_sprite_mask.position.x > 120 * SCREEN_SCALE || _sprite_mask.position.y > 160 * SCREEN_SCALE) {
                 if (_text_trans.x & TXT_UP_DOWN) {
                     _sprite_mask.position.y -= 2 * SCREEN_SCALE;
@@ -111,6 +112,7 @@ namespace TR {
         }
         // Text Exit Transitions
         else if (_text_trans.y & TXT_ACTIVE) {
+            _text_trans.x &= ~TXT_ACTIVE;
             if (_sprite_mask.position.y < gEngine->getWindow()->getHeight() && (_text_trans.y & TXT_UP_DOWN)) {
                 _sprite_mask.position.y += 2 * SCREEN_SCALE;
             }
