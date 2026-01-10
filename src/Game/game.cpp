@@ -10,7 +10,7 @@ extern Engine::Engine* gEngine;
 
 Game::Game() {
     // Constructor implementation
-    _game_state.reset(new TR::Char_Select());
+    _game_state.reset(new TR::Title_Screen());
 }
 
 Game::~Game() {
@@ -37,33 +37,6 @@ void Game::update(float deltaTime) {
 
         _game_state->update(gEngine, _sprite_set, _player_set);
 
-        if ((gEngine->getInput()->isKeyPressed(SDL_SCANCODE_LEFT)) && (_player_set.size() > 0)) {
-            move_state(std::make_unique<TR::Market_Game>());
-        }
-        if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_RIGHT)) {
-            move_state(std::make_unique<TR::Char_Select>());
-        }
-
-        if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Q)) {
-            if (!_input_pressed.at(SDL_SCANCODE_Q)) {
-                _player_set.insert(_player_set.end(), std::make_shared<TR::Player_Reimu>(TR::PI_Player_1, 1));
-                _input_pressed.at(SDL_SCANCODE_Q) = true;
-            }
-        }
-        else {
-            _input_pressed.at(SDL_SCANCODE_Q) = false;
-        }
-
-        if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_W)) {
-            if (!_input_pressed.at(SDL_SCANCODE_W)) {
-                _player_set.insert(_player_set.end(), std::make_shared<TR::Player_Marisa>(TR::PI_Player_1, 1));
-                _input_pressed.at(SDL_SCANCODE_W) = true;
-            }
-        }
-        else {
-            _input_pressed.at(SDL_SCANCODE_W) = false;
-        }
-
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Z) && (_player_set.size() > 0)) {
             if (!_input_pressed.at(SDL_SCANCODE_Z)) {
                 _player_set.at(0)->getLand()->setLand(0, TR::Wriggle());
@@ -75,6 +48,25 @@ void Game::update(float deltaTime) {
         }
 
         _beat = 0;
+    }
+
+    if (_game_state->getSceneCurr() != _game_state->getSceneNext()) {
+        TR::Scene::Scene_ID state = _game_state->getSceneNext();
+        switch (state) {
+            case TR::Scene::SC_Title:
+                move_state(std::make_unique<TR::Title_Screen>());
+                break;
+            case TR::Scene::SC_CharS:
+                move_state(std::make_unique<TR::Char_Select>());
+                break;
+            case TR::Scene::SC_Main:
+                if (_player_set.size()) {
+                    move_state(std::make_unique<TR::Market_Game>());
+                }
+                break;
+            default:
+                break;
+        }
     }
     
     
@@ -94,7 +86,7 @@ void Game::quit() {
 
 }
 
-void Game::move_state(std::unique_ptr<TR::Game_States> newState) {
+void Game::move_state(std::unique_ptr<TR::Scene> newState) {
     SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
     _game_state = std::move(newState);
 

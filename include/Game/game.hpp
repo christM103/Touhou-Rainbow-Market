@@ -14,7 +14,7 @@ public:
     virtual void render() override;
     virtual void quit() override;
 
-    void move_state(std::unique_ptr<TR::Game_States> newState);
+    void move_state(std::unique_ptr<TR::Scene> newState);
 
     void terminalTest();
     void timerTest();
@@ -24,7 +24,7 @@ public:
 private:
     // Game-specific data and methods
 
-    std::unique_ptr<TR::Game_States> _game_state;
+    std::unique_ptr<TR::Scene> _game_state;
     Sprite_Map _sprite_set;
     Player_Set _player_set;
     int _beat{ 0 };

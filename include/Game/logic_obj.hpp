@@ -64,9 +64,15 @@ namespace TR {
 
         inline void setText(const char* str) { _text_stored = str; }
         inline void setSpeed(int speed) { _text_speed = speed; }
+
         inline char* getText() { return _text_stored.data(); }
         inline int getSpeed() { return _text_speed; }
 
+        inline void enableAttrEnter(uint16_t attr) { _text_trans.x ^= attr; }
+        inline void enableAttrExit(uint16_t attr) { _text_trans.y ^= attr; }
+
+        inline void disableAttrEnter(uint16_t attr) { _text_trans.x ^= ~attr; }
+        inline void disableAttrExit(uint16_t attr) { _text_trans.y ^= ~attr; }
 
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set);
         void updateMask(Sprite_Map& sprite_set) override;

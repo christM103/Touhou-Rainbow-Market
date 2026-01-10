@@ -31,12 +31,14 @@ namespace Engine {
 		inline void setText(const char* text) { _text_string = text; }
 		inline void setTextSize(int size) { _text_size = size; }
 		inline void setAttr(Text_Attr attr) { _text_attr ^= attr; }
-		inline void remAttr(Text_Attr attr) { _text_attr = ~attr; }
+		inline void remAttr(Text_Attr attr) { _text_attr ^= ~attr; }
+		inline void setColor(SDL_Color col) { _text_color = col; }
 		inline void setFont(TTF_Font* font) { _text_font = font; }
 
 		inline const char* getText() { return _text_string.c_str(); }
-		inline int getTestSize() { return _text_size; }
+		inline int getTextSize() { return _text_size; }
 		inline Uint16 getTextAttr() { return _text_attr; }
+		inline SDL_Color getTextColor() { return _text_color; }
 		inline TTF_Font* getFont() { return _text_font; }
 		inline Recti getRenderSize() { return _texture_space; }
 
@@ -46,6 +48,7 @@ namespace Engine {
 		std::string _text_string{ "" };
 		int _text_size{ 10 }, _text_angle{ 0 };
 		Uint16 _text_attr{ Null };
+		SDL_Color _text_color{ 255, 255, 255, 255 };
 		TTF_Font* _text_font;
 		SDL_RendererFlip _text_flip{ SDL_FLIP_NONE };
 		SDL_Texture* _texture{ NULL };

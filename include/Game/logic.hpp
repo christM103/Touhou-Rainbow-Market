@@ -16,23 +16,46 @@ namespace TR {
     constexpr Engine::Vector2i TXT_A = Engine::Vector2i(205, 219);
 
     /// @brief Generic Game Scene
-    class Game_States {
+    class Scene {
     public:
-        Game_States();
-        virtual ~Game_States();
+        enum Scene_ID : uint8_t {
+            SC_Null, SC_Title, SC_CharS, SC_Main
+        };
+
+        Scene();
+        virtual ~Scene();
 
         virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
         virtual void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
         virtual void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
 
-        void characterMapping();
+        inline Scene_ID getSceneCurr() { return _currState; }
+        inline Scene_ID getSceneNext() { return _nextState; }
+
+        inline void setSceneCurr(Scene_ID state) { _currState = state; }
+        inline void setSceneNext(Scene_ID state) { _nextState = state; }
 
     protected:
-        std::map<char, Engine::Vector2i> _char_map;
+        Scene_ID _currState{ SC_Null }, _nextState{ SC_Null };
+    };
+
+    /// @brief Title Screen Scene
+    class Title_Screen : public Scene {
+    public:
+        Title_Screen();
+        ~Title_Screen() override;
+
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
+        void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
+        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
+
+    private:
+        Engine::Text start_prompt{ "Press Space to play!", 40 };
+
     };
 
     /// @brief Character Select Scene
-    class Char_Select : public Game_States {
+    class Char_Select : public Scene {
     public:
         Char_Select();
         ~Char_Select() override;
@@ -43,11 +66,11 @@ namespace TR {
 
 
     private:
-        
+        Engine::Text char_choice_prompt{ "Choose your character using the left and right arrow keys", 40 };
     };
 
     /// @brief Main Market Game Scene
-    class Market_Game : public Game_States {
+    class Market_Game : public Scene {
     public:
 
         /// @brief List of possible game states
@@ -90,11 +113,13 @@ namespace TR {
         };
 
     private:
-        Main_Game_States _current_state{ MG_Null_State };
+        uint16_t _market_scene_state{ MG_Null_State };
         std::string test_string = "THE QUICK BROWN FOX JUMPED OVER \nTHE LAZY DOG'S BACK 1234567890\nThe five boxing wizards jump quickly?";
-        TextBox test_textbox{ "This is a test message use to see whether transitions work for the text.", 
+        TextBox test_textbox{ "This is a small test demo for the game Touhou Rainbow Market.\nTo control, You can highlight a specific market using keypad numbers 1-6. From there you can have the option to either sell or buy a specific given market.\nMake sure to keep in mind the time!", 
             true, {TextBox::TXT_NULL | TextBox::TXT_UP_DOWN, TextBox::TXT_NULL | TextBox::TXT_UP_DOWN} };
     };
+
+    
 
 }
 // namespace TR

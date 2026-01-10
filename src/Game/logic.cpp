@@ -14,14 +14,14 @@ typedef std::chrono::duration<double> timer;
 
 namespace TR {
 
-Game_States::Game_States() {
-    characterMapping();
+Scene::Scene() {
+	_currState = SC_Null;
+	_nextState = _currState;
 }
-Game_States::~Game_States() {}
+Scene::~Scene() {}
 
 
-void Game_States::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {}
+void Scene::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {}
 
-void Game_States::characterMapping() {}
 
 }  // namespace TR

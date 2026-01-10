@@ -4,7 +4,10 @@
 
 namespace TR {
 
-	Market_Game::Market_Game() {}
+	Market_Game::Market_Game() {
+		_currState = SC_Main;
+		_nextState = _currState;
+	}
 
 	Market_Game::Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players) {}
 
@@ -71,15 +74,18 @@ namespace TR {
 
 	void Market_Game::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
 
-		// Input Functions
+		if (_market_scene_state & MG_Intro_Sceen) {
+			test_textbox.enableAttrEnter(TextBox::Text_Box_Transitions::TXT_ACTIVE);
+		}
 
 		if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_UP)) {
 			sprite_set.at("MID_Null")->setAlpha(100);
 		}
 
 		if (gEngine->getInput()->isMouseClicked(SDL_BUTTON_LEFT)) {
-			test_string = std::to_string(gEngine->getInput()->getMousePosition().x) + " : x\n" + 
-				std::to_string(gEngine->getInput()->getMousePosition().y) + " : y";
+			test_string = std::to_string(gEngine->getInput()->getMousePosition().x) + " : x\n" +
+			std::to_string(gEngine->getInput()->getMousePosition().y) + " : y";
+			_market_scene_state ^= MG_Intro_Sceen;
 		}
 
 		test_textbox.update(gEngine, sprite_set, player_set);
