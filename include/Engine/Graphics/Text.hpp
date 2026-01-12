@@ -27,6 +27,7 @@ namespace Engine {
 		SDL_Texture* load(SDL_Renderer* renderer, Recti text_space);
 		SDL_Texture* load(SDL_Renderer* renderer, Vector2i pos, Vector2i size);
 		SDL_Texture* load(SDL_Renderer* renderer, int x, int y, int width, int height);
+		SDL_Texture* load(SDL_Renderer* renderer);
 
 		inline void setText(const char* text) { _text_string = text; }
 		inline void setTextSize(int size) { _text_size = size; }

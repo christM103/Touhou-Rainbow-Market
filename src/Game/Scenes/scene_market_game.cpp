@@ -35,6 +35,8 @@ namespace TR {
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketFree.png", "MKT_NULL", renderer);
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketWriggle.png", "MKT_WRIG", renderer);
 
+		// Loading Text
+		gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
 
 		/* Sprite Creation */
 
@@ -74,6 +76,12 @@ namespace TR {
 
 		test_textbox.init(renderer, gEngine, sprite_set, player_set);
 
+		// Creating Text Sprites
+
+		sprite_set.insert({ "player_balance",
+			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT_PBAL"),
+				balance_text.getRenderSize().size.x * SCREEN_SCALE, balance_text.getRenderSize().size.y * SCREEN_SCALE)});
+		
 		return true;
 	}
 
@@ -81,13 +89,11 @@ namespace TR {
 
 		this->state_machine(gEngine, sprite_set, player_set);
 
-		if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_UP)) {
-			sprite_set.at("MID_Null")->setAlpha(100);
-		}
-
-		
-
 		test_textbox.update(gEngine, sprite_set, player_set);
+
+		if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_EQUALS)) {
+			player_set.at(0)->balanceChange(1000);
+		}
 
 	}
 
@@ -105,27 +111,35 @@ namespace TR {
 
 		sprite_set.at("player")->draw(renderer, Engine::Vector2i(980,0));
 
+		gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
+		sprite_set.at("player_balance")->swapTexture(gEngine->getAssetManager()->getTexture("TEXT_PBAL"), balance_text.getRenderSize().size.x, balance_text.getRenderSize().size.y);
+		sprite_set.at("player_balance")->draw(renderer, Engine::Vector2i(960, 300));
+
 		for (int i = 0; i < 5; ++i) {
 			sprite_set.at(player_set[0]->getLand()->getMarketStr(i))->draw(renderer, Engine::Vector2i(275 + i * 150, 350 + 50 * (i % 2)));
 		}
 
 		test_textbox.draw(renderer, gEngine, sprite_set, player_set);
 	}
-	/*
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketKisume.png", "MKT_KISU", renderer);
-		sprite_set.insert({ "MID_Kisume",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("MKT_KISU"), 128, 128) });
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketKogasa.png", "MKT_KOGA", renderer);
-		sprite_set.insert({ "MID_Kogasa",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("MKT_KOGA"), 128, 128) });
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketNazrin.png", "MKT_NAZR", renderer);
-		sprite_set.insert({ "MID_Nazrin",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("MKT_NAZR"), 128, 128) });
-
-		return true;
-	*/
 
 	void Market_Game::state_machine(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+
+
+		/*  Main Game State */
+
+		if (_market_scene_state & MG_Main_Game) {
+			// Sets the new balance for the text
+
+			std::stringstream newBalance;
+			newBalance << "Total Balance: " << std::fixed << std::setprecision(2) << player_set.at(0)->getBalance();
+			balance_text.setText(newBalance.str().c_str());
+
+		}
+		else {
+
+		}
+
+		/* Intro Screen State */
 
 		if (_market_scene_state & MG_Intro_Sceen) {
 			// Turning on the textbox
@@ -153,6 +167,11 @@ namespace TR {
 		}
 		
 		else {
+			// Reactivate the main game
+			if (!(_market_scene_state & MG_Main_Game)) {
+				_market_scene_state |= MG_Main_Game;
+			}
+
 			// If the textbox still exists, then tell it to leave
 
 			if ((test_textbox.getAttr() & (Text::TXT_ENTER_EXIT))) {

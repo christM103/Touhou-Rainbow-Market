@@ -76,18 +76,19 @@ namespace TR {
         /// @brief List of possible game states
         enum Main_Game_States : uint16_t {
             MG_Null_State = 0,
-            MG_Pause = 1 << 0,
-            MG_Intro_Sceen = 1 << 1,
-            MG_Help_Screen = 1 << 2,
-            MG_Market_Prompt = 1 << 3,
-            MG_Turn_Intro = 1 << 4,
-            MG_Text_Prompt = 1 << 5,
-            MG_Highlight_Market = 1 << 6,
-            MG_Highlight_Action = 1 << 7,
-            MG_Choosing_Player_Land = 1 << 8,
-            MG_Choosing_Enemy_Land = 1 << 9,
-            MG_End_Of_Turn = 1 << 10,
-            MG_Market_Action = 1 << 11
+            MG_Main_Game = 1 << 0,
+            MG_Pause = 1 << 1,
+            MG_Intro_Sceen = 1 << 2,
+            MG_Help_Screen = 1 << 3,
+            MG_Market_Prompt = 1 << 4,
+            MG_Turn_Intro = 1 << 5,
+            MG_Text_Prompt = 1 << 6,
+            MG_Highlight_Market = 1 << 7,
+            MG_Highlight_Action = 1 << 8,
+            MG_Choosing_Player_Land = 1 << 9,
+            MG_Choosing_Enemy_Land = 1 << 10,
+            MG_End_Of_Turn = 1 << 11,
+            MG_Market_Action = 1 << 12
         };
 
         Market_Game();
@@ -117,7 +118,11 @@ namespace TR {
     private:
         uint16_t _market_scene_state{ MG_Null_State };
         std::string test_string = "THE QUICK BROWN FOX JUMPED OVER \nTHE LAZY DOG'S BACK 1234567890\nThe five boxing wizards jump quickly?";
-        TextBox test_textbox{ "This is a small test demo for the game Touhou Rainbow Market.\nTo control, You can highlight a specific market using keypad numbers 1-6. From there you can have the option to either sell or buy a specific given market.\nMake sure to keep in mind the time!", 
+        Engine::Text balance_text{ "Total Balance: 0", 30 };
+        TextBox test_textbox{ 
+            "This is a small test demo for the game Touhou Rainbow Market.\n\
+To control, You can highlight a specific market using keypad numbers 1-6. From there you can have the option to either sell or buy a specific given market.\n\
+Make sure to keep in mind the time!", 
             true, TextBox::TXT_NULL | TextBox::TXT_ENTER_EXIT };
     };
 

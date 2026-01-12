@@ -144,6 +144,7 @@ namespace TR {
                     if (_text_attr & TXT_ACTIVE_TEXT) {
                         _text_attr ^= TXT_ACTIVE_TEXT;
                     }
+                    _text_attr |= TXT_ACTIVE_TEXT_COMPLETE;
                 }
 
                 if (_text_attr & TXT_ACTIVE_TEXT) {

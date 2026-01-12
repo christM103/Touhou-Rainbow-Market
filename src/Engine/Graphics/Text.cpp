@@ -47,7 +47,7 @@ SDL_Texture* Engine::Text::load(SDL_Renderer* renderer, Recti text_space)
 	TTF_SetFontSize(_text_font, _text_size);
 
 	// Creating the texture
-	SDL_Surface* text = TTF_RenderText_Solid_Wrapped(_text_font, _text_string.c_str(), color, text_space.size.x);
+	SDL_Surface* text = TTF_RenderText_Solid_Wrapped(_text_font, _text_string.c_str(), color, _texture_space.size.x);
 	if (_texture) {
 		SDL_DestroyTexture(_texture);
 	}
@@ -56,6 +56,11 @@ SDL_Texture* Engine::Text::load(SDL_Renderer* renderer, Recti text_space)
 	SDL_QueryTexture(_texture, NULL, NULL, &_texture_space.size.x, &_texture_space.size.y);
 	return _texture;
 
+}
+
+SDL_Texture* Engine::Text::load(SDL_Renderer* renderer)
+{
+	return load(renderer, Recti(0, 0, 0, 0));
 }
 
 SDL_Texture* Engine::Text::load(SDL_Renderer* renderer, Vector2i pos, Vector2i size)
