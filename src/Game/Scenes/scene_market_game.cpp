@@ -3,10 +3,15 @@
 #include "Engine/Graphics/AssetManager.hpp"
 
 namespace TR {
+	using Text = TextBox::Text_Box_Transitions;
 
 	Market_Game::Market_Game() {
 		_currState = SC_Main;
 		_nextState = _currState;
+		_market_scene_state ^= MG_Intro_Sceen;
+
+		test_textbox.enableAttr(Text::TXT_ACTIVE);
+		test_textbox.enableAttr(Text::TXT_UP_DOWN);
 	}
 
 	Market_Game::Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players) {}
@@ -74,19 +79,13 @@ namespace TR {
 
 	void Market_Game::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
 
-		if (_market_scene_state & MG_Intro_Sceen) {
-			test_textbox.enableAttrEnter(TextBox::Text_Box_Transitions::TXT_ACTIVE);
-		}
+		this->state_machine(gEngine, sprite_set, player_set);
 
 		if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_UP)) {
 			sprite_set.at("MID_Null")->setAlpha(100);
 		}
 
-		if (gEngine->getInput()->isMouseClicked(SDL_BUTTON_LEFT)) {
-			test_string = std::to_string(gEngine->getInput()->getMousePosition().x) + " : x\n" +
-			std::to_string(gEngine->getInput()->getMousePosition().y) + " : y";
-			_market_scene_state ^= MG_Intro_Sceen;
-		}
+		
 
 		test_textbox.update(gEngine, sprite_set, player_set);
 
@@ -125,6 +124,45 @@ namespace TR {
 
 		return true;
 	*/
+
+	void Market_Game::state_machine(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+
+		if (_market_scene_state & MG_Intro_Sceen) {
+			// Turning on the textbox
+
+			if (test_textbox.getAttr() & (Text::TXT_UP_DOWN | Text::TXT_ENTER_EXIT)) {
+				if (gEngine->getInput()->isMouseClicked(SDL_BUTTON_LEFT)) {
+					test_textbox.enableAttr(Text::TXT_ACTIVE);
+					test_textbox.enableAttr(Text::TXT_UP_DOWN);
+				}
+			}
+			// Autocompleting the textbox (using Spacebar)
+
+			if ((test_textbox.getAttr() & (Text::TXT_ACTIVE_TEXT_COMPLETE | Text::TXT_ACTIVE_TEXT) & Text::TXT_ACTIVE_TEXT)) {
+				if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_SPACE)) {
+					test_textbox.enableAttr(Text::TXT_ACTIVE_TEXT_COMPLETE);
+				}
+			}
+			// Turning off the Intro Scene (closing with Q)
+
+			if (test_textbox.getAttr() & (Text::TXT_ACTIVE_TEXT | Text::TXT_ACTIVE_TEXT_COMPLETE) & Text::TXT_ACTIVE_TEXT_COMPLETE) {
+				if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Q)) {
+					_market_scene_state ^= MG_Intro_Sceen;
+				}
+			}
+		}
+		
+		else {
+			// If the textbox still exists, then tell it to leave
+
+			if ((test_textbox.getAttr() & (Text::TXT_ENTER_EXIT))) {
+				test_textbox.disableAttr(Text::TXT_ENTER_EXIT);
+			}
+			if (!(test_textbox.getAttr() & (Text::TXT_ACTIVE))) {
+				test_textbox.enableAttr(Text::TXT_ACTIVE);
+			}
+		}
+	}
 
 	// Timer Functions
 

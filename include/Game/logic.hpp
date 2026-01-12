@@ -98,6 +98,8 @@ namespace TR {
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
 
+        void state_machine(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set);
+
         /// @brief Timer used for the game
         class Timer {
         public:
@@ -116,7 +118,7 @@ namespace TR {
         uint16_t _market_scene_state{ MG_Null_State };
         std::string test_string = "THE QUICK BROWN FOX JUMPED OVER \nTHE LAZY DOG'S BACK 1234567890\nThe five boxing wizards jump quickly?";
         TextBox test_textbox{ "This is a small test demo for the game Touhou Rainbow Market.\nTo control, You can highlight a specific market using keypad numbers 1-6. From there you can have the option to either sell or buy a specific given market.\nMake sure to keep in mind the time!", 
-            true, {TextBox::TXT_NULL | TextBox::TXT_UP_DOWN, TextBox::TXT_NULL | TextBox::TXT_UP_DOWN} };
+            true, TextBox::TXT_NULL | TextBox::TXT_ENTER_EXIT };
     };
 
     

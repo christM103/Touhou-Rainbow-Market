@@ -47,14 +47,17 @@ namespace TR {
         enum Text_Box_Transitions : uint16_t {
             TXT_NULL = 0,
             TXT_ACTIVE = 1 << 0,
-            TXT_UP_DOWN = 1 << 1,
-            TXT_LEFT_RIGHT = 1 << 2,
-            TXT_CONST_VEL = 1 << 3
+            TXT_ACTIVE_TEXT = 1 << 1,
+            TXT_ACTIVE_TEXT_COMPLETE = 1 << 2,
+            TXT_ENTER_EXIT = 1 << 3,
+            TXT_UP_DOWN = 1 << 4,
+            TXT_LEFT_RIGHT = 1 << 5,
+            TXT_CONST_VEL = 1 << 6
         };
 
         TextBox();
         TextBox(const char* text, bool prompt);
-        TextBox(const char* text, bool prompt, Engine::Vector2<uint16_t> transitions);
+        TextBox(const char* text, bool prompt, uint16_t transitions);
         ~TextBox();
 
 
@@ -68,11 +71,9 @@ namespace TR {
         inline char* getText() { return _text_stored.data(); }
         inline int getSpeed() { return _text_speed; }
 
-        inline void enableAttrEnter(uint16_t attr) { _text_trans.x ^= attr; }
-        inline void enableAttrExit(uint16_t attr) { _text_trans.y ^= attr; }
-
-        inline void disableAttrEnter(uint16_t attr) { _text_trans.x ^= ~attr; }
-        inline void disableAttrExit(uint16_t attr) { _text_trans.y ^= ~attr; }
+        inline void enableAttr(uint16_t attr) { if (!(_text_attr & attr)) { _text_attr |= attr; } }
+        inline void disableAttr(uint16_t attr) { if (_text_attr & attr) { _text_attr ^= attr; } }
+        inline uint16_t getAttr() { return _text_attr; }
 
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set);
         void updateMask(Sprite_Map& sprite_set) override;
@@ -88,7 +89,7 @@ namespace TR {
         std::string _text_current;
         int _text_speed{ 1 };
         bool _confirm_prompt{ false };
-        Engine::Vector2<uint16_t> _text_trans{ TXT_NULL, TXT_NULL };
+        uint16_t _text_attr{ TXT_NULL };
         Engine::Text _text_gfx;
         //std::map<char, Engine::Vector2i> _char_map;
     };

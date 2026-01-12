@@ -4,15 +4,15 @@
 namespace TR {
 
     TextBox::TextBox() : Scene_Object(), _text_stored("Test Message"), _text_current(""), _text_speed(1)
-        , _confirm_prompt(false), _text_trans{ TXT_NULL, TXT_NULL }, _text_gfx(Engine::Text("", 40)) {
+        , _confirm_prompt(false), _text_attr{ TXT_NULL }, _text_gfx(Engine::Text("", 40)) {
     }
 
     TextBox::TextBox(const char* text, bool prompt) : Scene_Object(), _text_stored(text), _text_current(""), _text_speed(3)
-        , _confirm_prompt(prompt), _text_trans{ TXT_NULL, TXT_NULL }, _text_gfx(Engine::Text(_text_current.c_str(), 40)) {
+        , _confirm_prompt(prompt), _text_attr{ TXT_NULL }, _text_gfx(Engine::Text(_text_current.c_str(), 40)) {
     }
 
-    TextBox::TextBox(const char* text, bool prompt, Engine::Vector2<uint16_t> transitions) : TextBox(text, prompt) {
-        _text_trans = transitions;
+    TextBox::TextBox(const char* text, bool prompt, uint16_t transitions) : TextBox(text, prompt) {
+        _text_attr = transitions;
     }
 
     TextBox::~TextBox() {
@@ -85,54 +85,80 @@ namespace TR {
 
     void TextBox::objKeyInput(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_U)) {
-            _text_trans.x |= TXT_ACTIVE;
+            _text_attr |= TXT_ACTIVE;
         }
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_I)) {
-            _text_trans.y |= TXT_ACTIVE;
+            _text_attr |= TXT_ACTIVE;
         }
 
     }
 
     void TextBox::displayTextBox(Engine::Engine* gEngine) {
 
-        // Text Entrance Transitions
-        if (_text_trans.x & TXT_ACTIVE) {
-            _text_trans.y &= ~TXT_ACTIVE;
-            if (_sprite_mask.position.x > 120 * SCREEN_SCALE || _sprite_mask.position.y > 160 * SCREEN_SCALE) {
-                if (_text_trans.x & TXT_UP_DOWN) {
-                    _sprite_mask.position.y -= 2 * SCREEN_SCALE;
+        if (_text_attr & TXT_ACTIVE) {
+            // Text Entrance Transitions
+            if (_text_attr & TXT_ENTER_EXIT) {
+                if (_sprite_mask.position.x > 120 * SCREEN_SCALE || _sprite_mask.position.y > 160 * SCREEN_SCALE) {
+                    if (_text_attr & TXT_UP_DOWN) {
+                        if (_sprite_mask.position.y - 160 * SCREEN_SCALE < 16 * SCREEN_SCALE) {
+                            _sprite_mask.position.y = 160 * SCREEN_SCALE;
+                        }
+                        else {
+                            _sprite_mask.position.y -= 16 * SCREEN_SCALE;
+                        }
+                    }
+                    if (_text_attr & TXT_LEFT_RIGHT) {
+                        if (_sprite_mask.position.x - 120 * SCREEN_SCALE < 16 * SCREEN_SCALE) {
+                            _sprite_mask.position.x = 120 * SCREEN_SCALE;
+                        }
+                        else {
+                            _sprite_mask.position.x -= 16 * SCREEN_SCALE;
+                        }
+                    }
                 }
-                if (_text_trans.x & TXT_LEFT_RIGHT) {
-                    _sprite_mask.position.x -= 2 * SCREEN_SCALE;
+                else {
+                    _text_attr ^= TXT_ACTIVE;
                 }
             }
-            else {
-                _text_trans.x &= ~TXT_ACTIVE;
+            // Text Exit Transitions
+            else if (_text_attr & ~TXT_ENTER_EXIT) {
+                if ((_sprite_mask.position.y < gEngine->getWindow()->getHeight()) && (_text_attr & TXT_UP_DOWN)) {
+                    _sprite_mask.position.y += 16 * SCREEN_SCALE;
+                }
+                else if ((_sprite_mask.position.x < gEngine->getWindow()->getWidth()) && (_text_attr & TXT_LEFT_RIGHT)) {
+                    _sprite_mask.position.x += 16 * SCREEN_SCALE;
+                }
+                else {
+                    _text_attr ^= TXT_ACTIVE;
+                }
             }
         }
-        // Text Exit Transitions
-        else if (_text_trans.y & TXT_ACTIVE) {
-            _text_trans.x &= ~TXT_ACTIVE;
-            if (_sprite_mask.position.y < gEngine->getWindow()->getHeight() && (_text_trans.y & TXT_UP_DOWN)) {
-                _sprite_mask.position.y += 2 * SCREEN_SCALE;
-            }
-            else if ((_sprite_mask.position.x < gEngine->getWindow()->getWidth()) && (_text_trans.y & TXT_LEFT_RIGHT)) {
-                    _sprite_mask.position.x += 2 * SCREEN_SCALE;
-               }
-            else {
-                _text_trans.y &= ~TXT_ACTIVE;
-            }
-        }
+        
         // Text On Default
         else {
             if ((_sprite_mask.position.x == 120 * SCREEN_SCALE) && (_sprite_mask.position.y == 160 * SCREEN_SCALE)) {
-                textAppear();
+                if (_text_current.size() < _text_stored.size()) {
+                    _text_attr |= TXT_ACTIVE_TEXT;
+                }
+                else {
+                    if (_text_attr & TXT_ACTIVE_TEXT) {
+                        _text_attr ^= TXT_ACTIVE_TEXT;
+                    }
+                }
+
+                if (_text_attr & TXT_ACTIVE_TEXT) {
+                    textAppear();
+                }
+                if (_text_attr & TXT_ACTIVE_TEXT_COMPLETE) {
+                    _text_current = _text_stored;
+                }
+                
             }
         }
     }
 
     void TextBox::textAppear() {
-        if ((_text_current.size() < _text_stored.size()) && (_time % ((4 - _text_speed) * 10) == 0)) {
+        if (_time % ((4 - _text_speed) * 10) == 0) {
             _text_current.append(_text_stored, _text_current.size(), 1);
             if (_time >= 60) {
                 _time = 0;
