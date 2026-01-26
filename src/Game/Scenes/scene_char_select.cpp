@@ -13,16 +13,33 @@ namespace TR {
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Char_Select/Placeholder_CharS_BG.png", "BGO", renderer);
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_R.png", "Portait_R", renderer);
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_M.png", "Portait_M", renderer);
+
+        
         gEngine->getAssetManager()->storeTexture(char_choice_prompt.load(renderer, Engine::Recti{ 0, 0, 720 * SCREEN_SCALE, 200 * SCREEN_SCALE }), "TEXT", renderer);
 
-        sprite_set.insert({ "background",
-            std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("BGO"), 1280, 720) });
-        sprite_set.insert({ "reimu",
-            std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("Portait_R"), 600, 600) });
-        sprite_set.insert({ "marisa",
-            std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("Portait_M"), 600, 600) });
-        sprite_set.insert({ "text",
-            std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT"), char_choice_prompt.getRenderSize().size.x, char_choice_prompt.getRenderSize().size.y) });
+        // Creates the Backgrounds
+        Engine::Entity BGO = gEngine->getECSManager()->createEntity();
+        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+        gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1280,720 }, Engine::Vector2i(1280, 720), "BGO");
+        gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(BGO, Engine::RenderLayerComponent::BG);
+
+        // Creates the Portaits
+        Engine::Entity REIMU = gEngine->getECSManager()->createEntity();
+        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(REIMU, Engine::Vector2i{ 20,30 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+        gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(REIMU, Engine::Recti{ 0,0,600,600 }, Engine::Vector2i(600, 600), "Portait_R");
+        gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(REIMU, Engine::RenderLayerComponent::SPRITE);
+
+        Engine::Entity MARISA = gEngine->getECSManager()->createEntity();
+        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(MARISA, Engine::Vector2i{ 660,30 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+        gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(MARISA, Engine::Recti{ 0,0,600,600 }, Engine::Vector2i(600, 600), "Portait_M");
+        gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(MARISA, Engine::RenderLayerComponent::SPRITE);
+
+        // Creates the Text
+        Engine::Entity TEXT = gEngine->getECSManager()->createEntity();
+        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(TEXT, Engine::Vector2i{ (gEngine->getWindow()->getWidth() / 2) - (char_choice_prompt.getSize().x / 2), 650 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+        gEngine->getECSManager()->addComponent<Engine::TextComponent>(TEXT, "Choose your character using the left and right arrow keys", 40, Engine::Vector4i(0, 0, 0, 255));
+        gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(TEXT, Engine::RenderLayerComponent::FG);
+
         return true;
     }
 
@@ -37,10 +54,5 @@ namespace TR {
         }
     }
 
-    void Char_Select::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
-        sprite_set.at("background")->draw(renderer, Engine::Vector2i(0, 0));
-        sprite_set.at("text")->draw(renderer, Engine::Vector2i((gEngine->getWindow()->getWidth() / 2) - (char_choice_prompt.getRenderSize().size.x / 2), 650));
-        sprite_set.at("reimu")->draw(renderer, Engine::Vector2i(20, 30));
-        sprite_set.at("marisa")->draw(renderer, Engine::Vector2i(660, 30));
-    }
+    void Char_Select::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {}
 }

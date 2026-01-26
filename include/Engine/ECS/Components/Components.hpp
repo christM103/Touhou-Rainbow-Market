@@ -1,24 +1,21 @@
 #pragma once
 
-#include <utility>
-#include <tuple>
-
 // Include necessary component headers
 #include "Engine/ECS/Components/ColliderComponent.hpp"
 #include "Engine/ECS/Components/TransformComponent.hpp"
+#include "Engine/ECS/Components/VelocityComponent.hpp"
+#include "Engine/ECS/Components/RenderLayerComponent.hpp"
 #include "Engine/ECS/Components/SpriteComponent.hpp"
 #include "Engine/ECS/Components/TextComponent.hpp"
 #include "Engine/ECS/Components/InputComponent.hpp"
 #include "Engine/ECS/Components/MouseComponent.hpp"
 
+
+#include <typeindex>
+#include <typeinfo>
+
 namespace Engine {
-	template <typename... Components>
-	struct ComponentGroup {
-		std::tuple<Components...> components;
+    using Component = std::type_index;
 
-		ComponentGroup() = default;
 
-		explicit ComponentGroup(Components... comp) 
-			: components(std::move(comp)...){}
-	};
 }

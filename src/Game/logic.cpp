@@ -1,6 +1,6 @@
 ﻿// Copyright 2025 chrisfantasy
 
-#include "Game/logic.hpp"
+#include "Game/Logic.hpp"
 #include <chrono>
 
 #include "Engine/Graphics/AssetManager.hpp"

@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include "Engine/Graphics/Window.hpp"
 #include "Engine/Graphics/AssetManager.hpp"
+#include "Engine/ECS/ECSManager.hpp"
 #include "Engine/Input/Input.hpp"
 
 namespace Engine {
@@ -49,6 +50,11 @@ namespace Engine {
         /// @brief Gets the asset manager associated with the engine.
         /// @return Pointer to the AssetManager
         AssetManager* getAssetManager() const { return assets.get(); }
+
+        /// @brief Gets the entity manager associated with the engine.
+        /// @return Pointer to the EntityManager
+        ECSManager* getECSManager() const { return ecs.get(); }
+
     private:
         float deltaTime;
         bool running;
@@ -57,6 +63,7 @@ namespace Engine {
         std::unique_ptr<Window> window;
         std::unique_ptr<Input> input;
         std::unique_ptr<AssetManager> assets;
+        std::unique_ptr<ECSManager> ecs;
         Application* Game = nullptr;
     };
 } // namespace Engine

@@ -15,6 +15,16 @@ struct Rect {
     constexpr Rect(T x, T y, T width, T height) : position(x, y), size(width, height) {}
     constexpr Rect(Vector2<T> pos, Vector2<T> s) : position(pos), size(s) {}
 
+    Rect& operator=(const Rect& r2) {
+        position = r2.position;
+        size = r2.size;
+        return *this;
+    }
+
+    bool operator==(const Rect& r2) const {
+        return position == r2.position && size == r2.size;
+    }
+
     // Utility functions
 
     /// @brief Checks if a point is inside the rectangle.

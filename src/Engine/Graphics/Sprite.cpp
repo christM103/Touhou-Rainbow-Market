@@ -2,10 +2,10 @@
 #include "engine/Math/Vector2.hpp"
 
 Engine::Sprite::Sprite(SDL_Texture* texture, int width, int height)
- : _texture(texture) {
-    _size.x = static_cast<float>(width);
-    _size.y = static_cast<float>(height);
-}
+ : _texture(texture), _dest_rect(Recti(0,0,width,height)) {}
+
+Engine::Sprite::Sprite(int width, int height)
+    : _dest_rect(Recti(0, 0, width, height)) {}
 
 Engine::Sprite::~Sprite() {
     if (_texture) {
@@ -15,8 +15,9 @@ Engine::Sprite::~Sprite() {
 
 void Engine::Sprite::draw(SDL_Renderer* renderer, int x, int y) {
     if (renderer && _texture) {
-        SDL_Rect dest = { x, y, static_cast<int>(_size.x), static_cast<int>(_size.y) };
-        SDL_RenderCopyEx(renderer, _texture, nullptr, &dest, _angle, nullptr, _flip);
+        SDL_Rect dest = { x, y, _dest_rect.size.x, _dest_rect.size.y };
+        SDL_Rect crop = { _src_rect.position.x, _src_rect.position.y, _src_rect.size.x, _src_rect.size.y };
+        SDL_RenderCopyEx(renderer, _texture, &crop, &dest, _angle, nullptr, _flip);
     }
 }
 
@@ -25,8 +26,12 @@ void Engine::Sprite::draw(SDL_Renderer* renderer, const Vector2i& position) {
 }
 
 void Engine::Sprite::draw(SDL_Renderer* renderer) {
-    draw(renderer, static_cast<int>(_pos.x), static_cast<int>(_pos.y));
-    movement();
+    draw(renderer, _dest_rect.position.x, _dest_rect.position.y);
+}
+
+
+void Engine::Sprite::draw_center(SDL_Renderer* renderer) {
+    draw(renderer, _dest_rect.position - (_dest_rect.size / 2));
 }
 
 void Engine::Sprite::drawCrop(SDL_Renderer* renderer, const Vector2i pos, const Vector2i size, const SDL_Rect& crop) {
@@ -39,12 +44,8 @@ void Engine::Sprite::drawCrop(SDL_Renderer* renderer, const Vector2i pos, const 
 
 void Engine::Sprite::swapTexture(SDL_Texture* tex, int x, int y) {
     std::swap(_texture, tex);
-    _size.x = static_cast<float>(x);
-    _size.y = static_cast<float>(y);
-}
-
-void Engine::Sprite::movement() {
-    _pos += _vel + (_accel * .5);
+    _dest_rect.position.x = x;
+    _dest_rect.position.y = y;
 }
 
 void Engine::Sprite::setAlpha(float a) {

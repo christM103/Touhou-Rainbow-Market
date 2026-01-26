@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 namespace Engine {
+	/*
 	struct KeyAction {
 		/// @brief When the key was pressed on the entity.
 		std::function<void()> onAction;
@@ -20,4 +21,5 @@ namespace Engine {
 		std::unordered_map<Uint16, KeyAction>  scancode;
 		
 	};
+	*/
 }

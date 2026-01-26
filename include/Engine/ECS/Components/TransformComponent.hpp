@@ -5,14 +5,22 @@
 
 namespace Engine {
     struct TransformComponent {
-        Vector2f position;
+        Vector2i position;
         float rotation; // In degrees
         Vector2f scale;
+        bool centered;
 
-        TransformComponent() 
-            : position(0.0f, 0.0f), rotation(0.0f), scale(1.0f, 1.0f) {}
+        TransformComponent(const Vector2i& pos = Vector2i(0,0), float rot = 0.0f, const Vector2f& scl = Vector2f(1.0f, 1.0f), bool cnt = false)
+            : position(pos), rotation(rot), scale(scl), centered(cnt) {}
 
-        TransformComponent(const Vector2f& pos, float rot, const Vector2f& scl)
-            : position(pos), rotation(rot), scale(scl) {}
+        // Comparison operators
+
+        bool operator==(const TransformComponent& r2) const {
+            return ((position == r2.position) && (rotation == r2.rotation) && (scale == r2.scale));
+        }
+        bool operator!=(const TransformComponent& r2) const {
+            return !(*this == r2);
+        }
+
     };
 } // namespace Engine

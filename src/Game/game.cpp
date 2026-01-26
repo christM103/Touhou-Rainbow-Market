@@ -10,7 +10,7 @@ extern Engine::Engine* gEngine;
 
 Game::Game() {
     // Constructor implementation
-    _game_state.reset(new TR::Title_Screen());
+    _currScene.reset(new TR::Title_Screen());
 }
 
 Game::~Game() {
@@ -25,7 +25,8 @@ bool Game::create() {
     gEngine->getAssetManager()->loadTexture("assets/player.png", "player", renderer);
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
     */
-    _game_state->create(renderer, gEngine, _sprite_set, _player_set);
+    _currScene->create(renderer, gEngine, _sprite_set, _player_set);
+    gEngine->getECSManager()->create();
     return true;
 }
 
@@ -35,7 +36,7 @@ void Game::update(float deltaTime) {
     if (_beat % 5 == 0) {
         // Update logic for the game
 
-        _game_state->update(gEngine, _sprite_set, _player_set);
+        _currScene->update(gEngine, _sprite_set, _player_set);
 
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Z) && (_player_set.size() > 0)) {
             if (!_input_pressed.at(SDL_SCANCODE_Z)) {
@@ -50,8 +51,8 @@ void Game::update(float deltaTime) {
         _beat = 0;
     }
 
-    if (_game_state->getSceneCurr() != _game_state->getSceneNext()) {
-        TR::Scene::Scene_ID state = _game_state->getSceneNext();
+    if (_currScene->getSceneCurr() != _currScene->getSceneNext()) {
+        TR::Scene::Scene_ID state = _currScene->getSceneNext();
         switch (state) {
             case TR::Scene::SC_Title:
                 move_state(std::make_unique<TR::Title_Screen>());
@@ -69,6 +70,7 @@ void Game::update(float deltaTime) {
         }
     }
     
+    gEngine->getECSManager()->update();
     
 }
 
@@ -78,22 +80,25 @@ void Game::render() {
 
     // Example rendering code
     //playerSprite->draw(renderer, Engine::Vector2i(0, 0));
-    _game_state->render(renderer, gEngine, _sprite_set, _player_set);
+    _currScene->render(renderer, gEngine, _sprite_set, _player_set);
+    gEngine->getECSManager()->render();
 }
 void Game::quit() {
     // Shutdown code for the game
     delete playerSprite;
+    gEngine->getECSManager()->quit();
 
 }
 
 void Game::move_state(std::unique_ptr<TR::Scene> newState) {
     SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
-    _game_state = std::move(newState);
+    _currScene = std::move(newState);
 
 	// Reset to current sprite set
 	_sprite_set.clear();
+    gEngine->getECSManager()->destroyAllEntities();
 	gEngine->getAssetManager()->clear();
-    _game_state->create(renderer, gEngine, _sprite_set, _player_set);
+    _currScene->create(renderer, gEngine, _sprite_set, _player_set);
 }
 
 

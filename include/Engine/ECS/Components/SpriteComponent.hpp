@@ -10,12 +10,25 @@ namespace Engine {
         ~SpriteComponent() = default;
 
         
-        SpriteComponent(const Rect<float>& srcRect, const Vector2<float>& sz)
-            : sourceRect(srcRect), size(sz) {}
+        SpriteComponent(const Rect<int>& srcRect, const Vector2<int>& sz, const char* str)
+            : sourceRect(srcRect), size(sz), resourceID(str) {}
+
+        const Rect<int> getSourceRect() const { return sourceRect; }
+        const Vector2<int> getSize() const { return size; }
+        const char* getResourceID() const { return resourceID.c_str(); }
+
+        void setSourceRect(Rect<int> srcR) { sourceRect = srcR; }
+        void setSize(Vector2<int> s) { size = s; }
+        void setResourceID(const char* txt) { resourceID = txt; }
+
+        bool operator==(const SpriteComponent& sc) const {
+            return size == sc.getSize() && sourceRect == sc.getSourceRect();
+        }
 
         private:
-        Rect<float> sourceRect;
-        Vector2<float> size;
+        Rect<int> sourceRect;
+        Vector2<int> size;
+        std::string resourceID;
 
     };
 }

@@ -40,9 +40,9 @@ namespace TR {
         sprite_set.insert({ "Text_Box",
             std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT_BOX"), 400, 200) });
         sprite_set.insert({ "Text",
-            std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT"), _text_gfx.getRenderSize().size.x, _text_gfx.getRenderSize().size.y)});
-        sprite_set.at("Text_Box")->setSizeScale(SCREEN_SCALE);
-        sprite_set.at("Text")->setSizeScale(SCREEN_SCALE);
+            std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT"), _text_gfx.getSize().x, _text_gfx.getSize().y)});
+        //sprite_set.at("Text_Box")->setSizeScale(SCREEN_SCALE);
+        //sprite_set.at("Text")->setSizeScale(SCREEN_SCALE);
 
         /* Update Position (Starts Off Screen) */
         _sprite_mask.position.x = 120 * SCREEN_SCALE;
@@ -62,15 +62,15 @@ namespace TR {
         _text_gfx.setText(_text_current.c_str());
 
         gEngine->getAssetManager()->storeTexture(_text_gfx.load(renderer, Engine::Recti{ 0, 0, 370 * SCREEN_SCALE, 200 * SCREEN_SCALE }), "TEXT", renderer);
-        sprite_set.at("Text")->swapTexture(gEngine->getAssetManager()->getTexture("TEXT"), _text_gfx.getRenderSize().size.x, _text_gfx.getRenderSize().size.y);
+        sprite_set.at("Text")->swapTexture(gEngine->getAssetManager()->getTexture("TEXT"), _text_gfx.getSize().x, _text_gfx.getSize().y);
         sprite_set.at("Text")->draw(renderer);
 
     }
 
     void TextBox::updateMask(Sprite_Map& sprite_set) {
-        sprite_set.at("Text_Box")->setPos(Engine::Vector2f(static_cast<float>(_sprite_mask.position.x), static_cast<float>(_sprite_mask.position.y)));
-        sprite_set.at("Text")->setPos(Engine::Vector2f(static_cast<float>(_sprite_mask.position.x + (20.0 * SCREEN_SCALE)), 
-            static_cast<float>(_sprite_mask.position.y + (20.0 * SCREEN_SCALE))));
+        sprite_set.at("Text_Box")->setPos(Engine::Vector2i(_sprite_mask.position.x, _sprite_mask.position.y));
+        sprite_set.at("Text")->setPos(Engine::Vector2i(_sprite_mask.position.x + (20.0f * SCREEN_SCALE), 
+            _sprite_mask.position.y + (20.0f * SCREEN_SCALE)));
     }
 
     void TextBox::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {

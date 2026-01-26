@@ -1,14 +1,9 @@
 // Copyright 2025 chrisfantasy
 
 #pragma once
-
-#include <vector>
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <memory>
-
-#include "Engine/Graphics/Sprite.hpp"
 
 
 /*
@@ -77,8 +72,6 @@ class Market{
     int _market_id{MID_Null}, _market_lvl{1}, _market_tier{1};
     float _market_sell{0.0}, _market_profit{0};
     std::string _market_type{" "};
-
-    std::unique_ptr<Engine::Sprite> _market_sprite, _market_portrait_large, _market_portrait_small;
 };
 
 std::string& operator<<(std::string& str, Market& market);

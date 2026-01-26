@@ -24,7 +24,7 @@ public:
 private:
     // Game-specific data and methods
 
-    std::unique_ptr<TR::Scene> _game_state;
+    std::unique_ptr<TR::Scene> _currScene;
     Sprite_Map _sprite_set;
     Player_Set _player_set;
     int _beat{ 0 };

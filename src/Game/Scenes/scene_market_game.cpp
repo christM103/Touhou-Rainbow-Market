@@ -41,35 +41,36 @@ namespace TR {
 		/* Sprite Creation */
 
 		// Create Background Sprite
-		sprite_set.insert({ "background",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("BGO"), 1280, 720) });
-		sprite_set.insert({ "background_cloud",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("BGOCloud"), 2444, 144) });
-		sprite_set.at("background_cloud")->setX(0);
-		sprite_set.at("background_cloud")->setY(0);
-		sprite_set.at("background_cloud")->setXVel(-0.05);
-		sprite_set.insert({ "background_cloud1",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("BGOCloud"), 2444, 72) });
-		sprite_set.at("background_cloud1")->setX(-611);
-		sprite_set.at("background_cloud1")->setY(150);
-		sprite_set.at("background_cloud1")->setXVel(-0.1);
+		Engine::Entity BGO = gEngine->getECSManager()->createEntity();
+		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1280,720 }, Engine::Vector2i(1280, 720), "BGO");
 
+		Engine::Entity BG_CLOUD1 = gEngine->getECSManager()->createEntity();
+		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BG_CLOUD1, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BG_CLOUD1, Engine::Recti{ 0,0,2444,144 }, Engine::Vector2i(2444, 144), "BGOCloud");
+
+		Engine::Entity BG_CLOUD2 = gEngine->getECSManager()->createEntity();
+		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BG_CLOUD2, Engine::Vector2i{ -611,150 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BG_CLOUD2, Engine::Recti{ 0,0,2444,144 }, Engine::Vector2i(2444, 144), "BGOCloud");
+
+		
 		// Creating Character Portraits Sprites
-		sprite_set.insert({ "player",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("CHAR_NUL"), 300, 300) });
+		Engine::Entity PLAYER = gEngine->getECSManager()->createEntity();
+		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(PLAYER, Engine::Vector2i{ 980,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
 
 		if (player_set.size() > 0) {
 			if (player_set[0]->getCharState() == S_Reimu) {
-				sprite_set.at("player")->swapTexture(gEngine->getAssetManager()->getTexture("CHAR_REI"), 300, 300);
+				gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_REI");
 			}
 			else if (player_set[0]->getCharState() == S_Marisa) {
-				sprite_set.at("player")->swapTexture(gEngine->getAssetManager()->getTexture("CHAR_MAR"), 300, 300);
+				gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_MAR");
 			}
 			else {
-				sprite_set.at("player")->swapTexture(gEngine->getAssetManager()->getTexture("CHAR_NUL"), 300, 300);
+				gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_NUL");
 			}
 		}
 
+		/*
 		// Creating Market Sprites
 		sprite_set.insert({ "MID_Null",
 			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("MKT_NULL"), 128, 128) });
@@ -80,13 +81,15 @@ namespace TR {
 
 		sprite_set.insert({ "player_balance",
 			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT_PBAL"),
-				balance_text.getRenderSize().size.x * SCREEN_SCALE, balance_text.getRenderSize().size.y * SCREEN_SCALE)});
-		
+				balance_text.getSize().x * SCREEN_SCALE, balance_text.getSize().y * SCREEN_SCALE)});
+		*/
+
 		return true;
+		
 	}
 
 	void Market_Game::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
-
+		/*
 		this->state_machine(gEngine, sprite_set, player_set);
 
 		test_textbox.update(gEngine, sprite_set, player_set);
@@ -94,25 +97,14 @@ namespace TR {
 		if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_EQUALS)) {
 			player_set.at(0)->balanceChange(1000);
 		}
+		*/
 
 	}
 
 	void Market_Game::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
-		sprite_set.at("background")->draw(renderer, Engine::Vector2i(0, 0));
-		if (sprite_set.at("background_cloud")->getX() < -1222) {
-			sprite_set.at("background_cloud")->setX(0);
-		}
-		sprite_set.at("background_cloud1")->draw(renderer);
-		if (sprite_set.at("background_cloud1")->getX() < -1222) {
-			sprite_set.at("background_cloud1")->setX(0);
-		}
-		sprite_set.at("background_cloud")->draw(renderer);
-		sprite_set.at("background_cloud1")->draw(renderer);
-
-		sprite_set.at("player")->draw(renderer, Engine::Vector2i(980,0));
-
+		/*
 		gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
-		sprite_set.at("player_balance")->swapTexture(gEngine->getAssetManager()->getTexture("TEXT_PBAL"), balance_text.getRenderSize().size.x, balance_text.getRenderSize().size.y);
+		sprite_set.at("player_balance")->swapTexture(gEngine->getAssetManager()->getTexture("TEXT_PBAL"), balance_text.getSize().x, balance_text.getSize().y);
 		sprite_set.at("player_balance")->draw(renderer, Engine::Vector2i(960, 300));
 
 		for (int i = 0; i < 5; ++i) {
@@ -125,7 +117,7 @@ namespace TR {
 	void Market_Game::state_machine(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
 
 
-		/*  Main Game State */
+		/*  Main Game State
 
 		if (_market_scene_state & MG_Main_Game) {
 			// Sets the new balance for the text
@@ -139,7 +131,7 @@ namespace TR {
 
 		}
 
-		/* Intro Screen State */
+		/* Intro Screen State
 
 		if (_market_scene_state & MG_Intro_Sceen) {
 			// Turning on the textbox
@@ -181,6 +173,7 @@ namespace TR {
 				test_textbox.enableAttr(Text::TXT_ACTIVE);
 			}
 		}
+		*/
 	}
 
 	// Timer Functions

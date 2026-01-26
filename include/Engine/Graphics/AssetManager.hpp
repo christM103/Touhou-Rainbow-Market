@@ -27,7 +27,7 @@ namespace Engine {
         /// @brief Get a texture by its asset name.
         /// @param assetName name of the asset
         /// @return Pointer to the SDL_Texture, or nullptr if not found
-        SDL_Texture* getTexture(const char* assetName);
+        SDL_Texture* getTexture(const char* assetName) const;
 
         /// @brief Clear all loaded assets.
         void clear();

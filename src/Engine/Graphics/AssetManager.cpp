@@ -37,7 +37,7 @@ namespace Engine {
         return true;
     }
 
-    SDL_Texture* AssetManager::getTexture(const char* assetName) {
+    SDL_Texture* AssetManager::getTexture(const char* assetName) const {
         auto it = textures.find(assetName);
         if (it != textures.end()) {
             return it->second;

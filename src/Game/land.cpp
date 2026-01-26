@@ -1,6 +1,6 @@
 // Copyright 2025 chrisfantasy
 
-#include "Game/land.hpp"
+#include "Game/Land.hpp"
 
 namespace TR {
 
@@ -34,6 +34,9 @@ const char* Land::getMarketList() {
 
 
 void Land::remLand(int ind) {
+    constexpr uint16_t Land_States_Reimu = LS_Reimu_Orb | LS_Reimu_TalisA | LS_Reimu_TalisB;
+    constexpr uint16_t Land_States_Chars = Land_States_Reimu;
+
     if (_landMarkets[ind].first & ~LS_Free) {
         _landMarkets[ind].second.reset();
         _landMarkets[ind].first &= ~(Land_States_Chars | LS_Immunity | LS_Active);

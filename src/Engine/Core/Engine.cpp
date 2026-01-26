@@ -12,6 +12,10 @@ namespace Engine {
     Engine::Engine() : deltaTime(0.0f), running(false) {}
 
     Engine::~Engine() {
+        if (ecs) {
+            ecs.get()->~ECSManager();
+        }
+
         if (assets) {
             assets.get()->clear(); 
         }
@@ -35,6 +39,10 @@ namespace Engine {
         window = std::make_unique<Window>(title, width, height);
         input = std::make_unique<Input>();
         assets = std::make_unique<AssetManager>();
+        ecs = std::make_unique<ECSManager>();
+
+        // Initialize ECS System
+        ecs->init(window, input, assets);
         
         // Set window icon
         SDL_Surface* iconSurface = IMG_Load("assets/player.png");

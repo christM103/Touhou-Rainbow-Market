@@ -36,6 +36,7 @@ namespace TR {
         inline void setSceneNext(Scene_ID state) { _nextState = state; }
 
     protected:
+        std::unordered_map<std::string, Engine::Entity> active_entities;
         Scene_ID _currState{ SC_Null }, _nextState{ SC_Null };
     };
 
@@ -48,9 +49,6 @@ namespace TR {
         bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
         void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
-
-    private:
-        Engine::Text start_prompt{ "Press Space to play!", 40 };
 
     };
 
