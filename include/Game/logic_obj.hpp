@@ -41,6 +41,8 @@ namespace TR {
     };
 
     /// @brief In-game textbox objects
+
+    /*
     class TextBox : public Scene_Object {
     public:
 
@@ -93,5 +95,6 @@ namespace TR {
         Engine::Text _text_gfx;
         //std::map<char, Engine::Vector2i> _char_map;
     };
+    */
 
 }

@@ -22,7 +22,7 @@ Engine::Text::~Text() {
 	}
 }
 
-SDL_Texture* Engine::Text::load(SDL_Renderer* renderer, Recti text_space)
+bool Engine::Text::load(SDL_Renderer* renderer, std::string texture_name, const AssetManager* manager, Recti text_space)
 {
 	// Setting text dimensions
 	_dest_rect = text_space;
@@ -51,28 +51,32 @@ SDL_Texture* Engine::Text::load(SDL_Renderer* renderer, Recti text_space)
 
 	// Creating the texture
 	SDL_Surface* text = TTF_RenderText_Solid_Wrapped(_text_font, _text_string.c_str(), color, _dest_rect.size.x);
-	if (_texture) {
-		SDL_DestroyTexture(_texture);
+	if (manager->getTexture(_textureID.c_str())) {
+		const_cast<AssetManager*>(manager)->destroyTexture(_textureID.c_str());
 	}
-	_texture = SDL_CreateTextureFromSurface(renderer, text);
+	SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text);
 	SDL_FreeSurface(text);
-	SDL_QueryTexture(_texture, NULL, NULL, &_dest_rect.size.x, &_dest_rect.size.y);
+	SDL_QueryTexture(text_texture, NULL, NULL, &_dest_rect.size.x, &_dest_rect.size.y);
 	_src_rect.size = _dest_rect.size;
-	return _texture;
+
+	const_cast<AssetManager*>(manager)->storeTexture(text_texture, texture_name.c_str(), renderer);
+	_textureID = texture_name;
+
+	return true;
 
 }
 
-SDL_Texture* Engine::Text::load(SDL_Renderer* renderer)
+bool Engine::Text::load(SDL_Renderer* renderer, std::string texture_name, const AssetManager* manager)
 {
-	return load(renderer, Recti(0, 0, 0, 0));
+	return load(renderer, texture_name, manager, Recti(0, 0, 0, 0));
 }
 
-SDL_Texture* Engine::Text::load(SDL_Renderer* renderer, Vector2i pos, Vector2i size)
+bool Engine::Text::load(SDL_Renderer* renderer, std::string texture_name, const AssetManager* manager, Vector2i pos, Vector2i size)
 {
-	return load(renderer, Recti(pos, size));
+	return load(renderer, texture_name, manager, Recti(pos, size));
 }
 
-SDL_Texture* Engine::Text::load(SDL_Renderer* renderer, int x, int y, int width, int height)
+bool Engine::Text::load(SDL_Renderer* renderer, std::string texture_name, const AssetManager* manager, int x, int y, int width, int height)
 {
-	return load(renderer, Recti(x, y, width, height));
+	return load(renderer, texture_name, manager, Recti(x, y, width, height));
 }

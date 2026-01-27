@@ -5,52 +5,52 @@
 
 #include "Engine/Math/Rect.hpp"
 #include "Engine/Math/Vector2.hpp"
+#include "Engine/Graphics/AssetManager.hpp"
 
 namespace Engine {
     class Sprite {
     public:
+        enum FlipState : Uint8 {
+            Flip_Null = 0,
+            Flip_Vertical = 1 << 0,
+            Flip_Horizontal = 1 << 1
+        };
+
+
         /// -- Constructor & Destructor -- ///
 
         Sprite() = default;
         Sprite(int width, int height);
-        Sprite(SDL_Texture* texture, int width, int height);
+        Sprite(std::string texture, int width, int height);
         ~Sprite();
 
 
         /// -- Helper Functions -- ///
 
+        /// @brief Draws the sprite using its stored current position.
+        /// @param renderer SDL_Renderer to draw the sprite on
+        void draw(SDL_Renderer* renderer, const AssetManager* manager);
 
         /// @brief Draws the sprite at the specified position.
         /// @param renderer SDL_Renderer to draw the sprite on
         /// @param x x position
         /// @param y y position
-        void draw(SDL_Renderer* renderer, int x, int y);
+        void draw(SDL_Renderer* renderer, const AssetManager* manager, int x, int y);
 
         /// @brief Draws the sprite at the specified position.
         /// @param renderer SDL_Renderer to draw the sprite on
         /// @param position Position as a Vector2i
-        void draw(SDL_Renderer* renderer, const Vector2i& position);
-
-        /// @brief Draws the sprite using its stored current position.
-        /// @param renderer SDL_Renderer to draw the sprite on
-        void draw(SDL_Renderer* renderer);
+        void draw(SDL_Renderer* renderer, const AssetManager* manager, const Vector2i& position);
 
         /// @brief Draws the sprite using its stored current center position.
         /// @param renderer SDL_Renderer to draw the sprite on
-        void draw_center(SDL_Renderer* renderer);
-
-        /// @brief Draws the sprite at the specified position.
-        /// @param renderer SDL_Renderer to draw the sprite on
-        /// @param position Vector2i for the sprite's x and y position
-        /// @param size Vector2i for the sprite's width and height
-        /// @param crop The area that actually gets rendered on screen
-        void drawCrop(SDL_Renderer* renderer, const Vector2i pos, const Vector2i size, const SDL_Rect& crop);
+        void draw_center(SDL_Renderer* renderer, const AssetManager* manager);
 
         /// @brief Swaps the pre-existing texture with a different texture
         /// @param tex The texture that will be swapped
         /// @param x Width of the new texture
         /// @param y Height of the new texture
-        void swapTexture(SDL_Texture* tex, int x, int y);
+        void swapTexture(std::string tex, int x, int y);
 
 
         /// -- Accessor & Mutator Functions -- ///
@@ -128,7 +128,7 @@ namespace Engine {
 
         /// @brief Gets the flip value of the sprite.
         /// @return Flip value of the sprite
-        SDL_RendererFlip getFlip() const { return _flip; }
+        FlipState getFlip() const { return _flip; }
 
 
         /// @brief Gets the alpha value of the sprite.
@@ -137,7 +137,7 @@ namespace Engine {
 
         /// @brief Gets the active texture of the sprite.
         /// @return Texture value of the sprite
-        SDL_Texture* getTexture() const { return _texture; }
+        const char* getTexture() const { return _textureID.c_str(); }
 
 
         // Mutators
@@ -215,11 +215,11 @@ namespace Engine {
         void setAngle(float a) { _angle = a; }
 
     protected:
-        SDL_Texture* _texture{ nullptr };
+        std::string _textureID{ ""};
         Recti _dest_rect{ 0,0,0,0 }, _src_rect{ 0,0,0,0 };
         Vector2f _scale{ 0.0,0.0 };
         float _angle{ 0.0 };
         uint8_t _alpha { 255 };
-        SDL_RendererFlip _flip{ SDL_FLIP_NONE };
+        FlipState _flip{ Flip_Null };
     };
 } // namespace Engine

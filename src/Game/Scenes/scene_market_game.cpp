@@ -3,15 +3,15 @@
 #include "Engine/Graphics/AssetManager.hpp"
 
 namespace TR {
-	using Text = TextBox::Text_Box_Transitions;
+	//using Text = TextBox::Text_Box_Transitions;
 
 	Market_Game::Market_Game() {
 		_currState = SC_Main;
 		_nextState = _currState;
 		_market_scene_state ^= MG_Intro_Sceen;
 
-		test_textbox.enableAttr(Text::TXT_ACTIVE);
-		test_textbox.enableAttr(Text::TXT_UP_DOWN);
+		//test_textbox.enableAttr(Text::TXT_ACTIVE);
+		//test_textbox.enableAttr(Text::TXT_UP_DOWN);
 	}
 
 	Market_Game::Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players) {}
@@ -36,7 +36,7 @@ namespace TR {
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketWriggle.png", "MKT_WRIG", renderer);
 
 		// Loading Text
-		gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
+		//gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
 
 		/* Sprite Creation */
 

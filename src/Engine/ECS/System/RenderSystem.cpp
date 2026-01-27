@@ -51,7 +51,7 @@ void Engine::RenderSystem::init(const EntityManager* entityManager, const Compon
 			if (imageType == isSprite::value) {
 				sprite_data = componentManager->getComponent<SpriteComponent>(entity);
 				_sprite_set.insert({ entity,
-					std::make_unique<Sprite>(assetManager->getTexture(sprite_data->getResourceID()),
+					std::make_unique<Sprite>(sprite_data->getResourceID(),
 						sprite_data->getSize().x, sprite_data->getSize().y) });
 			}
 			else if (imageType == isText::value) {
@@ -93,18 +93,18 @@ void Engine::RenderSystem::draw(const EntityManager* entityManager, const Compon
 
 		if (position_data->centered) {
 			if (imageType == isSprite::value) {
-				_sprite_set.at(entity)->draw_center(window->getRenderer());
+				_sprite_set.at(entity)->draw_center(window->getRenderer(), assetManager);
 			}
 			else if (imageType == isText::value) {
-				_text_set.at(entity)->draw_center(window->getRenderer());
+				_text_set.at(entity)->draw_center(window->getRenderer(), assetManager);
 			}
 		}
 		else {
 			if (imageType == isSprite::value) {
-				_sprite_set.at(entity)->draw(window->getRenderer());
+				_sprite_set.at(entity)->draw(window->getRenderer(), assetManager);
 			}
 			else if (imageType == isText::value) {
-				_text_set.at(entity)->draw(window->getRenderer());
+				_text_set.at(entity)->draw(window->getRenderer(), assetManager);
 			}
 		}
 		
@@ -180,8 +180,8 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 					|| (sprite_data->getSourceRect().position != sprite_data_prev.getSourceRect().position)) {
 					prevSprite->setSourceRect(sprite_data->getSourceRect());
 				}
-				if (prevSprite->getTexture() != assetManager->getTexture(sprite_data->getResourceID())) {
-					prevSprite->swapTexture(assetManager->getTexture(sprite_data->getResourceID()),
+				if (prevSprite->getTexture() != sprite_data->getResourceID()) {
+					prevSprite->swapTexture(sprite_data->getResourceID(),
 						prevSprite->getWidth(), prevSprite->getHeight());
 				}
 			}
@@ -205,7 +205,7 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 				if (text_data->getTextColor() != text_data_prev.getTextColor()) {
 					prevText->setColor(text_data->getTextColor());
 				}
-				prevText->load(window->getRenderer(), prevText->getDestinationRect());
+				prevText->load(window->getRenderer(), "txtEnt" + std::to_string(entity), assetManager, prevText->getDestinationRect());
 			}
 
 		}

@@ -117,11 +117,6 @@ namespace TR {
         uint16_t _market_scene_state{ MG_Null_State };
         std::string test_string = "THE QUICK BROWN FOX JUMPED OVER \nTHE LAZY DOG'S BACK 1234567890\nThe five boxing wizards jump quickly?";
         Engine::Text balance_text{ "Total Balance: 0", 30 };
-        TextBox test_textbox{ 
-            "This is a small test demo for the game Touhou Rainbow Market.\n\
-To control, You can highlight a specific market using keypad numbers 1-6. From there you can have the option to either sell or buy a specific given market.\n\
-Make sure to keep in mind the time!", 
-            true, TextBox::TXT_NULL | TextBox::TXT_ENTER_EXIT };
     };
 
     

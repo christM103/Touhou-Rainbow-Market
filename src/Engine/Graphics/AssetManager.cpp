@@ -45,6 +45,14 @@ namespace Engine {
         return nullptr;
     }
 
+    bool AssetManager::destroyTexture(const char* assetName) {
+        auto tex = textures.find(assetName);
+        SDL_DestroyTexture(tex->second);
+        textures.erase(tex);
+
+        return true;
+    }
+
     void AssetManager::clear() {
         for (auto& pair : textures) {
             SDL_DestroyTexture(pair.second);

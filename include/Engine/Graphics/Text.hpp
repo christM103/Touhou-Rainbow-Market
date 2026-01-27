@@ -26,10 +26,10 @@ namespace Engine {
 		Text(int width, int height, const char* string, int size);
 		~Text();
 
-		SDL_Texture* load(SDL_Renderer* renderer, Recti text_space);
-		SDL_Texture* load(SDL_Renderer* renderer, Vector2i pos, Vector2i size);
-		SDL_Texture* load(SDL_Renderer* renderer, int x, int y, int width, int height);
-		SDL_Texture* load(SDL_Renderer* renderer);
+		bool load(SDL_Renderer* renderer, std::string texture_name, const AssetManager* manager, Recti text_space);
+		bool load(SDL_Renderer* renderer, std::string texture_name, const AssetManager* manager, Vector2i pos, Vector2i size);
+		bool load(SDL_Renderer* renderer, std::string texture_name, const AssetManager* manager, int x, int y, int width, int height);
+		bool load(SDL_Renderer* renderer, std::string texture_name, const AssetManager* manager);
 
 		// Text Specific Functions
 		inline void setText(const char* text) { _text_string = text; }

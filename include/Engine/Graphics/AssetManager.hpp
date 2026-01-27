@@ -29,6 +29,11 @@ namespace Engine {
         /// @return Pointer to the SDL_Texture, or nullptr if not found
         SDL_Texture* getTexture(const char* assetName) const;
 
+        /// @brief Destroys a texture by its asset name.
+        /// @param assetName name of the asset
+        /// @return True if the texture was destroyed correctly, false if otherwise
+        bool destroyTexture(const char* assetName);
+
         /// @brief Clear all loaded assets.
         void clear();
     

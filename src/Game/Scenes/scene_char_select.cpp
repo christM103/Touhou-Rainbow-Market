@@ -14,9 +14,6 @@ namespace TR {
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_R.png", "Portait_R", renderer);
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_M.png", "Portait_M", renderer);
 
-        
-        gEngine->getAssetManager()->storeTexture(char_choice_prompt.load(renderer, Engine::Recti{ 0, 0, 720 * SCREEN_SCALE, 200 * SCREEN_SCALE }), "TEXT", renderer);
-
         // Creates the Backgrounds
         Engine::Entity BGO = gEngine->getECSManager()->createEntity();
         gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
@@ -36,7 +33,7 @@ namespace TR {
 
         // Creates the Text
         Engine::Entity TEXT = gEngine->getECSManager()->createEntity();
-        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(TEXT, Engine::Vector2i{ (gEngine->getWindow()->getWidth() / 2) - (char_choice_prompt.getSize().x / 2), 650 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(TEXT, Engine::Vector2i{ gEngine->getWindow()->getWidth() / 2, 650 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f }, true);
         gEngine->getECSManager()->addComponent<Engine::TextComponent>(TEXT, "Choose your character using the left and right arrow keys", 40, Engine::Vector4i(0, 0, 0, 255));
         gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(TEXT, Engine::RenderLayerComponent::FG);
 

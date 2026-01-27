@@ -1,6 +1,7 @@
 ﻿#include "Game/logic_obj.hpp"
 #include "Engine/Graphics/AssetManager.hpp"
 
+/*
 namespace TR {
 
     TextBox::TextBox() : Scene_Object(), _text_stored("Test Message"), _text_current(""), _text_speed(1)
@@ -21,20 +22,21 @@ namespace TR {
 
     void TextBox::init(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
 
-        /* Initialize the TTF library */
+        /* Initialize the TTF library
         if (!TTF_Init()) {
             SDL_Log("Couldn't initialize TTF: %s", SDL_GetError());
         }
 
-        /* Creating Mask Area*/
+        /* Creating Mask Area
+
         _sprite_mask = Engine::Recti(Engine::Vector2i(120, 160) * SCREEN_SCALE, Engine::Vector2i(400, 200) * SCREEN_SCALE);
 
-        /* Texture Initialization */
+        /* Texture Initialization
 
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Box.png", "TEXT_BOX", renderer);
         gEngine->getAssetManager()->storeTexture(_text_gfx.load(renderer, Engine::Recti{ 0, 0, 370 * SCREEN_SCALE, 200 * SCREEN_SCALE}), "TEXT", renderer);
 
-        /* Sprite Creation */
+        /* Sprite Creation
 
 
         sprite_set.insert({ "Text_Box",
@@ -44,7 +46,7 @@ namespace TR {
         //sprite_set.at("Text_Box")->setSizeScale(SCREEN_SCALE);
         //sprite_set.at("Text")->setSizeScale(SCREEN_SCALE);
 
-        /* Update Position (Starts Off Screen) */
+        /* Update Position (Starts Off Screen)
         _sprite_mask.position.x = 120 * SCREEN_SCALE;
         _sprite_mask.position.y = gEngine->getWindow()->getHeight();
         this->updateMask(sprite_set);
@@ -171,4 +173,6 @@ namespace TR {
     }
 
     void TextBox::textContinue() {}
+    
 }
+*/

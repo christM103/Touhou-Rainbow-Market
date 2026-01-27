@@ -44,7 +44,6 @@ namespace Engine {
         template<typename ComponentType>
         const ComponentType* getComponent(Entity entity) const {
             if (!this->hasComponent<ComponentType>(entity)) {
-                std::cerr << "Component does not exist" << std::endl;
                 return nullptr;
             }
             else {
