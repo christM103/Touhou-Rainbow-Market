@@ -2,6 +2,7 @@
 
 
 #include <unordered_map>
+#include <memory>
 
 #include "Engine/Math/Rect.hpp"
 #include "Engine/Math/Vector2.hpp"
@@ -28,6 +29,6 @@ namespace Engine {
     };
 
     struct MultiTransformComponent {
-        std::unordered_map<uint8_t, TransformComponent*> transforms;
+        std::unordered_map<uint8_t, std::shared_ptr<TransformComponent>> transforms;
     };
 } // namespace Engine

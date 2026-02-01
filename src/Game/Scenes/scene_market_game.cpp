@@ -37,6 +37,8 @@ namespace TR {
 
 		// Loading Text
 		//gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
+		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Box_BGO.png", "TXT_BOX_BG", renderer);
+		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Box_Frame.png", "TXT_BOX_F", renderer);
 
 		/* Sprite Creation */
 
@@ -69,6 +71,17 @@ namespace TR {
 				gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_NUL");
 			}
 		}
+
+		// Text Box Entity
+
+		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity();
+		auto& Transforms = gEngine->getECSManager()->addComponent<Engine::MultiTransformComponent>(TEXTBOX_TEST);
+		Transforms.transforms.emplace(0, std::make_shared<Engine::TransformComponent>(Engine::Vector2i{ 320,240 }));
+		Transforms.transforms.emplace(1, std::make_shared<Engine::TransformComponent>(Engine::Vector2i{ 320,240 }));
+
+		auto& Sprites = gEngine->getECSManager()->addComponent<Engine::MultiSpriteComponent>(TEXTBOX_TEST);
+		Sprites.sprites.emplace(0, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 400, 200), Engine::Vector2i(400, 200), "TXT_BOX_BG"));
+		Sprites.sprites.emplace(1, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 400, 200), Engine::Vector2i(400, 200), "TXT_BOX_F"));
 
 		/*
 		// Creating Market Sprites

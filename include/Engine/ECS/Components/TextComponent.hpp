@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Math/Vector4.hpp"
@@ -44,6 +45,6 @@ namespace Engine {
 	};
 
 	struct MultiTextComponent {
-		std::unordered_map<uint8_t, TextComponent*> text;
+		std::unordered_map<uint8_t, std::shared_ptr<TextComponent>> text;
 	};
 }
