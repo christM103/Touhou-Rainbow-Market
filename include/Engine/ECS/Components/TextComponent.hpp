@@ -13,22 +13,26 @@ namespace Engine {
 		TextComponent() : text(""), textSize(0), textColor( 0, 0, 0, 0 ) {}
 		~TextComponent() = default;
 
-		TextComponent(const char* tx, int txsz, const Vector4<int> tcol) : text(tx), textSize(txsz), textColor(tcol) {}
+		TextComponent(const char* tx, int txsz, const Vector4<int> tcol, Vector2i bounds = Vector2i(0, 0)) 
+			: text(tx), textSize(txsz), textColor(tcol), textBounds(bounds) {}
 
 		// Mutators and Accessors
 
 		const char* const getText() const { return text.c_str(); }
 		const int getTextSize() const { return textSize; }
 		const Vector4i getTextColor() const { return textColor; }
+		const Vector2i getTextBounds() const { return textBounds; }
 
 		void setText(const char* str) { text = str; }
 		void setTextSize(int size) { textSize = size; }
 		void setTextColor(Vector4i txtC) { textColor = txtC; }
+		void setTextBounds(Vector2i bounds) { textBounds = bounds; }
 
 		// Comparison operators
 
 		bool operator==(const TextComponent& r2) const {
-			return ((text.compare(r2.getText()) == 0) && (getTextSize() == r2.getTextSize()) && (getTextColor() == r2.getTextColor()));
+			return ((text.compare(r2.getText()) == 0) && (getTextSize() == r2.getTextSize()) && (getTextColor() == r2.getTextColor())
+				&& (getTextBounds().x == r2.getTextBounds().x));
 		}
 		bool operator!=(const TextComponent& r2) const {
 			return !(*this == r2);
@@ -41,6 +45,8 @@ namespace Engine {
 		int textSize; // Size of the text
 
 		Vector4i textColor; //  Bounds of the text (When set to 0 on default, width has no bounds)
+
+		Vector2i textBounds;
 
 	};
 

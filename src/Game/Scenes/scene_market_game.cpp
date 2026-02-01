@@ -75,13 +75,21 @@ namespace TR {
 		// Text Box Entity
 
 		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity();
+
 		auto& Transforms = gEngine->getECSManager()->addComponent<Engine::MultiTransformComponent>(TEXTBOX_TEST);
 		Transforms.transforms.emplace(0, std::make_shared<Engine::TransformComponent>(Engine::Vector2i{ 320,240 }));
 		Transforms.transforms.emplace(1, std::make_shared<Engine::TransformComponent>(Engine::Vector2i{ 320,240 }));
+		Transforms.transforms.emplace(2, std::make_shared<Engine::TransformComponent>(Engine::Vector2i{ 360,280 }));
 
 		auto& Sprites = gEngine->getECSManager()->addComponent<Engine::MultiSpriteComponent>(TEXTBOX_TEST);
-		Sprites.sprites.emplace(0, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 400, 200), Engine::Vector2i(400, 200), "TXT_BOX_BG"));
-		Sprites.sprites.emplace(1, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 400, 200), Engine::Vector2i(400, 200), "TXT_BOX_F"));
+		Sprites.sprites.emplace(0, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 800, 400), Engine::Vector2i(800, 400), "TXT_BOX_BG"));
+		Sprites.sprites.emplace(1, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 800, 400), Engine::Vector2i(800, 400), "TXT_BOX_F"));
+
+		auto& Text = gEngine->getECSManager()->addComponent<Engine::MultiTextComponent>(TEXTBOX_TEST);
+		Text.text.emplace(2, std::make_shared<Engine::TextComponent>("TESTING TESTING 1 2 3! TESTING TESTING 1 2 3! TESTING TESTING 1 2 3!", 
+			40, Engine::Vector4i(255, 255, 255, 255), Engine::Vector2i(740, 400)));
+
+		gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(TEXTBOX_TEST, Engine::RenderLayerComponent::FG);
 
 		/*
 		// Creating Market Sprites

@@ -52,7 +52,7 @@ void Engine::RenderSystem::init(const EntityManager* entityManager, const Compon
 				if (componentManager->hasComponent<MultiTextComponent>(entity)) {
 					renderflags |= Render_Flags::isText;
 				}
-				else if (componentManager->hasComponent<MultiSpriteComponent>(entity)) {
+				if (componentManager->hasComponent<MultiSpriteComponent>(entity)) {
 					renderflags |= Render_Flags::isSprite;
 				}
 			}
@@ -215,6 +215,11 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 	// Text Update Lambda (Updates attributes when the object is a text object)
 	auto updateTextData = [](const TextComponent* text_data, Text* prevText) {
 		TextComponent text_data_prev(prevText->getText(), prevText->getTextSize(), prevText->getTextColor());
+
+		if (text_data->getTextBounds() != Vector2i(0, 0)) {
+			text_data_prev.setTextBounds(prevText->getSize());
+		}
+
 		if (*text_data != text_data_prev) {
 			if (text_data->getText() != text_data_prev.getText()) {
 				prevText->setText(text_data->getText());
@@ -225,7 +230,12 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 			if (text_data->getTextColor() != text_data_prev.getTextColor()) {
 				prevText->setColor(text_data->getTextColor());
 			}
+			if ((text_data->getTextBounds() != Vector2i(0, 0)) && (text_data->getTextBounds().x != prevText->getSize().x)) {
+				prevText->setTextBounds(text_data->getTextBounds());
+			}
+			return true;
 		}
+		return false;
 
 	};
 
@@ -261,8 +271,9 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 
 			if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {
 				text_data = componentManager->getComponent<TextComponent>(entity);
-				updateTextData(text_data, sprite);
-				sprite->load(window->getRenderer(), "txtEnt" + std::to_string(entity), assetManager, sprite->getDestinationRect());
+				if (updateTextData(text_data, sprite)) {
+					sprite->load(window->getRenderer(), "txtEnt" + std::to_string(entity), assetManager, sprite->getDestinationRect());
+				}				
 			}
 			else {
 				sprite_data = componentManager->getComponent<SpriteComponent>(entity);
@@ -278,8 +289,9 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 				auto prevSprite = _multi_sprite_set[entity].at(ind).get();
 				if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {
 					text_data = componentManager->getComponent<MultiTextComponent>(entity)->text.at(ind).get();
-					updateTextData(text_data, sprite);
-					sprite->load(window->getRenderer(), "txtEnt" + std::to_string(entity), assetManager, sprite->getDestinationRect());
+					if (updateTextData(text_data, sprite)) {
+						sprite->load(window->getRenderer(), "txtEnt" + std::to_string(entity), assetManager, sprite->getDestinationRect());
+					}
 				}
 				else {
 					sprite_data = componentManager->getComponent<MultiSpriteComponent>(entity)->sprites.at(ind).get();

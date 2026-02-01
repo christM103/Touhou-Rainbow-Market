@@ -50,13 +50,14 @@ bool Engine::Text::load(SDL_Renderer* renderer, std::string texture_name, const 
 	TTF_SetFontSize(_text_font, _text_size);
 
 	// Creating the texture
-	SDL_Surface* text = TTF_RenderText_Solid_Wrapped(_text_font, _text_string.c_str(), color, _dest_rect.size.x);
+	SDL_Surface* text = TTF_RenderText_Solid_Wrapped(_text_font, _text_string.c_str(), color, _text_bounds.x);
 	if (manager->getTexture(_textureID.c_str())) {
 		const_cast<AssetManager*>(manager)->destroyTexture(_textureID.c_str());
 	}
 	SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text);
 	SDL_FreeSurface(text);
-	SDL_QueryTexture(text_texture, NULL, NULL, &_dest_rect.size.x, &_dest_rect.size.y);
+	SDL_QueryTexture(text_texture, NULL, NULL, &_text_bounds.x, &_text_bounds.y);
+	_dest_rect.size = _text_bounds;
 	_src_rect.size = _dest_rect.size;
 
 	const_cast<AssetManager*>(manager)->storeTexture(text_texture, texture_name.c_str(), renderer);

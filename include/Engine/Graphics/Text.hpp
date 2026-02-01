@@ -38,12 +38,14 @@ namespace Engine {
 		inline void remAttr(Text_Attr attr) { _text_attr ^= ~attr; }
 		inline void setColor(Vector4i col) { _text_color = col; }
 		inline void setFont(TTF_Font* font) { _text_font = font; }
+		inline void setTextBounds(Vector2i bounds) { _text_bounds = bounds; }
 
 		inline const char* getText() { return _text_string.c_str(); }
 		inline int getTextSize() { return _text_size; }
 		inline Uint16 getTextAttr() { return _text_attr; }
 		inline Vector4i getTextColor() { return _text_color; }
 		inline TTF_Font* getFont() { return _text_font; }
+		inline Vector2i getTextBounds() { return _text_bounds; }
 
 		// Overloaded Functions
 
@@ -53,6 +55,7 @@ namespace Engine {
 		std::string _text_string{ "" };
 		int _text_size{ 10 };
 		Uint16 _text_attr{ Null };
+		Vector2i _text_bounds{ 0,0 };
 		Vector4i _text_color{ 255, 255, 255, 255 };
 		TTF_Font* _text_font;
 	};
