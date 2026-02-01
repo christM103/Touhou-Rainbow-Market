@@ -1,6 +1,10 @@
 #pragma once
 
 #include <deque>
+#include <tuple>
+#include <vector>
+#include <memory>
+#include <unordered_map>
 
 #include <Engine/ECS/System/BaseSystem.hpp>
 #include "Engine/Graphics/Sprite.hpp"
@@ -8,12 +12,49 @@
 
 namespace Engine {
 	class RenderSystem {
-
-	using isSprite = std::true_type;
-	using isText = std::false_type;
-	using RenderTarget = std::tuple<Entity, bool, uint16_t>;
-
 	public:
+		enum class Render_Flags : uint8_t {
+			Null = 0,
+
+			isSingle = 1 << 1,
+			isMulti = 1 << 2,
+
+			isSprite = 1 << 3,
+			isText = 1 << 4,
+		};
+
+		// Bitwise operator helpers for Render_Flags
+		friend constexpr Render_Flags operator|(Render_Flags a, Render_Flags b) noexcept {
+			return static_cast<Render_Flags>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+		}
+		friend constexpr Render_Flags operator&(Render_Flags a, Render_Flags b) noexcept {
+			return static_cast<Render_Flags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+		}
+		friend constexpr Render_Flags operator^(Render_Flags a, Render_Flags b) noexcept {
+			return static_cast<Render_Flags>(static_cast<uint8_t>(a) ^ static_cast<uint8_t>(b));
+		}
+		friend constexpr Render_Flags operator~(Render_Flags a) noexcept {
+			return static_cast<Render_Flags>(~static_cast<uint8_t>(a));
+		}
+		friend Render_Flags& operator|=(Render_Flags& a, Render_Flags b) noexcept {
+			a = a | b;
+			return a;
+		}
+		friend Render_Flags& operator&=(Render_Flags& a, Render_Flags b) noexcept {
+			a = a & b;
+			return a;
+		}
+		friend Render_Flags& operator^=(Render_Flags& a, Render_Flags b) noexcept {
+			a = a ^ b;
+			return a;
+		}
+
+		// Alias for render target tuple
+		using RenderTarget = std::tuple<Entity, Render_Flags, uint16_t>;
+
+
+		// Constructor and Destructor
+
 		RenderSystem() = default;
 		~RenderSystem();
 
@@ -32,7 +73,6 @@ namespace Engine {
 		void update(const EntityManager* entityManager, const ComponentManager* componentManager,
 			const AssetManager* assetManager, const Window* window);
 
-
 		// Overloaded functions
 
 		void create(const SystemContext& ctx);
@@ -45,7 +85,8 @@ namespace Engine {
 
 	private:
 		std::deque<RenderTarget> _render_targets{ }; // Set of renderable entities
-		std::unordered_map<Entity, std::unique_ptr<Sprite>> _sprite_set{ }; // Set of Sprite Objects
-		std::unordered_map<Entity, std::unique_ptr<Text>> _text_set{ }; // Set of Text Objects
+		std::unordered_map<Entity, std::vector<std::unique_ptr<Sprite>>> _multi_sprite_set{ }; // Set of multi sprite objects
 	};
+
+	// Define the Render_Flags enum separately (flags only; no member functions inside enum)
 }

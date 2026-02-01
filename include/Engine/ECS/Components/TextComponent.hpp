@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
+
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Math/Vector4.hpp"
 
@@ -39,5 +41,9 @@ namespace Engine {
 
 		Vector4i textColor; //  Bounds of the text (When set to 0 on default, width has no bounds)
 
+	};
+
+	struct MultiTextComponent {
+		std::unordered_map<uint8_t, TextComponent*> text;
 	};
 }

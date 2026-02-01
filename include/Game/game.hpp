@@ -16,11 +16,6 @@ public:
 
     void move_state(std::unique_ptr<TR::Scene> newState);
 
-    void terminalTest();
-    void timerTest();
-    void characterSelect(TR::Player_Data& Player_1);
-    void marketTransaction(TR::Player_Data& Player_1);
-
 private:
     // Game-specific data and methods
 

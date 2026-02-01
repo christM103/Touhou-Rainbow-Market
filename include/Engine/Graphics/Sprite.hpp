@@ -22,7 +22,7 @@ namespace Engine {
         Sprite() = default;
         Sprite(int width, int height);
         Sprite(std::string texture, int width, int height);
-        ~Sprite();
+        virtual ~Sprite(); // Make destructor virtual to ensure Sprite is polymorphic
 
 
         /// -- Helper Functions -- ///
@@ -217,7 +217,7 @@ namespace Engine {
     protected:
         std::string _textureID{ ""};
         Recti _dest_rect{ 0,0,0,0 }, _src_rect{ 0,0,0,0 };
-        Vector2f _scale{ 0.0,0.0 };
+        Vector2f _scale{ 1.0,1.0 };
         float _angle{ 0.0 };
         uint8_t _alpha { 255 };
         FlipState _flip{ Flip_Null };

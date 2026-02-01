@@ -1,5 +1,8 @@
 #pragma once
 
+
+#include <unordered_map>
+
 #include "Engine/Math/Rect.hpp"
 #include "Engine/Math/Vector2.hpp"
 
@@ -22,5 +25,9 @@ namespace Engine {
             return !(*this == r2);
         }
 
+    };
+
+    struct MultiTransformComponent {
+        std::unordered_map<uint8_t, TransformComponent*> transforms;
     };
 } // namespace Engine

@@ -1,7 +1,10 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "Engine/Math/Rect.hpp"
 #include "Engine/Math/Vector2.hpp"
+
 
 namespace Engine {
     class SpriteComponent {
@@ -29,6 +32,9 @@ namespace Engine {
         Rect<int> sourceRect;
         Vector2<int> size;
         std::string resourceID;
+    };
 
+    struct MultiSpriteComponent {
+        std::unordered_map<uint8_t, SpriteComponent*> sprites;
     };
 }
