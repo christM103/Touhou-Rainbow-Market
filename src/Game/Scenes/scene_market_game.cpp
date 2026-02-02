@@ -1,6 +1,12 @@
+#include "Engine/Graphics/AssetManager.hpp"
+
+#include "Game/Objects/Components/MarketGameComponents.hpp"
+#include "Game/Objects/Systems/MarketGameSystems.hpp"
 #include "Game/logic.hpp"
 #include "Game/logic_obj.hpp"
-#include "Engine/Graphics/AssetManager.hpp"
+
+
+
 
 namespace TR {
 	//using Text = TextBox::Text_Box_Transitions;
@@ -76,21 +82,10 @@ namespace TR {
 
 		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity();
 
-		auto& Transforms = gEngine->getECSManager()->addComponent<Engine::MultiTransformComponent>(TEXTBOX_TEST);
-		Transforms.transforms.emplace(0, std::make_shared<Engine::TransformComponent>(Engine::Vector2i{ 320,240 }));
-		Transforms.transforms.emplace(1, std::make_shared<Engine::TransformComponent>(Engine::Vector2i{ 320,240 }));
-		Transforms.transforms.emplace(2, std::make_shared<Engine::TransformComponent>(Engine::Vector2i{ 360,280 }));
+		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, "Testing the component", 240, 240);
+		gEngine->getECSManager()->addSystem<TextboxSystem>();
 
-		auto& Sprites = gEngine->getECSManager()->addComponent<Engine::MultiSpriteComponent>(TEXTBOX_TEST);
-		Sprites.sprites.emplace(0, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 800, 400), Engine::Vector2i(800, 400), "TXT_BOX_BG"));
-		Sprites.sprites.emplace(1, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 800, 400), Engine::Vector2i(800, 400), "TXT_BOX_F"));
-
-		auto& Text = gEngine->getECSManager()->addComponent<Engine::MultiTextComponent>(TEXTBOX_TEST);
-		Text.text.emplace(2, std::make_shared<Engine::TextComponent>("TESTING TESTING 1 2 3! TESTING TESTING 1 2 3! TESTING TESTING 1 2 3!", 
-			40, Engine::Vector4i(255, 255, 255, 255), Engine::Vector2i(740, 400)));
-
-		gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(TEXTBOX_TEST, Engine::RenderLayerComponent::FG);
-
+		
 		/*
 		// Creating Market Sprites
 		sprite_set.insert({ "MID_Null",
@@ -119,6 +114,14 @@ namespace TR {
 			player_set.at(0)->balanceChange(1000);
 		}
 		*/
+		if (gEngine->getECSManager()->componentExists<TextBoxComponent>()) {
+			if (gEngine->getECSManager()->isSystemRunning<TextboxSystem>()) {
+				gEngine->getECSManager()->toggleSystem<TextboxSystem>(true);
+			}
+		}
+		else {
+			gEngine->getECSManager()->toggleSystem<TextboxSystem>(false);
+		}
 
 	}
 

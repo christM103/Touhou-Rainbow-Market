@@ -99,4 +99,5 @@ void Game::move_state(std::unique_ptr<TR::Scene> newState) {
     gEngine->getECSManager()->destroyAllEntities();
 	gEngine->getAssetManager()->clear();
     _currScene->create(renderer, gEngine, _sprite_set, _player_set);
+    gEngine->getECSManager()->create();
 }

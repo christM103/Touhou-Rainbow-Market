@@ -38,6 +38,12 @@ namespace Engine {
 		}
 
 		template<typename SystemType>
+		bool isSystemRunning() {
+			System system = std::type_index(typeid(SystemType));
+			return (activeSystems.find(system)->second);
+		}
+
+		template<typename SystemType>
 		void initSystem() {
 			System system = std::type_index(typeid(SystemType));
 			auto index = activeSystems.find(system);

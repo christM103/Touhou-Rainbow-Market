@@ -64,6 +64,13 @@ namespace Engine {
         }
 
         template<typename ComponentType>
+        bool componentExists() const {
+            Component compType = std::type_index(typeid(ComponentType));
+            auto it = componentTypes.find(compType);
+            return (it != componentTypes.end());
+        }
+
+        template<typename ComponentType>
         bool removeComponent(Entity entity) {
             if (this->hasComponent<ComponentType>(entity)) {
                 Component component = std::type_index(typeid(ComponentType));

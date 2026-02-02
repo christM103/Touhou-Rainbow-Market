@@ -78,6 +78,15 @@ namespace Engine {
             return componentManager->hasComponent<ComponentType>(entity);
         }
 
+        /// @brief Checks whether a component exists
+        /// @tparam Component The type of component to search
+        /// @return A boolean whether it exists or not
+        template<typename ComponentType>
+        bool componentExists() {
+            return componentManager->componentExists<ComponentType>();
+        }
+
+
 		template<typename SystemType>
 		void addSystem(std::unique_ptr<SystemType> system) {
             systemManager->addSystem<SystemType>(system);
@@ -92,6 +101,11 @@ namespace Engine {
 		void toggleSystem(bool isRunning) {
             systemManager->toggleSystem<SystemType>(isRunning);
 		}
+
+        template<typename SystemType>
+        bool isSystemRunning() {
+            return systemManager->isSystemRunning<SystemType>();
+        }
 
 		template<typename SystemType>
 		void initSystem() {
