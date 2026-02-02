@@ -2,7 +2,7 @@
 #pragma once
 #include "Engine/Core/Application.hpp"
 #include "Engine/Graphics/Sprite.hpp"
-#include "Game/logic.hpp"
+#include "Game/Logic/Scenes.hpp"
 
 class Game : public Engine::Application {
 public:
@@ -20,7 +20,6 @@ private:
     // Game-specific data and methods
 
     std::unique_ptr<TR::Scene> _currScene;
-    Sprite_Map _sprite_set;
     Player_Set _player_set;
     int _beat{ 0 };
     std::unordered_map<SDL_Scancode, bool> _input_pressed{ 
@@ -28,6 +27,3 @@ private:
     Engine::Sprite* playerSprite = nullptr;
 };
 
-/*
-
-*/

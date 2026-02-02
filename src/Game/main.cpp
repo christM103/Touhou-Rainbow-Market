@@ -4,7 +4,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 
-#include "Game/game.hpp"
+#include "Game/Game.hpp"
 #include "Engine/Core/Engine.hpp"
 
 const int SCREEN_WIDTH = 1280;

@@ -1,9 +1,9 @@
 #include "Engine/Graphics/AssetManager.hpp"
 
+#include "Game/Logic/Scenes.hpp"
 #include "Game/Objects/Components/MarketGameComponents.hpp"
 #include "Game/Objects/Systems/MarketGameSystems.hpp"
-#include "Game/logic.hpp"
-#include "Game/logic_obj.hpp"
+
 
 
 
@@ -22,9 +22,7 @@ namespace TR {
 
 	Market_Game::Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players) {}
 
-	Market_Game::~Market_Game() {}
-
-	bool Market_Game::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+	bool Market_Game::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) {
 
 		/* Texture Initialization */
 
@@ -104,16 +102,8 @@ namespace TR {
 		
 	}
 
-	void Market_Game::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
-		/*
-		this->state_machine(gEngine, sprite_set, player_set);
+	void Market_Game::update(Engine::Engine* gEngine, Player_Set& player_set) {
 
-		test_textbox.update(gEngine, sprite_set, player_set);
-
-		if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_EQUALS)) {
-			player_set.at(0)->balanceChange(1000);
-		}
-		*/
 		if (gEngine->getECSManager()->componentExists<TextBoxComponent>()) {
 			if (gEngine->getECSManager()->isSystemRunning<TextboxSystem>()) {
 				gEngine->getECSManager()->toggleSystem<TextboxSystem>(true);
@@ -125,97 +115,8 @@ namespace TR {
 
 	}
 
-	void Market_Game::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
-		/*
-		gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
-		sprite_set.at("player_balance")->swapTexture(gEngine->getAssetManager()->getTexture("TEXT_PBAL"), balance_text.getSize().x, balance_text.getSize().y);
-		sprite_set.at("player_balance")->draw(renderer, Engine::Vector2i(960, 300));
-
-		for (int i = 0; i < 5; ++i) {
-			sprite_set.at(player_set[0]->getLand()->getMarketStr(i))->draw(renderer, Engine::Vector2i(275 + i * 150, 350 + 50 * (i % 2)));
-		}
-
-		test_textbox.draw(renderer, gEngine, sprite_set, player_set);
-	}
-
-	void Market_Game::state_machine(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
-
-
-		/*  Main Game State
-
-		if (_market_scene_state & MG_Main_Game) {
-			// Sets the new balance for the text
-
-			std::stringstream newBalance;
-			newBalance << "Total Balance: " << std::fixed << std::setprecision(2) << player_set.at(0)->getBalance();
-			balance_text.setText(newBalance.str().c_str());
-
-		}
-		else {
-
-		}
-
-		/* Intro Screen State
-
-		if (_market_scene_state & MG_Intro_Sceen) {
-			// Turning on the textbox
-
-			if (test_textbox.getAttr() & (Text::TXT_UP_DOWN | Text::TXT_ENTER_EXIT)) {
-				if (gEngine->getInput()->isMouseClicked(SDL_BUTTON_LEFT)) {
-					test_textbox.enableAttr(Text::TXT_ACTIVE);
-					test_textbox.enableAttr(Text::TXT_UP_DOWN);
-				}
-			}
-			// Autocompleting the textbox (using Spacebar)
-
-			if ((test_textbox.getAttr() & (Text::TXT_ACTIVE_TEXT_COMPLETE | Text::TXT_ACTIVE_TEXT) & Text::TXT_ACTIVE_TEXT)) {
-				if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_SPACE)) {
-					test_textbox.enableAttr(Text::TXT_ACTIVE_TEXT_COMPLETE);
-				}
-			}
-			// Turning off the Intro Scene (closing with Q)
-
-			if (test_textbox.getAttr() & (Text::TXT_ACTIVE_TEXT | Text::TXT_ACTIVE_TEXT_COMPLETE) & Text::TXT_ACTIVE_TEXT_COMPLETE) {
-				if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Q)) {
-					_market_scene_state ^= MG_Intro_Sceen;
-				}
-			}
-		}
+	void Market_Game::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) {
 		
-		else {
-			// Reactivate the main game
-			if (!(_market_scene_state & MG_Main_Game)) {
-				_market_scene_state |= MG_Main_Game;
-			}
-
-			// If the textbox still exists, then tell it to leave
-
-			if ((test_textbox.getAttr() & (Text::TXT_ENTER_EXIT))) {
-				test_textbox.disableAttr(Text::TXT_ENTER_EXIT);
-			}
-			if (!(test_textbox.getAttr() & (Text::TXT_ACTIVE))) {
-				test_textbox.enableAttr(Text::TXT_ACTIVE);
-			}
-		}
-		*/
 	}
-
-	// Timer Functions
-
-	Market_Game::Timer::Timer(seconds new_dur) {
-		_start = std::chrono::steady_clock::now();
-		_dur = new_dur;
-		_curr_left = _dur;
-	}
-
-	timer Market_Game::Timer::time_left() {
-		_curr_left = _dur - (std::chrono::steady_clock::now() - _start);
-		return _curr_left;
-	}
-
-	void Market_Game::Timer::timer_reset(seconds new_dur) {
-		*this = Timer(new_dur);
-	}
-
 
 }

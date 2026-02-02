@@ -1,6 +1,6 @@
 // Copyright 2025 chrisfantasy
 
-#include "Game/market.hpp"
+#include "Game/Logic/Market.hpp"
 
 namespace TR {
 

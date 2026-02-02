@@ -26,7 +26,7 @@ Once per turn you can choose to…
     Unlucky (4, 9): Shut down a select open market in your possession for 1 turn. 
 */
 
-#include "Game/player.hpp"
+#include "Game/Logic/Player.hpp"
 #include <random>
 
 

@@ -2,14 +2,11 @@
 
 #pragma once
 
-#include <chrono>
-#include "Game/logic_obj.hpp"
+#include "Engine/Core/Engine.hpp"
+#include "Game/Logic/Player.hpp"
 //#include "Game/event.hpp"
 
-using namespace std::chrono_literals;
-typedef std::chrono::steady_clock::time_point current_time;
-typedef std::chrono::seconds seconds;
-typedef std::chrono::duration<double> timer;
+using Player_Set = std::vector<std::shared_ptr<TR::Player_Data>>;
 
 namespace TR {
 
@@ -22,12 +19,16 @@ namespace TR {
             SC_Null, SC_Title, SC_CharS, SC_Main
         };
 
-        Scene();
-        virtual ~Scene();
+        Scene() {
+            _currState = SC_Null;
+            _nextState = _currState;
+        }
 
-        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
-        virtual void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
-        virtual void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) = 0;
+        ~Scene() = default;
+
+        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) = 0;
+        virtual void update(Engine::Engine* gEngine, Player_Set& player_set) = 0;
+        virtual void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) = 0;
 
         inline Scene_ID getSceneCurr() { return _currState; }
         inline Scene_ID getSceneNext() { return _nextState; }
@@ -44,11 +45,10 @@ namespace TR {
     class Title_Screen : public Scene {
     public:
         Title_Screen();
-        ~Title_Screen() override;
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
-        void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
-        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
+        void update(Engine::Engine* gEngine, Player_Set& player_set) override;
+        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
 
     };
 
@@ -56,11 +56,10 @@ namespace TR {
     class Char_Select : public Scene {
     public:
         Char_Select();
-        ~Char_Select() override;
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
-        void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
-        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
+        void update(Engine::Engine* gEngine, Player_Set& player_set) override;
+        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
 
 
     private:
@@ -91,27 +90,12 @@ namespace TR {
 
         Market_Game();
         explicit Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players);
-        ~Market_Game() override;
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set);
-        void update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
-        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) override;
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set);
+        void update(Engine::Engine* gEngine, Player_Set& player_set) override;
+        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
 
-        void state_machine(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set);
-
-        /// @brief Timer used for the game
-        class Timer {
-        public:
-            explicit Timer(seconds new_dur);
-            timer time_left();
-            void timer_reset(seconds new_dur);
-
-
-        private:
-            current_time _start;
-            seconds _dur;
-            timer _curr_left;
-        };
+        void state_machine(Engine::Engine* gEngine, Player_Set& player_set);
 
     private:
         uint16_t _market_scene_state{ MG_Null_State };

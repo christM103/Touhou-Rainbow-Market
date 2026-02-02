@@ -4,7 +4,7 @@
 
 #include <map>
 #include <utility>
-#include "Game/Market.hpp"
+#include "Game/Logic/Market.hpp"
 
 namespace TR {
     // --- Land Class --- //

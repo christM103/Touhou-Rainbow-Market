@@ -23,7 +23,7 @@ Once per turn you can choose to…
 
 */
 
-#include "Game/player.hpp"
+#include "Game/Logic/Player.hpp"
 
 namespace TR {
 Player_Reimu::Player_Reimu(Player_ID ID, int type) : Player_Data(ID) {

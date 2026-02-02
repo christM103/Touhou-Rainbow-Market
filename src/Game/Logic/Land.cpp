@@ -1,6 +1,6 @@
 // Copyright 2025 chrisfantasy
 
-#include "Game/Land.hpp"
+#include "Game/Logic/Land.hpp"
 
 namespace TR {
 

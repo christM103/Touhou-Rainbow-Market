@@ -25,7 +25,7 @@ bool Game::create() {
     gEngine->getAssetManager()->loadTexture("assets/player.png", "player", renderer);
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
     */
-    _currScene->create(renderer, gEngine, _sprite_set, _player_set);
+    _currScene->create(renderer, gEngine, _player_set);
     gEngine->getECSManager()->create();
     return true;
 }
@@ -36,7 +36,7 @@ void Game::update(float deltaTime) {
     if (_beat % 5 == 0) {
         // Update logic for the game
 
-        _currScene->update(gEngine, _sprite_set, _player_set);
+        _currScene->update(gEngine, _player_set);
 
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Z) && (_player_set.size() > 0)) {
             if (!_input_pressed.at(SDL_SCANCODE_Z)) {
@@ -80,7 +80,7 @@ void Game::render() {
 
     // Example rendering code
     //playerSprite->draw(renderer, Engine::Vector2i(0, 0));
-    _currScene->render(renderer, gEngine, _sprite_set, _player_set);
+    _currScene->render(renderer, gEngine, _player_set);
     gEngine->getECSManager()->render();
 }
 void Game::quit() {
@@ -95,9 +95,8 @@ void Game::move_state(std::unique_ptr<TR::Scene> newState) {
     _currScene = std::move(newState);
 
 	// Reset to current sprite set
-	_sprite_set.clear();
     gEngine->getECSManager()->destroyAllEntities();
 	gEngine->getAssetManager()->clear();
-    _currScene->create(renderer, gEngine, _sprite_set, _player_set);
+    _currScene->create(renderer, gEngine, _player_set);
     gEngine->getECSManager()->create();
 }

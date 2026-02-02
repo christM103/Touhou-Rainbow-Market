@@ -5,7 +5,7 @@
 
 #include <memory>
 #include <vector>
-#include "Game/Land.hpp"
+#include "Game/Logic/Land.hpp"
 
 namespace TR {
 

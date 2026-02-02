@@ -1,6 +1,6 @@
 // Copyright 2025 chrisfantasy
 
-#include "Game/player.hpp"
+#include "Game/Logic/Player.hpp"
 
 namespace TR {
     Player_Null::Player_Null(Player_ID ID, int type) : Player_Data(ID) {

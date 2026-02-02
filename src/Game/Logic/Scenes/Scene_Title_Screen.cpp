@@ -1,5 +1,4 @@
-#include "Game/logic.hpp"
-#include "Game/logic_obj.hpp"
+#include "Game/Logic/Scenes.hpp"
 #include "Engine/Graphics/AssetManager.hpp"
 
 namespace TR {
@@ -8,9 +7,8 @@ namespace TR {
         _currState = SC_Title;
         _nextState = _currState;
     }
-    Title_Screen::~Title_Screen() {}
 
-    bool Title_Screen::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+    bool Title_Screen::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) {
 
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Title_Screen/Placeholder_Title.png", "TITLE", renderer);
 
@@ -29,14 +27,14 @@ namespace TR {
         return true;
     }
 
-    void Title_Screen::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+    void Title_Screen::update(Engine::Engine* gEngine, Player_Set& player_set) {
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_SPACE)) {
             _nextState = SC_CharS;
             active_entities.clear();
         }
     }
 
-    void Title_Screen::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+    void Title_Screen::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) {
         
     }
 }

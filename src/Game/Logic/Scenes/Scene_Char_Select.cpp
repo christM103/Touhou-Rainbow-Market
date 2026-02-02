@@ -1,4 +1,4 @@
-#include "Game/logic.hpp"
+#include "Game/Logic/Scenes.hpp"
 #include "Engine/Graphics/AssetManager.hpp"
 
 namespace TR {
@@ -7,9 +7,7 @@ namespace TR {
         _nextState = _currState;
     }
 
-    Char_Select::~Char_Select() {}
-
-    bool Char_Select::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+    bool Char_Select::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) {
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Char_Select/Placeholder_CharS_BG.png", "BGO", renderer);
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_R.png", "Portait_R", renderer);
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_M.png", "Portait_M", renderer);
@@ -40,7 +38,7 @@ namespace TR {
         return true;
     }
 
-    void Char_Select::update(Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {
+    void Char_Select::update(Engine::Engine* gEngine, Player_Set& player_set) {
         if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_LEFT)) {
             player_set.insert(player_set.end(), std::make_shared<TR::Player_Reimu>(TR::PI_Player_1, 1));
             _nextState = SC_Main;
@@ -51,5 +49,5 @@ namespace TR {
         }
     }
 
-    void Char_Select::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Sprite_Map& sprite_set, Player_Set& player_set) {}
+    void Char_Select::render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) {}
 }

@@ -1,6 +1,6 @@
 // Copyright 2025 chrisfantasy
 
-#include "Game/Player.hpp"
+#include "Game/Logic/Player.hpp"
 
 namespace TR {
 
