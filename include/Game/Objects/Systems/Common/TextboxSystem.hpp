@@ -12,7 +12,7 @@ namespace TR {
 		TextboxSystem() = default;
 		~TextboxSystem();
 
-		void init(const Engine::EntityManager* entityManager, const Engine::ComponentManager* componentManager);
+		void init(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager);
 		void updateRender(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager);
 
 		// Overloaded functions
@@ -25,7 +25,6 @@ namespace TR {
 
 		void quit(const Engine::SystemContext& ctx);
 	private:
-		std::deque<Engine::Entity> _textbox_entities{ }; // Set of renderable entities
 		std::unordered_map<Engine::Entity, std::unique_ptr<TextBoxComponent>> _textboxes{ }; // Set of multi sprite objects
 	};
 }

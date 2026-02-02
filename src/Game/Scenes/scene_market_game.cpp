@@ -82,7 +82,7 @@ namespace TR {
 
 		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity();
 
-		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, "Testing the component", 240, 240);
+		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, "Testing the component", 240, 240, 1, TextBoxComponent::TXTBOX_NULL);
 		gEngine->getECSManager()->addSystem<TextboxSystem>();
 
 		
