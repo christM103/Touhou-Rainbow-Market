@@ -4,7 +4,7 @@
 
 
 TR::TextboxSystem::~TextboxSystem() {
-
+	_textboxes.clear();
 }
 
 void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager) {
@@ -88,5 +88,5 @@ void TR::TextboxSystem::render(const Engine::SystemContext& ctx) {
 }
 
 void TR::TextboxSystem::quit(const Engine::SystemContext& ctx) {
-
+	this->~TextboxSystem();
 }

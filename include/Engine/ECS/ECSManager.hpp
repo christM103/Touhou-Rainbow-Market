@@ -8,7 +8,11 @@ namespace Engine {
 	class ECSManager {
 	public:
 		ECSManager() = default;
-		~ECSManager() = default;
+        ~ECSManager() {
+            componentManager.release();
+            entityManager.release();
+            systemManager.release();
+        }
 
         /// @brief Initilizes the ECS Manager
         /// @param window The current application's window
@@ -128,6 +132,7 @@ namespace Engine {
 
 		void quit() {
             systemManager->quit();
+            this->destroyAllEntities();
 		}
 
 	private:

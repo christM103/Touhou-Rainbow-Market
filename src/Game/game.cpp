@@ -15,6 +15,7 @@ Game::Game() {
 
 Game::~Game() {
     // Destructor implementation
+    
 }
 
 bool Game::create() {
@@ -85,9 +86,8 @@ void Game::render() {
 }
 void Game::quit() {
     // Shutdown code for the game
-    delete playerSprite;
     gEngine->getECSManager()->quit();
-
+    _player_set.clear();
 }
 
 void Game::move_state(std::unique_ptr<TR::Scene> newState) {

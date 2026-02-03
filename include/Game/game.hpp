@@ -24,6 +24,5 @@ private:
     int _beat{ 0 };
     std::unordered_map<SDL_Scancode, bool> _input_pressed{ 
         {SDL_SCANCODE_Q, false }, {SDL_SCANCODE_W, false }, {SDL_SCANCODE_Z, false }, };
-    Engine::Sprite* playerSprite = nullptr;
 };
 

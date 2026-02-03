@@ -74,7 +74,10 @@ namespace Engine {
 		void quit() {
 			for (auto& sys : systems) {
 				sys->quit(ctx);
+				sys.release();
 			}
+			activeSystems.clear();
+			systems.clear();
 		}
 
 		template<typename Manager>

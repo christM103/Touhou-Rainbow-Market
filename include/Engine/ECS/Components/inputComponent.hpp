@@ -4,22 +4,14 @@
 #include <unordered_map>
 
 namespace Engine {
-	/*
-	struct KeyAction {
-		/// @brief When the key was pressed on the entity.
-		std::function<void()> onAction;
-		/// @brief When the key was released by the entity.
-		std::function<void()> onRelease;
+	struct KeyComponent {
+		uint8_t key{ 0 };
+		bool isPressed{ false };
+		bool isHeld{ false };
+		bool isReleased{ true };
 	};
 
-	class InputComponent {
-	public:
-		InputComponent() : scancode() {};
-		~InputComponent() = default;
-
-	private:
-		std::unordered_map<Uint16, KeyAction>  scancode;
-		
+	struct InputComponent {
+		std::unordered_set<KeyComponent>  scancode;
 	};
-	*/
 }

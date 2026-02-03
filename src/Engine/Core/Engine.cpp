@@ -12,10 +12,6 @@ namespace Engine {
     Engine::Engine() : deltaTime(0.0f), running(false) {}
 
     Engine::~Engine() {
-        if (ecs) {
-            ecs.get()->~ECSManager();
-        }
-
         if (assets) {
             assets.get()->clear(); 
         }
