@@ -2,6 +2,7 @@
 
 #include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/CollisionSystem.hpp"
+#include "Engine/ECS/System/MotionSystem.hpp"
 
 namespace Engine {
 	

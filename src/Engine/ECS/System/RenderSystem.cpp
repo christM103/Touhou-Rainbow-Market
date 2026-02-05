@@ -6,7 +6,7 @@
  
 
 Engine::RenderSystem::~RenderSystem() {
-	_multi_sprite_set.clear();
+	_sprite_set.clear();
 	_render_targets.clear();
 }
 
@@ -25,7 +25,7 @@ void Engine::RenderSystem::init(const EntityManager* entityManager, const Compon
 
 	// Initializes any entities that are renderable targets
 	for (Entity entity : entityManager->getEntities()) {
-		if (_multi_sprite_set.find(entity) == _multi_sprite_set.end()) {
+		if (_sprite_set.find(entity) == _sprite_set.end()) {
 
 			renderflags = Render_Flags::Null;
 
@@ -69,31 +69,31 @@ void Engine::RenderSystem::init(const EntityManager* entityManager, const Compon
 		auto entity = std::get<0>(renderTarget);
 		auto imageType = std::get<1>(renderTarget);
 
-		if (_multi_sprite_set.find(entity) == _multi_sprite_set.end()) {
+		if (_sprite_set.find(entity) == _sprite_set.end()) {
 			if ((imageType & Render_Flags::isSingle) != Render_Flags::Null) {
 				position_data = componentManager->getComponent<TransformComponent>(entity);
 				if ((imageType & Render_Flags::isSprite) != Render_Flags::Null) {
 					sprite_data = componentManager->getComponent<SpriteComponent>(entity);
 					std::vector<std::unique_ptr<Sprite>> tempV;
 					tempV.emplace_back(std::make_unique<Sprite>(sprite_data->getResourceID(), sprite_data->getSize().x, sprite_data->getSize().y));
-					_multi_sprite_set.emplace( entity, std::move(tempV) );
+					_sprite_set.emplace( entity, std::move(tempV) );
 				}
 				if ((imageType & Render_Flags::isText) != Render_Flags::Null) {
 					text_data = componentManager->getComponent<TextComponent>(entity);
 					std::vector<std::unique_ptr<Sprite>> tempV;
 					tempV.emplace_back(std::make_unique<Text>(text_data->getText(), text_data->getTextSize()));
-					_multi_sprite_set.emplace( entity, std::move(tempV) );
+					_sprite_set.emplace( entity, std::move(tempV) );
 				}
 			}
 			else if ((imageType & Render_Flags::isMulti) != Render_Flags::Null) {
 				multi_position_data = componentManager->getComponent<MultiTransformComponent>(entity);
-				_multi_sprite_set.try_emplace(entity);
+				_sprite_set.try_emplace(entity);
 				for (auto& transformComp : multi_position_data->transforms) {
 					if ((imageType & Render_Flags::isSprite) != Render_Flags::Null) {
 						multi_sprite_data = componentManager->getComponent<MultiSpriteComponent>(entity);
 						for (auto& spriteComp : multi_sprite_data->sprites) {
 							if (spriteComp.first == transformComp.first) {
-								_multi_sprite_set[entity].emplace_back(
+								_sprite_set[entity].emplace_back(
 									std::make_unique<Sprite>(spriteComp.second->getResourceID(), spriteComp.second->getSize().x, spriteComp.second->getSize().y));
 							}
 						}
@@ -102,7 +102,7 @@ void Engine::RenderSystem::init(const EntityManager* entityManager, const Compon
 						multi_text_data = componentManager->getComponent<MultiTextComponent>(entity);
 						for (auto& spriteComp : multi_text_data->text) {
 							if (spriteComp.first == transformComp.first) {
-								_multi_sprite_set[entity].emplace_back(std::make_unique<Text>(spriteComp.second->getText(), spriteComp.second->getTextSize()));
+								_sprite_set[entity].emplace_back(std::make_unique<Text>(spriteComp.second->getText(), spriteComp.second->getTextSize()));
 							}
 						}
 					}
@@ -145,12 +145,12 @@ void Engine::RenderSystem::draw(const EntityManager* entityManager, const Compon
 			for (auto& pos_data : componentManager->getComponent<MultiTransformComponent>(entity)->transforms) {
 				position_data = pos_data.second.get();
 				if (position_data->centered) {
-					for (auto& sprite : _multi_sprite_set.at(entity)) {
+					for (auto& sprite : _sprite_set.at(entity)) {
 						sprite->draw_center(window->getRenderer(), assetManager);
 					}
 				}
 				else {
-					for (auto& sprite : _multi_sprite_set.at(entity)) {
+					for (auto& sprite : _sprite_set.at(entity)) {
 						sprite->draw(window->getRenderer(), assetManager);
 					}
 				}
@@ -159,12 +159,12 @@ void Engine::RenderSystem::draw(const EntityManager* entityManager, const Compon
 		else {
 			position_data = componentManager->getComponent<TransformComponent>(entity);
 			if (position_data->centered) {
-				for (auto& sprite : _multi_sprite_set.at(entity)) {
+				for (auto& sprite : _sprite_set.at(entity)) {
 					sprite->draw_center(window->getRenderer(), assetManager);
 				}
 			}
 			else {
-				for (auto& sprite : _multi_sprite_set.at(entity)) {
+				for (auto& sprite : _sprite_set.at(entity)) {
 					sprite->draw(window->getRenderer(), assetManager);
 				}
 			}
@@ -250,7 +250,7 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 		return entityManager->getEntities().find(entity) == entityManager->getEntities().end();
 		});
 
-	std::erase_if(_multi_sprite_set, [&](const auto& item) {
+	std::erase_if(_sprite_set, [&](const auto& item) {
 		const Entity& entity = std::get<0>(item);
 		return entityManager->getEntities().find(entity) == entityManager->getEntities().end()
 			&& !componentManager->hasComponent<TextComponent>(entity) && !componentManager->hasComponent<SpriteComponent>(entity)
@@ -266,8 +266,8 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 		if (static_cast<uint8_t>(imageType & Render_Flags::isSingle)) {
 			position_data = componentManager->getComponent<TransformComponent>(entity);
 
-			updateSpriteTransformation(position_data, _multi_sprite_set[entity].at(0));
-			auto prevSprite = _multi_sprite_set[entity].at(0).get();
+			updateSpriteTransformation(position_data, _sprite_set[entity].at(0));
+			auto prevSprite = _sprite_set[entity].at(0).get();
 
 			if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {
 				text_data = componentManager->getComponent<TextComponent>(entity);
@@ -282,11 +282,11 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 
 		}
 		else if (static_cast<uint8_t>(imageType & Render_Flags::isMulti)) {
-			for (uint8_t ind = 0; ind < _multi_sprite_set[entity].size(); ind++) {
+			for (uint8_t ind = 0; ind < _sprite_set[entity].size(); ind++) {
 				position_data = componentManager->getComponent<MultiTransformComponent>(entity)->transforms.at(ind).get();
-				updateSpriteTransformation(position_data, _multi_sprite_set[entity].at(ind));
+				updateSpriteTransformation(position_data, _sprite_set[entity].at(ind));
 
-				auto prevSprite = _multi_sprite_set[entity].at(ind).get();
+				auto prevSprite = _sprite_set[entity].at(ind).get();
 				if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {
 					text_data = componentManager->getComponent<MultiTextComponent>(entity)->text.at(ind).get();
 					if (updateTextData(text_data, sprite)) {

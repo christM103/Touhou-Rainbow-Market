@@ -80,9 +80,9 @@ namespace TR {
 
 		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity();
 
-		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, "Testing the component", 240, 240, 1, TextBoxComponent::TXTBOX_NULL);
+		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, "Testing the component", 240, 240, 1, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP | TextBoxComponent::TRANSITION_RIGHT);
 		gEngine->getECSManager()->addSystem<TextboxSystem>();
-
+		gEngine->getECSManager()->addSystem<Engine::MotionSystem>();
 		
 		/*
 		// Creating Market Sprites

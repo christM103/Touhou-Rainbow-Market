@@ -42,6 +42,18 @@ namespace Engine {
         }
 
         template<typename ComponentType>
+        ComponentType* getComponent(Entity entity) {
+            if (!this->hasComponent<ComponentType>(entity)) {
+                return nullptr;
+            }
+            else {
+                Component component = std::type_index(typeid(ComponentType));
+                auto& data = entityToComponent.at(entity).at(component);
+                return std::any_cast<ComponentType>(&data);
+            }
+        }
+
+        template<typename ComponentType>
         const ComponentType* getComponent(Entity entity) const {
             if (!this->hasComponent<ComponentType>(entity)) {
                 return nullptr;

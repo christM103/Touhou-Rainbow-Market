@@ -85,7 +85,7 @@ namespace Engine {
 
 	private:
 		std::deque<RenderTarget> _render_targets{ }; // Set of renderable entities
-		std::unordered_map<Entity, std::vector<std::unique_ptr<Sprite>>> _multi_sprite_set{ }; // Set of multi sprite objects
+		std::unordered_map<Entity, std::vector<std::unique_ptr<Sprite>>> _sprite_set{ }; // Set of multi sprite objects
 	};
 
 	// Define the Render_Flags enum separately (flags only; no member functions inside enum)
