@@ -22,7 +22,7 @@ namespace Engine {
 
 		Text(const char* string);
 		Text(const char* string, int size);
-		Text(const char* file, char* string, int size);
+		Text(const char* file, const char* string, int size);
 		Text(int width, int height, const char* string, int size);
 		~Text();
 

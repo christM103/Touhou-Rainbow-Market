@@ -22,11 +22,13 @@ namespace Engine {
 		const int getTextSize() const { return textSize; }
 		const Vector4i getTextColor() const { return textColor; }
 		const Vector2i getTextBounds() const { return textBounds; }
+		const char* const getTextFont() const { return textFont.c_str(); }
 
 		void setText(const char* str) { text = str; }
 		void setTextSize(int size) { textSize = size; }
 		void setTextColor(Vector4i txtC) { textColor = txtC; }
 		void setTextBounds(Vector2i bounds) { textBounds = bounds; }
+		void setTextFont(const char* str) { textFont = str; }
 
 		// Comparison operators
 
@@ -45,6 +47,8 @@ namespace Engine {
 		int textSize; // Size of the text
 
 		Vector4i textColor; //  Bounds of the text (When set to 0 on default, width has no bounds)
+
+		std::string textFont{ "assets/fonts/ArialMdm.ttf" };
 
 		Vector2i textBounds;
 

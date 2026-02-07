@@ -12,7 +12,7 @@ Engine::Text::Text(int width, int height, const char* string, int size) : Sprite
 	_text_font = TTF_OpenFont("assets/fonts/ArialMdm.ttf", size);
 }
 
-Engine::Text::Text(const char* file, char* string, int size) : Sprite(), _text_string(string), _text_size(size) {
+Engine::Text::Text(const char* file,const char* string, int size) : Sprite(), _text_string(string), _text_size(size) {
 	_text_font = TTF_OpenFont(file, size);
 }
 

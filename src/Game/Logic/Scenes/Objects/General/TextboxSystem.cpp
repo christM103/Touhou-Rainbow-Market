@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SDL2/SDL_ttf.h>
+
 #include "Game/Objects/Systems/Common/TextboxSystem.hpp"
 
 
@@ -8,7 +10,7 @@ TR::TextboxSystem::~TextboxSystem() {
 }
 
 void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager) {
-	const TextBoxComponent* textbox;
+	TextBoxComponent* textbox;
 
 	const char* text;
 	Engine::Vector2i position;
@@ -51,7 +53,11 @@ void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine:
 
 				((textbox->_textbox_flags & TextBoxComponent::TXT_COMPLETE) != TextBoxComponent::TXTBOX_NULL) ? text = textbox->_textbox_text.c_str() : text = "";
 
-				_text_comp.text.emplace(2, std::make_shared<Engine::TextComponent>(text, 40, Engine::Vector4i(255, 255, 255, 255), Engine::Vector2i(740, 400)));
+				_textboxes.at(entity)->_textbox_text = textFormatting("assets/fonts/ArialMdm.ttf", 40, textbox->_textbox_text);
+
+				_text_comp.text.emplace(2, std::make_shared<Engine::TextComponent>(text, 40, Engine::Vector4i(255, 255, 255, 255), Engine::Vector2i(730, 400)));
+
+				
 
 				_render_comp.layer = Engine::RenderLayerComponent::FG;
 			}
@@ -114,45 +120,49 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 				textbox->_textbox_flags ^= TextBoxComponent::ENTER;
 			}
 
-			/*
-			if ((hor != 0.0) && (vert != 0.0)) {
-
-				if (hor > 0) {
-					hor = (-800 + textbox->_textbox_position.x / 1145.425) * 4;
-				}
-				else {
-					hor = (1280 - textbox->_textbox_position.x / 1145.425) * 4;
-				}
-				
-				if (vert > 0) {
-					vert = (-400 + textbox->_textbox_position.y / 1145.425) * 4;
-				}
-				else {
-					vert = (720 - textbox->_textbox_position.y / 1145.425) * 4;
-				}
-
-			}
-			*/
-
 			componentManager->addComponent<Engine::VelocityComponent>(entity, Engine::Vector2f(hor, vert));
 		}
 		else {
 			if (textbox->dT % 10 == 0) {
-				if ((textbox->_textbox_flags & TextBoxComponent::TXT_COMPLETE) == TextBoxComponent::TXTBOX_NULL) {
-					std::string currentText = _text_comp->getText();
-					if (currentText.size() < textbox->_textbox_text.size()) {
-						currentText.append(textbox->_textbox_text, currentText.size(), 1);
-						_text_comp->setText(currentText.c_str());
+				if ((textbox->_textbox_flags & TextBoxComponent::TXT_CONTINUE) == TextBoxComponent::TXTBOX_NULL) {
+					if ((textbox->_textbox_flags & TextBoxComponent::TXT_COMPLETE) == TextBoxComponent::TXTBOX_NULL) {
+						std::string currentText = _text_comp->getText();
+						if (currentText.size() < textbox->_textbox_text.size()) {
+							currentText.append(textbox->_textbox_text, currentText.size(), 1);
+							_text_comp->setText(currentText.c_str());
+						}
+						else {
+							textbox->_textbox_flags |= TextBoxComponent::TXT_COMPLETE;
+						}
 					}
-					else {
-						textbox->_textbox_flags |= TextBoxComponent::TXT_COMPLETE;
-					}
+				}
+				else {
+
 				}
 			}
 		}
 
 		(textbox->dT < 360) ? textbox->dT+= textbox->_textbox_speed : textbox->dT = 0;
 	}
+}
+
+std::string TR::TextboxSystem::textFormatting(std::string font, int size,  std::string text) {
+	int count;
+	std::string newString = "", newLine;
+	TTF_Font* tempFont = TTF_OpenFont(font.c_str(), size);
+
+	for (char const &ch : text) {
+		newLine += ch;
+		TTF_MeasureText(tempFont, newLine.c_str(), 730, NULL, &count);
+		if (count != newLine.size()) {
+			newString += newLine.substr(0, newLine.find_last_of(' ')) + "\n";
+			newLine = newLine.substr(newLine.find_last_of(' ') + 1);
+		}
+	}
+	newString += newLine;
+
+	TTF_CloseFont(tempFont);
+	return newString;
 }
 
 // Overloaded functions

@@ -21,6 +21,7 @@ namespace TR {
             TRANSITION_DOWN = 1 << 6,
             TXT_ACTIVE = 1 << 7,
             TXT_COMPLETE = 1 << 8,
+            TXT_CONTINUE = 1 << 9,
 
         };
 

@@ -14,6 +14,7 @@ namespace TR {
 
 		void init(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager);
 		void updateRender(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager);
+		std::string textFormatting(std::string font, int size, std::string text);
 
 		// Overloaded functions
 
