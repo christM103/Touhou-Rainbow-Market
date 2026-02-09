@@ -26,6 +26,7 @@ void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine:
 				auto& _sprite_comp = componentManager->addComponent<Engine::MultiSpriteComponent>(entity);
 				auto& _text_comp = componentManager->addComponent<Engine::MultiTextComponent>(entity);
 				auto& _render_comp = componentManager->addComponent<Engine::RenderLayerComponent>(entity, Engine::RenderLayerComponent::FG);
+				auto& _input_comp = componentManager->addComponent<Engine::InputComponent>(entity);
 
 				position = textbox->_textbox_position;
 				if ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) {
@@ -57,9 +58,9 @@ void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine:
 
 				_text_comp.text.emplace(2, std::make_shared<Engine::TextComponent>(text, 40, Engine::Vector4i(255, 255, 255, 255), Engine::Vector2i(730, 400)));
 
-				
-
 				_render_comp.layer = Engine::RenderLayerComponent::FG;
+
+				_input_comp.newKey(SDL_SCANCODE_SPACE);
 			}
 		}
 	}
@@ -123,12 +124,18 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 			componentManager->addComponent<Engine::VelocityComponent>(entity, Engine::Vector2f(hor, vert));
 		}
 		else {
-			if (textbox->dT % 10 == 0) {
+			if (textbox->dT % 20 == 0) {
 				if ((textbox->_textbox_flags & TextBoxComponent::TXT_CONTINUE) == TextBoxComponent::TXTBOX_NULL) {
 					if ((textbox->_textbox_flags & TextBoxComponent::TXT_COMPLETE) == TextBoxComponent::TXTBOX_NULL) {
 						std::string currentText = _text_comp->getText();
 						if (currentText.size() < textbox->_textbox_text.size()) {
 							currentText.append(textbox->_textbox_text, currentText.size(), 1);
+							if (currentText.back() == '\n') {
+								textbox->textLine++;
+							}
+							if (textbox->textLine > 6) {
+								textbox->_textbox_flags ^= TextBoxComponent::TXT_CONTINUE;
+							}
 							_text_comp->setText(currentText.c_str());
 						}
 						else {
@@ -143,6 +150,10 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 		}
 
 		(textbox->dT < 360) ? textbox->dT+= textbox->_textbox_speed : textbox->dT = 0;
+		
+		if (componentManager->getComponent<Engine::InputComponent>(entity)->keyPressed(SDL_SCANCODE_SPACE)) {
+			std::cout << "Pressed Space key" << std::endl;
+		}
 	}
 }
 
@@ -155,8 +166,17 @@ std::string TR::TextboxSystem::textFormatting(std::string font, int size,  std::
 		newLine += ch;
 		TTF_MeasureText(tempFont, newLine.c_str(), 730, NULL, &count);
 		if (count != newLine.size()) {
-			newString += newLine.substr(0, newLine.find_last_of(' ')) + "\n";
-			newLine = newLine.substr(newLine.find_last_of(' ') + 1);
+			if (newLine.find_last_of(' ') != std::string::npos) {
+				newString += newLine.substr(0, newLine.find_last_of(' ')) + "\n";
+				newLine = newLine.substr(newLine.find_last_of(' ') + 1);
+			}
+			else {
+				newLine.pop_back();
+				newString += newLine + "\n";
+				newLine = ch;
+			}
+			
+			
 		}
 	}
 	newString += newLine;

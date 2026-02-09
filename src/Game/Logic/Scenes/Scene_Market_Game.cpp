@@ -81,11 +81,11 @@ namespace TR {
 		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity();
 
 		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, 
-			R"(There once was a man from Nantucket, Who kept all of his cash in a bucket, But his daughter, named Nan, Ran away with a man, And as for the bucket, Nantucket.)", 
-			240, 240, 1, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP);
+			R"(ThereoncewasamanfromNantucket,Whokeptallofhiscashinabucket,Buthisdaughter,named Nan,Ranawaywithaman,Andasforthebucket,Nantucket. There once was a man from Nantucket, Who kept all of his cash in a bucket, But his daughter, named Nan, Ran away with a man, And as for the bucket, Nantucket.)",
+			240, 240, 3, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP);
 		gEngine->getECSManager()->addSystem<TextboxSystem>();
 		gEngine->getECSManager()->addSystem<Engine::MotionSystem>();
-		
+		gEngine->getECSManager()->addSystem<Engine::InputSystem>();
 		/*
 		// Creating Market Sprites
 		sprite_set.insert({ "MID_Null",

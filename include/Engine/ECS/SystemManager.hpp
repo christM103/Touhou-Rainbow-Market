@@ -11,9 +11,6 @@ namespace Engine {
 		SystemManager() = default;
 		~SystemManager() = default;
 
-		void init() {
-		}
-
 		template<typename SystemType>
 		void addSystem(std::unique_ptr<SystemType> system) {
 			System sysType = std::type_index(typeid(SystemType));

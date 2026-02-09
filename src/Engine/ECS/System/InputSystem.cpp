@@ -1,3 +1,137 @@
 #pragma once
 
 #include "Engine/ECS/System/InputSystem.hpp"
+
+
+
+void Engine::InputSystem::init(const EntityManager* entityManager, ComponentManager* componentManager) {
+
+	for (const auto& entity : entityManager->getEntities()) {
+		if (componentManager->hasComponent<InputComponent>(entity)) {
+			if (entity_inputs.at(Button).find(entity) == entity_inputs.at(Button).end()) {
+				for (auto& keys : componentManager->getComponent<InputComponent>(entity)->scancode) {
+					entity_inputs.at(Button).emplace(entity);
+					keyboard_keys.emplace(keys.first, KeyComponent(keys.first));
+					if (keys.second == nullptr) {
+						keys.second = &(keyboard_keys.at(keys.first));
+					}
+				}
+			}
+		}
+		else if (componentManager->hasComponent<KeyboardComponent>(entity)) {
+			entity_inputs.at(Keyboard).emplace(entity);
+			componentManager->getComponent<KeyboardComponent>(entity)->key = &current_key;
+
+		}
+		else if (componentManager->hasComponent<MouseComponent>(entity)) {
+			entity_inputs.at(Mouse).emplace(entity);
+			componentManager->getComponent<MouseComponent>(entity)->position = &mouse_position;
+			componentManager->getComponent<MouseComponent>(entity)->buttonL = &(mouse_buttons.at(1));
+			componentManager->getComponent<MouseComponent>(entity)->buttonM = &(mouse_buttons.at(2));
+			componentManager->getComponent<MouseComponent>(entity)->buttonR = &(mouse_buttons.at(3));
+		}
+	}
+
+}
+
+void Engine::InputSystem::updateInput(const EntityManager* entityManager, ComponentManager* componentManager, const Input* inputManager) {
+
+	// Updates all stored keys
+	if (!keyboard_keys.empty()) {
+		for (auto& key : keyboard_keys) {
+			if (inputManager->isKeyPressed(static_cast<SDL_Scancode>(key.first))) {
+				if (!key.second.isPressed && !key.second.isHeld) {
+					key.second.isPressed = true;
+					key.second.isHeld = false;
+				}
+				else {
+					key.second.isHeld = true;
+					key.second.isPressed = false;
+				}
+				key.second.isReleased = false;
+			}
+			else {
+				if (key.second.isPressed || key.second.isHeld) {
+					key.second.isReleased = true;
+				}
+				else if (key.second.isReleased) {
+					key.second.isReleased = false;
+				}
+				key.second.isPressed = false;
+				key.second.isHeld = false;
+			}
+		}
+	}
+
+	// Updates the mouse buttons
+	if (!mouse_buttons.empty()) {
+		mouse_position = inputManager->getMousePosition();
+
+		for (auto& button : mouse_buttons) {
+			if (inputManager->isMouseClicked(button.first)) {
+				if (!button.second.isPressed && !button.second.isHeld) {
+					button.second.isPressed = true;
+					button.second.isHeld = false;
+				}
+				else {
+					button.second.isHeld = true;
+					button.second.isPressed = false;
+				}
+				button.second.isReleased = false;
+			}
+			else {
+				if (button.second.isPressed || button.second.isHeld) {
+					button.second.isReleased = true;
+				}
+				else if (button.second.isReleased) {
+					button.second.isReleased = false;
+				}
+				button.second.isPressed = false;
+				button.second.isHeld = false;
+			}
+		}
+	}	
+
+	// Updates the current keyboard
+	if (!entity_inputs.at(Keyboard).empty()) {
+		auto key = inputManager->getCurrentKey();
+		if (key.second == false) {
+			current_key = 0;
+		}
+		else {
+			current_key = key.first;
+		}
+	}
+
+}
+
+// Overloaded functions
+
+void Engine::InputSystem::create(const SystemContext& ctx) {
+	if (!ctx.entityManager || !ctx.componentManager) {
+		return;
+	}
+	else {
+		this->init(ctx.entityManager, ctx.componentManager);
+	}
+}
+
+void Engine::InputSystem::update(const SystemContext& ctx) {
+	if (!ctx.entityManager || !ctx.componentManager || !ctx.input) {
+		return;
+	}
+	else {
+		this->updateInput(ctx.entityManager, ctx.componentManager, ctx.input);
+	}
+
+}
+
+void Engine::InputSystem::render(const SystemContext& ctx) {
+
+}
+
+void Engine::InputSystem::quit(const SystemContext& ctx) {
+	entity_inputs.clear();
+	keyboard_keys.clear();
+	mouse_buttons.clear();
+}

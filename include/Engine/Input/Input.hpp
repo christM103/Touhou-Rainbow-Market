@@ -18,6 +18,14 @@ public:
     // Checks if a mouse button was pressed
     bool isMouseClicked(int click) const;
 
+    // Checks the currently logged button
+    std::pair<const SDL_Scancode, bool> getCurrentKey() const {
+        if (keyStates.empty()) {
+            return { SDL_SCANCODE_UNKNOWN , false };
+        }
+        return (*(keyStates.begin()));
+    }
+
     /// @brief Track the current position of the mouse on the screen
     /// @return The current mouse position
     Vector2i getMousePosition() const { return mousePosition; }

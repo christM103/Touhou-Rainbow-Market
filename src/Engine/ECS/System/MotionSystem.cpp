@@ -3,6 +3,7 @@
 #include "Engine/ECS/System/MotionSystem.hpp"
 
 
+
 void Engine::MotionSystem::init(const EntityManager* entityManager, ComponentManager* componentManager) {
 	TransType trans;
 	VelType vel;
@@ -42,7 +43,8 @@ void Engine::MotionSystem::movementUpdate(const EntityManager* entityManager, Co
 	MultiVelocityComponent* multiVelComp;
 
 	auto transformationMutator = [](TransformComponent* transformComp, VelocityComponent* velocityComp) {
-		transformComp->position = Vector2i(transformComp->position.x + velocityComp->linear.x, transformComp->position.y + velocityComp->linear.y);
+		transformComp->position = Vector2i(static_cast<int>(static_cast<float>(transformComp->position.x) + velocityComp->linear.x), 
+			static_cast<int>(static_cast<float>(transformComp->position.y) + velocityComp->linear.y));
 		transformComp->rotation += velocityComp->angular;
 		transformComp->scale += velocityComp->scalar;
 	};

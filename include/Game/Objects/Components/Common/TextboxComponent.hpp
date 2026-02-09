@@ -32,6 +32,9 @@ namespace TR {
         uint8_t _textbox_style;
         uint16_t _textbox_flags;
 
+        // Text Properties
+        uint8_t textLine{ 1 };
+
         // Time Properties
         uint8_t dT{ 0 };
 
