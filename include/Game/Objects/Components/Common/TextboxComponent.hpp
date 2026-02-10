@@ -22,7 +22,7 @@ namespace TR {
             TXT_ACTIVE = 1 << 7,
             TXT_COMPLETE = 1 << 8,
             TXT_CONTINUE = 1 << 9,
-
+            END = 1 << 10,
         };
 
         /// Textbox Components
@@ -36,7 +36,7 @@ namespace TR {
         uint8_t textLine{ 1 };
 
         // Time Properties
-        uint8_t dT{ 0 };
+        uint16_t dT{ 0 };
 
         TextBoxComponent(const char* text, int x, int y, int txtSp = 1, uint16_t flags = TXTBOX_NULL | TXT_COMPLETE, int txtSt = 0)
             : _textbox_text(text), _textbox_position(x, y), _textbox_speed(txtSp), _textbox_flags(flags), _textbox_style(txtSt){}

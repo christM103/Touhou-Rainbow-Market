@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iterator>
+
 #include "Engine/ECS/System/Systems.hpp"
 #include "Engine/ECS/ComponentManager.hpp"
 
@@ -129,6 +131,7 @@ namespace Engine {
 			void render(const SystemContext& ctx) override { systemPtr->render(ctx); }
 			void quit(const SystemContext& ctx) override { systemPtr->quit(ctx); }
 
+			SystemType* getSystemPtr() const { return systemPtr.get(); }
 		private:
 			std::unique_ptr<SystemType> systemPtr;
 		};

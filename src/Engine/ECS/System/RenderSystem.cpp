@@ -335,5 +335,6 @@ void Engine::RenderSystem::render(const SystemContext& ctx) {
 }
 
 void Engine::RenderSystem::quit(const SystemContext& ctx) {
-	this->~RenderSystem();
+	_render_targets.clear();
+	_sprite_set.clear();
 }

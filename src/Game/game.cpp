@@ -33,24 +33,7 @@ bool Game::create() {
 
 void Game::update(float deltaTime) {
 
-    _beat++;
-    if (_beat % 5 == 0) {
-        // Update logic for the game
-
-        _currScene->update(gEngine, _player_set);
-
-        if (gEngine->getInput()->isKeyPressed(SDL_SCANCODE_Z) && (_player_set.size() > 0)) {
-            if (!_input_pressed.at(SDL_SCANCODE_Z)) {
-                _player_set.at(0)->getLand()->setLand(0, TR::Wriggle());
-                _input_pressed.at(SDL_SCANCODE_Z) = true;
-            }
-        }
-        else {
-            _input_pressed.at(SDL_SCANCODE_Z) = false;
-        }
-
-        _beat = 0;
-    }
+    _currScene->update(gEngine, _player_set);
 
     if (_currScene->getSceneCurr() != _currScene->getSceneNext()) {
         TR::Scene::Scene_ID state = _currScene->getSceneNext();
@@ -77,11 +60,7 @@ void Game::update(float deltaTime) {
 
 void Game::render() {
     // Get the renderer from the engine's window
-    SDL_Renderer* renderer = gEngine->getWindow()->getRenderer();
 
-    // Example rendering code
-    //playerSprite->draw(renderer, Engine::Vector2i(0, 0));
-    _currScene->render(renderer, gEngine, _player_set);
     gEngine->getECSManager()->render();
 }
 void Game::quit() {

@@ -28,7 +28,6 @@ namespace TR {
 
         virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) = 0;
         virtual void update(Engine::Engine* gEngine, Player_Set& player_set) = 0;
-        virtual void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) = 0;
 
         inline Scene_ID getSceneCurr() { return _currState; }
         inline Scene_ID getSceneNext() { return _nextState; }
@@ -48,7 +47,6 @@ namespace TR {
 
         bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
         void update(Engine::Engine* gEngine, Player_Set& player_set) override;
-        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
 
     };
 
@@ -59,7 +57,6 @@ namespace TR {
 
         bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
         void update(Engine::Engine* gEngine, Player_Set& player_set) override;
-        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
 
 
     private:
@@ -93,7 +90,6 @@ namespace TR {
 
         bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set);
         void update(Engine::Engine* gEngine, Player_Set& player_set) override;
-        void render(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
 
         void state_machine(Engine::Engine* gEngine, Player_Set& player_set);
 

@@ -111,5 +111,5 @@ void Engine::MotionSystem::render(const SystemContext& ctx) {
 }
 
 void Engine::MotionSystem::quit(const SystemContext& ctx) {
-	this->~MotionSystem();
+	_entities.clear();
 }

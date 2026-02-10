@@ -18,23 +18,40 @@ void Engine::InputSystem::init(const EntityManager* entityManager, ComponentMana
 				}
 			}
 		}
-		else if (componentManager->hasComponent<KeyboardComponent>(entity)) {
-			entity_inputs.at(Keyboard).emplace(entity);
-			componentManager->getComponent<KeyboardComponent>(entity)->key = &current_key;
-
+		if (componentManager->hasComponent<KeyboardComponent>(entity)) {
+			if (entity_inputs.at(Keyboard).find(entity) == entity_inputs.at(Keyboard).end()) {
+				entity_inputs.at(Keyboard).emplace(entity);
+				componentManager->getComponent<KeyboardComponent>(entity)->key = &current_key;
+			}
 		}
-		else if (componentManager->hasComponent<MouseComponent>(entity)) {
-			entity_inputs.at(Mouse).emplace(entity);
-			componentManager->getComponent<MouseComponent>(entity)->position = &mouse_position;
-			componentManager->getComponent<MouseComponent>(entity)->buttonL = &(mouse_buttons.at(1));
-			componentManager->getComponent<MouseComponent>(entity)->buttonM = &(mouse_buttons.at(2));
-			componentManager->getComponent<MouseComponent>(entity)->buttonR = &(mouse_buttons.at(3));
+		if (componentManager->hasComponent<MouseComponent>(entity)) {
+			if (entity_inputs.at(Mouse).find(entity) == entity_inputs.at(Mouse).end()) {
+				entity_inputs.at(Mouse).emplace(entity);
+				componentManager->getComponent<MouseComponent>(entity)->position = &mouse_position;
+				componentManager->getComponent<MouseComponent>(entity)->buttonL = &(mouse_buttons.at(1));
+				componentManager->getComponent<MouseComponent>(entity)->buttonM = &(mouse_buttons.at(2));
+				componentManager->getComponent<MouseComponent>(entity)->buttonR = &(mouse_buttons.at(3));
+			}
 		}
 	}
 
 }
 
 void Engine::InputSystem::updateInput(const EntityManager* entityManager, ComponentManager* componentManager, const Input* inputManager) {
+
+
+	// Erases any entity that no longer exists
+	for (auto cat : { Button, Keyboard, Mouse }) {
+		std::erase_if(entity_inputs.at(cat), [&](const auto& item) {
+			const Entity& ent = item;
+			return entityManager->getEntities().find(ent) == entityManager->getEntities().end();
+			});
+	}
+
+	/* Potentially implement lambda for searching through the entity list to remove an entity */
+
+	// Update for any added entites within the engine
+	init(entityManager, componentManager);
 
 	// Updates all stored keys
 	if (!keyboard_keys.empty()) {

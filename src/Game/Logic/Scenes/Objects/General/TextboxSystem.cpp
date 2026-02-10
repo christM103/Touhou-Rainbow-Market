@@ -27,6 +27,7 @@ void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine:
 				auto& _text_comp = componentManager->addComponent<Engine::MultiTextComponent>(entity);
 				auto& _render_comp = componentManager->addComponent<Engine::RenderLayerComponent>(entity, Engine::RenderLayerComponent::FG);
 				auto& _input_comp = componentManager->addComponent<Engine::InputComponent>(entity);
+				auto& _mouse_comp = componentManager->addComponent<Engine::MouseComponent>(entity);
 
 				position = textbox->_textbox_position;
 				if ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) {
@@ -84,14 +85,12 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 			if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_LEFT) != TextBoxComponent::TXTBOX_NULL) {
 				hor = -4.0;
 				if (_transform_comp->position.x + hor < textbox->_textbox_position.x) {
-					textbox->_textbox_flags ^= TextBoxComponent::TRANSITION_LEFT;
 					hor = 0.0;
 				}
 			}
 			else if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_RIGHT) != TextBoxComponent::TXTBOX_NULL) {
 				hor = 4.0;
 				if (_transform_comp->position.x + hor > textbox->_textbox_position.x) {
-					textbox->_textbox_flags ^= TextBoxComponent::TRANSITION_RIGHT;
 					hor = 0.0;
 				}
 			}
@@ -102,14 +101,12 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 			if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_UP) != TextBoxComponent::TXTBOX_NULL) {
 				vert = -4.0;
 				if (_transform_comp->position.y + vert < textbox->_textbox_position.y) {
-					textbox->_textbox_flags ^= TextBoxComponent::TRANSITION_UP;
 					vert = 0.0;
 				}
 			}
 			else if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_DOWN) != TextBoxComponent::TXTBOX_NULL) {
 				vert = 4.0;
 				if (_transform_comp->position.y + vert > textbox->_textbox_position.y) {
-					textbox->_textbox_flags ^= TextBoxComponent::TRANSITION_DOWN;
 					vert = 0.0;
 				}
 			}
@@ -122,12 +119,55 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 			}
 
 			componentManager->addComponent<Engine::VelocityComponent>(entity, Engine::Vector2f(hor, vert));
+		} 
+		else if ((textbox->_textbox_flags & TextBoxComponent::EXIT) != TextBoxComponent::TXTBOX_NULL) {
+			float hor = 0.0, vert = 0.0;
+			auto& _transform_comp = componentManager->getComponent<Engine::MultiTransformComponent>(entity)->transforms.at(0);
+
+			if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_LEFT) != TextBoxComponent::TXTBOX_NULL) {
+				hor = -4.0;
+				if (_transform_comp->position.x + hor < -800) {
+					hor = 0.0;
+				}
+			}
+			else if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_RIGHT) != TextBoxComponent::TXTBOX_NULL) {
+				hor = 4.0;
+				if (_transform_comp->position.x + hor > 1280) {
+					hor = 0.0;
+				}
+			}
+			else {
+				hor = 0.0;
+			}
+
+			if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_UP) != TextBoxComponent::TXTBOX_NULL) {
+				vert = -4.0;
+				if (_transform_comp->position.y + vert < -400) {
+					vert = 0.0;
+				}
+			}
+			else if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_DOWN) != TextBoxComponent::TXTBOX_NULL) {
+				vert = 4.0;
+				if (_transform_comp->position.y + vert > 720) {
+					vert = 0.0;
+				}
+			}
+			else {
+				vert = 0.0;
+			}
+
+			if ((hor == 0.0) && (vert == 0.0)) {
+				textbox->_textbox_flags ^= TextBoxComponent::EXIT;
+				textbox->_textbox_flags ^= TextBoxComponent::END;
+			}
+
+			componentManager->addComponent<Engine::VelocityComponent>(entity, Engine::Vector2f(hor, vert));
 		}
-		else {
-			if (textbox->dT % 20 == 0) {
+		else if ((textbox->_textbox_flags & TextBoxComponent::END) == TextBoxComponent::TXTBOX_NULL) {
+			std::string currentText = _text_comp->getText();
+			if (textbox->dT % 30 == 0) {
 				if ((textbox->_textbox_flags & TextBoxComponent::TXT_CONTINUE) == TextBoxComponent::TXTBOX_NULL) {
 					if ((textbox->_textbox_flags & TextBoxComponent::TXT_COMPLETE) == TextBoxComponent::TXTBOX_NULL) {
-						std::string currentText = _text_comp->getText();
 						if (currentText.size() < textbox->_textbox_text.size()) {
 							currentText.append(textbox->_textbox_text, currentText.size(), 1);
 							if (currentText.back() == '\n') {
@@ -143,16 +183,53 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 						}
 					}
 				}
-				else {
+			}
+			if (componentManager->getComponent<Engine::InputComponent>(entity)->keyPressed(SDL_SCANCODE_SPACE)) {
 
+				if ((textbox->_textbox_flags & TextBoxComponent::TXT_COMPLETE) != TextBoxComponent::TXTBOX_NULL) {
+					textbox->_textbox_flags ^= TextBoxComponent::EXIT;
+
+					if (((textbox->_textbox_flags & TextBoxComponent::TRANSITION_LEFT) != TextBoxComponent::TXTBOX_NULL) ||
+						((textbox->_textbox_flags & TextBoxComponent::TRANSITION_RIGHT) != TextBoxComponent::TXTBOX_NULL)) {
+						textbox->_textbox_flags ^= TextBoxComponent::TRANSITION_LEFT;
+						textbox->_textbox_flags ^= TextBoxComponent::TRANSITION_RIGHT;
+					}
+
+					if (((textbox->_textbox_flags & TextBoxComponent::TRANSITION_UP) != TextBoxComponent::TXTBOX_NULL) ||
+						((textbox->_textbox_flags & TextBoxComponent::TRANSITION_DOWN) != TextBoxComponent::TXTBOX_NULL)) {
+						textbox->_textbox_flags ^= TextBoxComponent::TRANSITION_UP;
+						textbox->_textbox_flags ^= TextBoxComponent::TRANSITION_DOWN;
+					}
+				}
+
+				if ((textbox->_textbox_flags & TextBoxComponent::TXT_CONTINUE) != TextBoxComponent::TXTBOX_NULL) {
+					_text_comp->setText("");
+					textbox->textLine = 0;
+					auto pos = textbox->_textbox_text.find(currentText);
+					if (pos != std::string::npos) {
+						textbox->_textbox_text.erase(pos, currentText.length());
+					}
+					textbox->_textbox_flags ^= TextBoxComponent::TXT_CONTINUE;
+				}
+				else {
+					for (auto ch : textbox->_textbox_text.substr(currentText.size())) {
+						currentText.append(1, ch);
+						if (ch == '\n') {
+							textbox->textLine++;
+						}
+						if (textbox->textLine > 6) {
+							textbox->_textbox_flags ^= TextBoxComponent::TXT_CONTINUE;
+							break;
+						}
+					}
+					_text_comp->setText(currentText.c_str());
+					if (currentText.size() == textbox->_textbox_text.size()) {
+						textbox->_textbox_flags ^= TextBoxComponent::TXT_COMPLETE;
+					}
 				}
 			}
-		}
 
-		(textbox->dT < 360) ? textbox->dT+= textbox->_textbox_speed : textbox->dT = 0;
-		
-		if (componentManager->getComponent<Engine::InputComponent>(entity)->keyPressed(SDL_SCANCODE_SPACE)) {
-			std::cout << "Pressed Space key" << std::endl;
+			(textbox->dT < 360) ? textbox->dT += textbox->_textbox_speed : textbox->dT = 0;
 		}
 	}
 }
@@ -175,8 +252,6 @@ std::string TR::TextboxSystem::textFormatting(std::string font, int size,  std::
 				newString += newLine + "\n";
 				newLine = ch;
 			}
-			
-			
 		}
 	}
 	newString += newLine;
