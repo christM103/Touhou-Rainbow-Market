@@ -26,8 +26,8 @@ namespace TR {
 
         ~Scene() = default;
 
-        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) = 0;
-        virtual void update(Engine::Engine* gEngine, Player_Set& player_set) = 0;
+        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine) = 0;
+        virtual void update(Engine::Engine* gEngine) = 0;
 
         inline Scene_ID getSceneCurr() { return _currState; }
         inline Scene_ID getSceneNext() { return _nextState; }
@@ -36,7 +36,6 @@ namespace TR {
         inline void setSceneNext(Scene_ID state) { _nextState = state; }
 
     protected:
-        std::unordered_map<std::string, Engine::Entity> active_entities;
         Scene_ID _currState{ SC_Null }, _nextState{ SC_Null };
     };
 
@@ -45,8 +44,8 @@ namespace TR {
     public:
         Title_Screen();
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
-        void update(Engine::Engine* gEngine, Player_Set& player_set) override;
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine) override;
+        void update(Engine::Engine* gEngine) override;
 
     };
 
@@ -55,12 +54,8 @@ namespace TR {
     public:
         Char_Select();
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) override;
-        void update(Engine::Engine* gEngine, Player_Set& player_set) override;
-
-
-    private:
-        Engine::Text char_choice_prompt{ "Choose your character using the left and right arrow keys", 40 };
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine) override;
+        void update(Engine::Engine* gEngine) override;
     };
 
     /// @brief Main Market Game Scene
@@ -88,15 +83,13 @@ namespace TR {
         Market_Game();
         explicit Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players);
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set);
-        void update(Engine::Engine* gEngine, Player_Set& player_set) override;
+        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine);
+        void update(Engine::Engine* gEngine) override;
 
         void state_machine(Engine::Engine* gEngine, Player_Set& player_set);
 
     private:
         uint16_t _market_scene_state{ MG_Null_State };
-        std::string test_string = "THE QUICK BROWN FOX JUMPED OVER \nTHE LAZY DOG'S BACK 1234567890\nThe five boxing wizards jump quickly?";
-        Engine::Text balance_text{ "Total Balance: 0", 30 };
     };
 
     

@@ -6,8 +6,13 @@
 
 void Engine::InputSystem::init(const EntityManager* entityManager, ComponentManager* componentManager) {
 
-	for (const auto& entity : entityManager->getEntities()) {
-		if (componentManager->hasComponent<InputComponent>(entity)) {
+
+	const auto* buttonEntities = componentManager->allEntities<InputComponent>();
+	const auto* keyboardEntities = componentManager->allEntities<KeyboardComponent>();
+	const auto* mouseEntities = componentManager->allEntities<MouseComponent>();
+
+	if (buttonEntities) {
+		for (auto& entity : *buttonEntities) {
 			if (entity_inputs.at(Button).find(entity) == entity_inputs.at(Button).end()) {
 				for (auto& keys : componentManager->getComponent<InputComponent>(entity)->scancode) {
 					entity_inputs.at(Button).emplace(entity);
@@ -18,13 +23,19 @@ void Engine::InputSystem::init(const EntityManager* entityManager, ComponentMana
 				}
 			}
 		}
-		if (componentManager->hasComponent<KeyboardComponent>(entity)) {
+	}
+
+	if (keyboardEntities) {
+		for (auto& entity : *keyboardEntities) {
 			if (entity_inputs.at(Keyboard).find(entity) == entity_inputs.at(Keyboard).end()) {
 				entity_inputs.at(Keyboard).emplace(entity);
 				componentManager->getComponent<KeyboardComponent>(entity)->key = &current_key;
 			}
 		}
-		if (componentManager->hasComponent<MouseComponent>(entity)) {
+	}
+
+	if (mouseEntities) {
+		for (auto& entity : *mouseEntities) {
 			if (entity_inputs.at(Mouse).find(entity) == entity_inputs.at(Mouse).end()) {
 				entity_inputs.at(Mouse).emplace(entity);
 				componentManager->getComponent<MouseComponent>(entity)->position = &mouse_position;
@@ -43,8 +54,12 @@ void Engine::InputSystem::updateInput(const EntityManager* entityManager, Compon
 	// Erases any entity that no longer exists
 	for (auto cat : { Button, Keyboard, Mouse }) {
 		std::erase_if(entity_inputs.at(cat), [&](const auto& item) {
-			const Entity& ent = item;
-			return entityManager->getEntities().find(ent) == entityManager->getEntities().end();
+			const auto& entity = item;
+			const auto& entMap = entityManager->getEntities();
+			const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
+				return pair.second == entity;
+				});
+			return (it == entMap.end());
 			});
 	}
 

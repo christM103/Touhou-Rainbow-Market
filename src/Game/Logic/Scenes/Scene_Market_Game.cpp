@@ -20,9 +20,7 @@ namespace TR {
 		//test_textbox.enableAttr(Text::TXT_UP_DOWN);
 	}
 
-	Market_Game::Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players) {}
-
-	bool Market_Game::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) {
+	bool Market_Game::create(SDL_Renderer* renderer, Engine::Engine* gEngine) {
 
 		/* Texture Initialization */
 
@@ -47,63 +45,48 @@ namespace TR {
 		/* Sprite Creation */
 
 		// Create Background Sprite
-		Engine::Entity BGO = gEngine->getECSManager()->createEntity();
+		Engine::Entity BGO = gEngine->getECSManager()->createEntity("BGO");
 		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
 		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1280,720 }, Engine::Vector2i(1280, 720), "BGO");
 
-		Engine::Entity BG_CLOUD1 = gEngine->getECSManager()->createEntity();
+		Engine::Entity BG_CLOUD1 = gEngine->getECSManager()->createEntity("BG_CLOUD1");
 		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BG_CLOUD1, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
 		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BG_CLOUD1, Engine::Recti{ 0,0,2444,144 }, Engine::Vector2i(2444, 144), "BGOCloud");
 
-		Engine::Entity BG_CLOUD2 = gEngine->getECSManager()->createEntity();
+		Engine::Entity BG_CLOUD2 = gEngine->getECSManager()->createEntity("BG_CLOUD2");
 		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BG_CLOUD2, Engine::Vector2i{ -611,150 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
 		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BG_CLOUD2, Engine::Recti{ 0,0,2444,144 }, Engine::Vector2i(2444, 144), "BGOCloud");
 
 		
 		// Creating Character Portraits Sprites
-		Engine::Entity PLAYER = gEngine->getECSManager()->createEntity();
-		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(PLAYER, Engine::Vector2i{ 980,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+		Engine::Entity PLAYER_PORTRAIT = gEngine->getECSManager()->createEntity("PLAYER_PORTRAIT");
+		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(PLAYER_PORTRAIT, Engine::Vector2i{ 980,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
 
-		if (player_set.size() > 0) {
-			if (player_set[0]->getCharState() == S_Reimu) {
-				gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_REI");
-			}
-			else if (player_set[0]->getCharState() == S_Marisa) {
-				gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_MAR");
-			}
-			else {
-				gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_NUL");
-			}
+		if (gEngine->getECSManager()->getComponent<PlayerComponent>(gEngine->getECSManager()->getEntities().at("PLAYER"))->current_char == Player_Data::S_Reimu) {
+			gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_REI");
 		}
+		else if (gEngine->getECSManager()->getComponent<PlayerComponent>(gEngine->getECSManager()->getEntities().at("PLAYER"))->current_char == Player_Data::S_Marisa) {
+			gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_MAR");
+		}
+		else {
+			gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_NUL");
+		}
+
 
 		// Text Box Entity
 
-		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity();
+		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity("TEXTBOX_TEST");
 
 		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, 
-			R"(ThereoncewasamanfromNantucket,Whokeptallofhiscashinabucket,Buthisdaughter,named Nan,Ranawaywithaman,Andasforthebucket,Nantucket. There once was a man from Nantucket, Who kept all of his cash in a bucket, But his daughter, named Nan, Ran away with a man, And as for the bucket, Nantucket.)",
+			R"(ThereoncewasamanfromNantucket,Whokeptallofhiscashinabucket,Buthisdaughter,namedNan,Ranawaywithaman,Andasforthebucket,Nantucket. There once was a man from Nantucket, Who kept all of his cash in a bucket, But his daughter, named Nan, Ran away with a man, And as for the bucket, Nantucket.)",
 			240, 240, 5, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP);
 		gEngine->getECSManager()->addSystem<TextboxSystem>();
-		
-		/*
-		// Creating Market Sprites
-		sprite_set.insert({ "MID_Null",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("MKT_NULL"), 128, 128) });
-
-		test_textbox.init(renderer, gEngine, sprite_set, player_set);
-
-		// Creating Text Sprites
-
-		sprite_set.insert({ "player_balance",
-			std::make_unique<Engine::Sprite>(gEngine->getAssetManager()->getTexture("TEXT_PBAL"),
-				balance_text.getSize().x * SCREEN_SCALE, balance_text.getSize().y * SCREEN_SCALE)});
-		*/
 
 		return true;
 		
 	}
 
-	void Market_Game::update(Engine::Engine* gEngine, Player_Set& player_set) {
+	void Market_Game::update(Engine::Engine* gEngine) {
 
 		if (gEngine->getECSManager()->componentExists<TextBoxComponent>()) {
 			if (gEngine->getECSManager()->isSystemRunning<TextboxSystem>()) {

@@ -8,7 +8,7 @@ namespace TR {
         _nextState = _currState;
     }
 
-    bool Title_Screen::create(SDL_Renderer* renderer, Engine::Engine* gEngine, Player_Set& player_set) {
+    bool Title_Screen::create(SDL_Renderer* renderer, Engine::Engine* gEngine) {
 
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Title_Screen/Placeholder_Title.png", "TITLE", renderer);
 
@@ -17,26 +17,25 @@ namespace TR {
         gEngine->getECSManager()->addSystem<Engine::InputSystem>();
 
         // Creates the BGO
-        Engine::Entity BGO = gEngine->getECSManager()->createEntity();
+        Engine::Entity BGO = gEngine->getECSManager()->createEntity("BGO");
         gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
         gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1280,720 }, Engine::Vector2i(1280, 720), "TITLE");
         auto& input = gEngine->getECSManager()->addComponent<Engine::InputComponent>(BGO);
         input.newKey(SDL_SCANCODE_SPACE);
-        active_entities.emplace("BGO", BGO);
 
         // Creates the Text
-        Engine::Entity TEXT = gEngine->getECSManager()->createEntity();
+        Engine::Entity TEXT = gEngine->getECSManager()->createEntity("TEXT");
         gEngine->getECSManager()->addComponent<Engine::TransformComponent>(TEXT, Engine::Vector2i{ (gEngine->getWindow()->getWidth() / 2), 600 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f }, true);
         gEngine->getECSManager()->addComponent<Engine::TextComponent>(TEXT, "Press Space to play!", 60, Engine::Vector4i(0, 0, 0, 255));
-        active_entities.emplace("TEXT", TEXT);
 
         return true;
     }
 
-    void Title_Screen::update(Engine::Engine* gEngine, Player_Set& player_set) {
-        if (gEngine->getECSManager()->getComponent<Engine::InputComponent>(active_entities.at("BGO"))->keyPressed(SDL_SCANCODE_SPACE)) {
+    void Title_Screen::update(Engine::Engine* gEngine) {
+        if (gEngine->getECSManager()->getComponent<Engine::InputComponent>(gEngine->getECSManager()->getEntities().at("BGO"))->keyPressed(SDL_SCANCODE_SPACE)) {
             _nextState = SC_CharS;
-            active_entities.clear();
+            gEngine->getECSManager()->destroyEntity("BGO");
+            gEngine->getECSManager()->destroyEntity("TEXT");
         }
     }
 

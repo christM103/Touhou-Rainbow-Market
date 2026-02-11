@@ -66,6 +66,15 @@ namespace Engine {
         }
 
         template<typename ComponentType>
+        const std::unordered_set<Entity>* allEntities() const {
+            Component compType = std::type_index(typeid(ComponentType));
+            if (componentTypes.find(compType) != componentTypes.end()) {
+                return static_cast<const std::unordered_set<Entity>*>(&componentToEntity.at(compType));
+            }
+            return nullptr;
+        }
+
+        template<typename ComponentType>
         bool hasComponent(Entity entity) const {
             Component compType = std::type_index(typeid(ComponentType));
             auto it = componentTypes.find(compType);
@@ -106,12 +115,19 @@ namespace Engine {
                 entityToComponent[entity].clear();
                 entityToComponent.erase(entity);
 
+                std::vector<Component> toRemove;
+                toRemove.reserve(componentToEntity.size());
+
                 for (auto& component : componentToEntity) {
                     component.second.erase(entity);
                     if (component.second.empty()) {
-                        componentTypes.erase(component.first);
-                        componentToEntity.erase(component.first);
+                        toRemove.push_back(component.first);
                     }
+                }
+
+                for (auto const& comp : toRemove) {
+                    componentToEntity.erase(comp);
+                    componentTypes.erase(comp);
                 }
 
                 return true;

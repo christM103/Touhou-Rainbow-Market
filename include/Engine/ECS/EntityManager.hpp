@@ -10,13 +10,13 @@ public:
     EntityManager() = default;
     ~EntityManager() = default;
 
-    Entity createEntity() {
+    Entity createEntity(std::string entity) {
         Entity id = nextEntity++;
-        entities.insert(id);
+        entities.emplace(entity, id);
         return id;
     }
 
-    void destroy(Entity entity) {
+    void destroy(std::string entity) {
         entities.erase(entity);
 
     }
@@ -26,7 +26,7 @@ public:
         //nextEntity = 1;
     }
 
-    const std::unordered_set<Entity>& getEntities() const {
+    const std::unordered_map<std::string, Entity>& getEntities() const {
         return entities;
     }
 
@@ -34,7 +34,7 @@ public:
 private:
 
     Entity nextEntity{ 1 };
-    std::unordered_set<Entity> entities{ };
+    std::unordered_map<std::string, Entity> entities{ };
 
 };
 } // namespace Engine

@@ -33,14 +33,14 @@ namespace Engine {
 
         /// @brief Creates a new entity
         /// @return The newly created entity
-        Entity createEntity() {
-            return entityManager->createEntity();
+        Entity createEntity(std::string newEntity) {
+            return entityManager->createEntity(newEntity);
         }
 
         /// @brief Destroys an existing entity
         /// @param entity The entity to destroy
-        void destroyEntity(Entity entity) {
-            componentManager->clearComponents(entity);
+        void destroyEntity(std::string entity) {
+            componentManager->clearComponents(entityManager->getEntities().at(entity));
             entityManager->destroy(entity);
             return;
         }
@@ -50,6 +50,10 @@ namespace Engine {
             componentManager->clearAllComponents();
             entityManager->destroyAll();
             return;
+        }
+
+        const std::unordered_map<std::string, Entity>& getEntities() const {
+            return entityManager->getEntities();
         }
 
         /// @brief Adds a component to an entity
@@ -90,6 +94,11 @@ namespace Engine {
             return componentManager->componentExists<ComponentType>();
         }
 
+
+        template<typename ComponentType>
+        const std::unordered_set<Entity>* allEntities() const {
+            return componentManager->allEntities<ComponentType>();
+        }
 
 		template<typename SystemType>
 		void addSystem(std::unique_ptr<SystemType> system) {

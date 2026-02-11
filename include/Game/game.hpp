@@ -20,9 +20,5 @@ private:
     // Game-specific data and methods
 
     std::unique_ptr<TR::Scene> _currScene;
-    Player_Set _player_set;
-    int _beat{ 0 };
-    std::unordered_map<SDL_Scancode, bool> _input_pressed{ 
-        {SDL_SCANCODE_Q, false }, {SDL_SCANCODE_W, false }, {SDL_SCANCODE_Z, false }, };
 };
 

@@ -4,9 +4,6 @@
 #include <string>
 #include <unordered_set>
 
-
-#include "Engine/ECS/Components/Components.hpp"
-
 namespace TR {
 
     struct TextBoxComponent {

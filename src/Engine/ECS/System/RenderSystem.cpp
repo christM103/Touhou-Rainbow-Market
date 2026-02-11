@@ -24,7 +24,7 @@ void Engine::RenderSystem::init(const EntityManager* entityManager, const Compon
 	Render_Flags renderflags;
 
 	// Initializes any entities that are renderable targets
-	for (Entity entity : entityManager->getEntities()) {
+	for (const auto& [key, entity] : entityManager->getEntities()) {
 		if (_sprite_set.find(entity) == _sprite_set.end()) {
 
 			renderflags = Render_Flags::Null;
@@ -243,18 +243,24 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 	const SpriteComponent* sprite_data;
 	const TextComponent* text_data;
 
-	// Updates current render data by erasing any entities/components that currently do not exist
+	// Updates current render data by erasing any entities that currently do not exist
 
 	std::erase_if(_render_targets, [&](const auto& item) {
-		const Entity& entity = std::get<0>(item);
-		return entityManager->getEntities().find(entity) == entityManager->getEntities().end();
+		const auto& [entity, flags, layer] = item;
+		const auto& entMap = entityManager->getEntities();
+		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
+			return pair.second == entity;
+			});
+		return (it == entMap.end());
 		});
 
 	std::erase_if(_sprite_set, [&](const auto& item) {
-		const Entity& entity = std::get<0>(item);
-		return entityManager->getEntities().find(entity) == entityManager->getEntities().end()
-			&& !componentManager->hasComponent<TextComponent>(entity) && !componentManager->hasComponent<SpriteComponent>(entity)
-			&& !componentManager->hasComponent<MultiTextComponent>(entity) && !componentManager->hasComponent<MultiSpriteComponent>(entity);
+		const auto& [entity, vector] = item;
+		const auto& entMap = entityManager->getEntities();
+		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
+			return pair.second == entity;
+			});
+		return (it == entMap.end());
 		});
 
 

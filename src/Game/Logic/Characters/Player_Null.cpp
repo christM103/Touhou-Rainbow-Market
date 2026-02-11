@@ -3,11 +3,9 @@
 #include "Game/Logic/Player.hpp"
 
 namespace TR {
-    Player_Null::Player_Null(Player_ID ID, int type) : Player_Data(ID) {
+    Player_Null::Player_Null(int type) : Player_Data() {
         _style_type = type;
         _char_desc = "Null \nType Num " + std::to_string(_style_type);
-        _player_char_state = S_Null_Char;
-        _player_pathway = { S_Koishi, S_Koishi, S_Koishi, S_Koishi, S_Koishi };
     }
 
     Player_Null::~Player_Null() {}

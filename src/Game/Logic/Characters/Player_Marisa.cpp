@@ -33,11 +33,9 @@ Once per turn you can choose to…
 
 namespace TR {
 
-Player_Marisa::Player_Marisa(Player_ID ID, int type) : Player_Data(ID) {
+Player_Marisa::Player_Marisa(int type) {
     _style_type = type;
     _char_desc = "Marisa \nType Num " + std::to_string(_style_type);
-    _player_char_state = S_Marisa;
-    _player_pathway = { S_Tewi, S_Sanae, S_Koishi, S_Reimu, S_Flandre };
 }
 
 Player_Marisa::~Player_Marisa() {}

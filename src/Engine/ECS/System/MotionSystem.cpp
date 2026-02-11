@@ -8,7 +8,7 @@ void Engine::MotionSystem::init(const EntityManager* entityManager, ComponentMan
 	TransType trans;
 	VelType vel;
 
-	for (const auto& entity : entityManager->getEntities()) {
+	for (const auto& [key, entity] : entityManager->getEntities()) {
 		if (_entities.find(entity) == _entities.end()) {
 			if (componentManager->hasComponent<TransformComponent>(entity)) {
 				trans = isSingleTrans;
@@ -50,9 +50,14 @@ void Engine::MotionSystem::movementUpdate(const EntityManager* entityManager, Co
 	};
 
 	std::erase_if(_entities, [&](const auto& item) {
-		const Entity& entity = std::get<0>(item);
-		return entityManager->getEntities().find(entity) == entityManager->getEntities().end();
+		const auto& [entity, data] = item;
+		const auto& entMap = entityManager->getEntities();
+		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
+			return pair.second == entity;
+			});
+		return (it == entMap.end());
 		});
+
 	this->init(entityManager, componentManager);
 
 	for (const auto& pair: _entities) {

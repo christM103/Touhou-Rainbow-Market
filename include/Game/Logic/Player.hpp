@@ -5,29 +5,30 @@
 
 #include <memory>
 #include <vector>
+#include <map>
+
 #include "Game/Logic/Land.hpp"
 
 namespace TR {
 
 // TODO: Replace enums w uint16s, try to combine Player_Data class w Character class
 
-enum Char_State : uint8_t {
-    S_Null_Char, S_Reimu, S_Marisa, S_Sanae, S_Flandre, S_Youmu, S_Tewi, S_Koishi
-};
 
-static const std::string Char_State_Str[] =
-    {"Null", "Reimu", "Marisa", "Sanae", "Flandre", "Youmu", "Tewi", "Koishi"};
-
-enum Action_State : uint8_t {
-    A_Idle, A_Action_1, A_Action_2, A_Finished
-};
-
-enum Player_ID : uint8_t {
-    PI_Player_Null, PI_Player_1, PI_Player_2, PI_Player_3, PI_Player_4
-};
 
 class Player_Data{
  public:
+     enum Char_State : uint8_t {
+         S_Null_Char, S_Reimu, S_Marisa, S_Sanae, S_Flandre, S_Youmu, S_Tewi, S_Koishi
+     };
+
+     enum Action_State : uint8_t {
+         A_Start, A_Action_1, A_Action_2, A_Finished
+     };
+
+     enum Player_ID : uint8_t {
+         PI_Player_Null, PI_Player_1, PI_Player_2, PI_Player_3, PI_Player_4
+     };
+
     // Constructor and Destuctor
     Player_Data();
     explicit Player_Data(Player_ID ID);
@@ -40,51 +41,43 @@ class Player_Data{
     Player_Data& operator=(Player_Data&& other) noexcept = default;
 
     // Standard Accessors
-    inline Player_ID getPlayerID() { return _player_ID; };
-    inline int getCharState() { return _player_char_state; };
     inline int getType() { return _style_type; };
-    std::string getPathway();
     inline std::unique_ptr<Land>& getLand() { return _player_land; };
     inline float getBalance() { return _player_balance; };
     inline float getProfit() { return _player_profit; };
-    inline int getTurn() { return _turn; };
     inline std::string getActionState() { return std::to_string(_player_action_state); };
 
     // Standard Mutators
     inline void setType(int type) { _style_type = type; };
-    inline void setTurn(int turn) { _turn = turn; };
     inline void setDesc(std::string str) { _char_desc = str; }
-    void setChar(Char_State state);
-    void setPathway();
 
     // Other Functions
     void balanceChange(float change);
     void showDesc();
-    void turnInc();
 
  protected:
-	 Player_ID _player_ID;                                                               // Player Identifier
-     Char_State _player_char_state{ Char_State::S_Null_Char };                           // Player's Current Character State
      std::string _char_desc{ "" };                                                       // Player's Character Description
      int _style_type{ 0 };                                                               // Player's Playstyle Type Number
-     std::vector<Char_State> _player_pathway{ Char_State::S_Null_Char };                 // Player's Character Progression Pathway
 	 std::unique_ptr<Land> _player_land{ new Land() };                                   // Player's Land Lot
 	 float _player_balance{ 0 };                                                         // Player's Current Balance
 	 float _player_profit{ 0 };                                                          // Player's Total Profit
-     int _turn{ 0 };                                                                     // Player's Current Turn Number
-	 Action_State _player_action_state{ Action_State::A_Idle };                          // Player's Current Action State
+	 Action_State _player_action_state{ Action_State::A_Start };                          // Player's Current Action State
+
+
+     std::map<Char_State, std::string> Char_State_Str{ {S_Null_Char, "Null"}, {S_Reimu, "Reimu"}, {S_Marisa, "Marisa"}, {S_Sanae, "Sanae"},
+         {S_Flandre, "Flandre"}, { S_Youmu, "Youmu"}, {S_Tewi, "Tewi"}, {S_Koishi, "Koishi"} };
 };
 
 class Player_Null : public Player_Data {
 public:
-    Player_Null(Player_ID ID, int type);
+    Player_Null(int type);
     ~Player_Null();
 };
 
 class Player_Reimu : public Player_Data {
 public:
     // Constructor and Destuctor
-    Player_Reimu(Player_ID ID, int type);
+    Player_Reimu(int type);
     ~Player_Reimu();
 
     // Child Functions
@@ -100,7 +93,7 @@ private:
 class Player_Marisa : public Player_Data {
 public:
     // Constructor and Destuctor
-    Player_Marisa(Player_ID ID, int type);
+    Player_Marisa(int type);
     ~Player_Marisa();
 
     // Child Functions

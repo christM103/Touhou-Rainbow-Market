@@ -10,14 +10,15 @@ TR::TextboxSystem::~TextboxSystem() {
 }
 
 void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager) {
+	const auto* entities = componentManager->allEntities<TextBoxComponent>();
 	TextBoxComponent* textbox;
 
 	const char* text;
 	Engine::Vector2i position;
 
 	// Initialize the textboxes for each entity
-	for (const auto& entity : entityManager->getEntities()) {
-		if (componentManager->hasComponent<TextBoxComponent>(entity) || (_textboxes.find(entity) == _textboxes.end())) {
+	for (const auto& entity : *entities) {
+		if (_textboxes.find(entity) == _textboxes.end()) {
 			textbox = componentManager->getComponent<TextBoxComponent>(entity);
 			if (textbox && _textboxes.try_emplace(entity, std::make_unique<TextBoxComponent>(*textbox)).second) {
 
@@ -70,8 +71,12 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 	Engine::TextComponent* _text_comp;
 
 	std::erase_if(_textboxes, [&](const auto& item) {
-		const Engine::Entity& entity = std::get<0>(item);
-		return entityManager->getEntities().find(entity) == entityManager->getEntities().end();
+		const auto& [entity, component] = item;
+		const auto& entMap = entityManager->getEntities();
+		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
+			return pair.second == entity;
+			});
+		return (it == entMap.end());
 		});
 
 

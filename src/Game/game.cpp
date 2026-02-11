@@ -26,14 +26,14 @@ bool Game::create() {
     gEngine->getAssetManager()->loadTexture("assets/player.png", "player", renderer);
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
     */
-    _currScene->create(renderer, gEngine, _player_set);
+    _currScene->create(renderer, gEngine);
     gEngine->getECSManager()->create();
     return true;
 }
 
 void Game::update(float deltaTime) {
 
-    _currScene->update(gEngine, _player_set);
+    _currScene->update(gEngine);
 
     if (_currScene->getSceneCurr() != _currScene->getSceneNext()) {
         TR::Scene::Scene_ID state = _currScene->getSceneNext();
@@ -45,9 +45,7 @@ void Game::update(float deltaTime) {
                 move_state(std::make_unique<TR::Char_Select>());
                 break;
             case TR::Scene::SC_Main:
-                if (_player_set.size()) {
-                    move_state(std::make_unique<TR::Market_Game>());
-                }
+                move_state(std::make_unique<TR::Market_Game>());
                 break;
             default:
                 break;
@@ -66,7 +64,6 @@ void Game::render() {
 void Game::quit() {
     // Shutdown code for the game
     gEngine->getECSManager()->quit();
-    _player_set.clear();
 }
 
 void Game::move_state(std::unique_ptr<TR::Scene> newState) {
@@ -74,8 +71,7 @@ void Game::move_state(std::unique_ptr<TR::Scene> newState) {
     _currScene = std::move(newState);
 
 	// Reset to current sprite set
-    gEngine->getECSManager()->destroyAllEntities();
 	gEngine->getAssetManager()->clear();
-    _currScene->create(renderer, gEngine, _player_set);
+    _currScene->create(renderer, gEngine);
     gEngine->getECSManager()->create();
 }

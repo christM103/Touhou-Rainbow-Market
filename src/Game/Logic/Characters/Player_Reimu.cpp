@@ -26,11 +26,9 @@ Once per turn you can choose to…
 #include "Game/Logic/Player.hpp"
 
 namespace TR {
-Player_Reimu::Player_Reimu(Player_ID ID, int type) : Player_Data(ID) {
+Player_Reimu::Player_Reimu(int type) {
     _style_type = type;
     _char_desc = "Reimu \nType Num " + std::to_string(_style_type);
-    _player_char_state = S_Reimu;
-    _player_pathway = { S_Tewi, S_Koishi, S_Sanae, S_Marisa, S_Flandre };
 }
 
 Player_Reimu::~Player_Reimu() {}
