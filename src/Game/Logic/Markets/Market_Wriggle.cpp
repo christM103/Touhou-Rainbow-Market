@@ -5,11 +5,9 @@
 namespace TR {
 
 Wriggle::Wriggle() : Market() {
-    this->_market_id = MID_Wriggle;
     this->_market_sell = 50000;
     this->_market_lvl = 1;
     this->_market_tier = 1;
-    this->_market_type = "Striker";
     this->_market_profit = 10000;
 }
 

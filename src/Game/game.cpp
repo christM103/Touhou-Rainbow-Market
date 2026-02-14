@@ -27,7 +27,6 @@ bool Game::create() {
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
     */
     _currScene->create(renderer, gEngine);
-    gEngine->getECSManager()->create();
     return true;
 }
 

@@ -8,8 +8,7 @@ namespace Engine {
         Rect<float> bounds;
         Vector2<float> offset;
 
-        ColliderComponent() : bounds(0, 0, 0, 0), offset(0, 0) {}
-        ColliderComponent(const Rect<float>& rect, const Vector2<float>& off)
+        ColliderComponent(const Rectf& rect = Rectf(), const Vector2f& off = Vector2f())
             : bounds(rect), offset(off) {}
     };
 } // namespace Engine

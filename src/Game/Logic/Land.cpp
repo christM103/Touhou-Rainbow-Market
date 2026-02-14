@@ -5,26 +5,22 @@
 namespace TR {
 
 Land::Land() {
-    for (uint8_t x = 0; x < 5; x++) {
-        _landMarkets[x].first ^= LS_Free;
+    for (uint8_t index = 0; index < 6; index++) {
+        _landMarkets.emplace(index, std::pair(LS_Free, std::make_unique<Market>()));
     }
 }
 
 Land::~Land() {}
 
-Market& Land::getMarket(int ind) {
-    return *_landMarkets.at(ind).second.get();
-}
-
-const char* Land::getMarketStr(int ind) {
-    return _landMarkets.at(ind).second.get()->getIDStr();
+Market* Land::getMarket(int ind) {
+    return _landMarkets.at(ind).second.get();
 }
 
 const char* Land::getMarketList() {
     std::string temp;
 
     for (auto const& i : _landMarkets) {
-        temp += i.second.second.get()->getIDStr();
+        //temp += i.second.second.get()->getIDStr();
         temp += " ";
     }
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <unordered_map>
 
 
 /*
@@ -33,30 +34,19 @@ Open markets can inflict a whole heap of buffs, debuffs, aliments and the like. 
 
 namespace TR {
 
-enum Market_ID{MID_Null, MID_Wriggle, MID_Kisume, MID_Kogasa, MID_Nazrin};
-static const char* Market_ID_Str[] = {"MID_Null", "MID_Wriggle", "MID_Kisume", "MID_Kogasa", "MID_Nazrin"};
+enum Market_ID{MID_Null, MID_Mystia, MID_Wriggle, MID_Kisume, MID_Kogasa, MID_Nazrin};
 
 class Market{
  public:
     // Constructor and Destuctor
     Market();
-    Market(int id, int tier, float sell);
+    Market(int tier, float sell);
     ~Market();
 
-    // Copy Constructor Handling
-    Market(const Market& other) = delete;
-    Market& operator=(const Market& other) = delete;
-    Market(Market&& other) noexcept = default;
-    Market& operator=(Market&& other) noexcept = default;
-
     // Accessors and Mutators
-    inline const int getID() { return _market_id; };
     inline const int getLevel() { return _market_lvl; };
     inline const int getTier() { return _market_tier; };
     inline const float getSellPrice() { return _market_sell; };
-    inline const std::string getType() { return _market_type; };
-    inline const char* getIDStr() { return Market_ID_Str[_market_id]; };
-    inline void setID(int id) { _market_id = id; };
     inline void setLevel(int lvl) { _market_lvl = lvl; };
     inline void setTier(int tier) { _market_tier = tier; };
     inline void setSellPrice(float sell) { _market_sell = sell; };
@@ -69,12 +59,10 @@ class Market{
     virtual float marketProfit();
 
  protected:
-    int _market_id{MID_Null}, _market_lvl{1}, _market_tier{1};
+    int _market_lvl{1}, _market_tier{1};
     float _market_sell{0.0}, _market_profit{0};
-    std::string _market_type{" "};
+    //std::unordered_map<Market_ID, const char*> marketIDStr{ { MID_Null, "MID_Null" }, { MID_Mystia, "MID_Mystia" }, { MID_Wriggle, "MID_Wriggle" }, { MID_Kisume, "MID_Kisume" }, { MID_Kogasa, "MID_Kogasa" }, { MID_Nazrin, "MID_Nazrin" } };
 };
-
-std::string& operator<<(std::string& str, Market& market);
 
 class Wriggle : public Market {
  public:

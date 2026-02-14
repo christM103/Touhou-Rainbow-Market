@@ -32,12 +32,7 @@ class Land{
     /// @brief Returns the current market stored in the land.
     /// @param ind  The index of the specific piece of land
     /// @return The current market occupied
-    Market& getMarket(int ind);
-
-    /// @brief Returns the current market stored in the land as a string
-    /// @param ind      The index of the specific piece of land
-    /// @return The string market
-    const char* getMarketStr(int ind);
+    Market* getMarket(int ind);
 
     /// @brief Gets a list of all the currently active markets
     /// @return String featuring every market loaded into all lands
@@ -46,12 +41,12 @@ class Land{
     /// @brief Sets the size of the sprite.
     /// @param ind      The index of the piece of land
     /// @param state    The state to set
-    inline void setState(int ind, Land_States state) { _landMarkets[ind].first ^= state; };
+    inline void setState(int ind, uint64_t state) { _landMarkets[ind].first |= state; };
 
     /// @brief Removes the size of the sprite.
     /// @param ind      The index of the piece of land
     /// @param state    The state to remove
-    inline void remState(int ind, Land_States state) { _landMarkets[ind].first &= ~state; };
+    inline void remState(int ind, uint64_t state) { _landMarkets[ind].first &= ~state; };
 
     /// @brief Sets one portion of land with a market
     /// @param ind      The index of the piece of land
@@ -74,12 +69,7 @@ class Land{
 
  private:
      // Market State and Storage
-     std::map<int, std::pair<uint64_t, std::shared_ptr<Market>>> _landMarkets {
-         {0, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}}, 
-         {1, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}},
-         {2, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}},
-         {3, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}},
-         {4, {LS_Null, std::make_shared<Market>(MID_Null, 1, 0.00f)}} };
+     std::map<uint8_t, std::pair<uint64_t, std::unique_ptr<Market>>> _landMarkets { };
 
 };
 

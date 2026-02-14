@@ -9,7 +9,7 @@ TR::TextboxSystem::~TextboxSystem() {
 	_textboxes.clear();
 }
 
-void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager) {
+void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager) {
 	const auto* entities = componentManager->allEntities<TextBoxComponent>();
 	TextBoxComponent* textbox;
 
@@ -33,14 +33,14 @@ void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine:
 				position = textbox->_textbox_position;
 				if ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) {
 					if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_LEFT) != TextBoxComponent::TXTBOX_NULL) {
-						position.x = 1280;
+						position.x = windowManager->getWidth();
 					}
 					else if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_RIGHT) != TextBoxComponent::TXTBOX_NULL) {
 						position.x = -800;
 					}
 
 					if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_UP) != TextBoxComponent::TXTBOX_NULL) {
-						position.y = 720;
+						position.y = windowManager->getHeight();
 					}
 					else if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_DOWN) != TextBoxComponent::TXTBOX_NULL) {
 						position.y = -400;
@@ -67,7 +67,7 @@ void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine:
 		}
 	}
 }
-void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager) {
+void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager) {
 	Engine::TextComponent* _text_comp;
 
 	std::erase_if(_textboxes, [&](const auto& item) {
@@ -80,7 +80,7 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 		});
 
 
-	this->init(entityManager, componentManager);
+	this->init(entityManager, componentManager, windowManager);
 	for (const auto& [entity, textbox] : _textboxes) {
 		_text_comp = componentManager->getComponent<Engine::MultiTextComponent>(entity)->text.at(2).get();
 		if ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) {
@@ -137,7 +137,7 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 			}
 			else if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_RIGHT) != TextBoxComponent::TXTBOX_NULL) {
 				hor = 4.0;
-				if (_transform_comp->position.x + hor > 1280) {
+				if (_transform_comp->position.x + hor > windowManager->getWidth()) {
 					hor = 0.0;
 				}
 			}
@@ -153,7 +153,7 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 			}
 			else if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_DOWN) != TextBoxComponent::TXTBOX_NULL) {
 				vert = 4.0;
-				if (_transform_comp->position.y + vert > 720) {
+				if (_transform_comp->position.y + vert > windowManager->getHeight()) {
 					vert = 0.0;
 				}
 			}
@@ -268,20 +268,20 @@ std::string TR::TextboxSystem::textFormatting(std::string font, int size,  std::
 // Overloaded functions
 
 void TR::TextboxSystem::create(const Engine::SystemContext& ctx) {
-	if (!ctx.entityManager || !ctx.componentManager) {
+	if (!ctx.entityManager || !ctx.componentManager || !ctx.window) {
 		return;
 	}
 	else {
-		init(ctx.entityManager, ctx.componentManager);
+		init(ctx.entityManager, ctx.componentManager, ctx.window);
 	}
 }
 
 void TR::TextboxSystem::update(const Engine::SystemContext& ctx) {
-	if (!ctx.entityManager || !ctx.componentManager) {
+	if (!ctx.entityManager || !ctx.componentManager || !ctx.window) {
 		return;
 	}
 	else {
-		updateRender(ctx.entityManager, ctx.componentManager);
+		updateRender(ctx.entityManager, ctx.componentManager, ctx.window);
 	}
 }
 

@@ -4,7 +4,7 @@
 #include <tuple>
 #include <vector>
 #include <memory>
-#include <unordered_map>
+#include <map>
 
 #include <Engine/ECS/System/BaseSystem.hpp>
 #include "Engine/Graphics/Sprite.hpp"
@@ -85,7 +85,7 @@ namespace Engine {
 
 	private:
 		std::deque<RenderTarget> _render_targets{ }; // Set of renderable entities
-		std::unordered_map<Entity, std::vector<std::unique_ptr<Sprite>>> _sprite_set{ }; // Set of multi sprite objects
+		std::map<Entity, std::vector<std::unique_ptr<Sprite>>> _sprite_set{ }; // Set of multi sprite objects
 	};
 
 	// Define the Render_Flags enum separately (flags only; no member functions inside enum)

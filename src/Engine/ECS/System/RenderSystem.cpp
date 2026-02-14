@@ -20,6 +20,8 @@ void Engine::RenderSystem::init(const EntityManager* entityManager, const Compon
 	const MultiSpriteComponent* multi_sprite_data;
 	const MultiTextComponent* multi_text_data;
 
+	/* Possible Implementation: Camera */
+
 	uint16_t layer;
 	Render_Flags renderflags;
 

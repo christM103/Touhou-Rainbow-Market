@@ -25,17 +25,14 @@ namespace TR {
 		/* Texture Initialization */
 
 		// Loading Background
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_BGLand.png", "BGO", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_BGCLoud.png", "BGOCloud", renderer);
-		
+		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_BGO.png", "BGO", renderer);
+
 		// Loading Character Portraits
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_Null.png", "CHAR_NUL", renderer);
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Portrait_R_S.png", "CHAR_REI", renderer);
 		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Portrait_M_S.png", "CHAR_MAR", renderer);
 
 		// Loading Markets
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketFree.png", "MKT_NULL", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketWriggle.png", "MKT_WRIG", renderer);
 
 		// Loading Text
 		//gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
@@ -46,16 +43,8 @@ namespace TR {
 
 		// Create Background Sprite
 		Engine::Entity BGO = gEngine->getECSManager()->createEntity("BGO");
-		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
-		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1280,720 }, Engine::Vector2i(1280, 720), "BGO");
-
-		Engine::Entity BG_CLOUD1 = gEngine->getECSManager()->createEntity("BG_CLOUD1");
-		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BG_CLOUD1, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
-		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BG_CLOUD1, Engine::Recti{ 0,0,2444,144 }, Engine::Vector2i(2444, 144), "BGOCloud");
-
-		Engine::Entity BG_CLOUD2 = gEngine->getECSManager()->createEntity("BG_CLOUD2");
-		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BG_CLOUD2, Engine::Vector2i{ -611,150 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
-		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BG_CLOUD2, Engine::Recti{ 0,0,2444,144 }, Engine::Vector2i(2444, 144), "BGOCloud");
+		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ -100,-600 });
+		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1500,1500 }, Engine::Vector2i(1500, 1500), "BGO");
 
 		
 		// Creating Character Portraits Sprites
@@ -73,12 +62,20 @@ namespace TR {
 		}
 
 
+		for (int index = 0; index < 6; index++) {
+			Engine::Entity entity = gEngine->getECSManager()->createEntity("Market" + std::to_string(index));
+			auto* market = gEngine->getECSManager()->getComponent<PlayerComponent>(gEngine->getECSManager()->getEntities().at("PLAYER"))->player_data->getLand()->getMarket(index);
+			gEngine->getECSManager()->addComponent<MarketComponent>(entity, market);
+		}
+
+		gEngine->getECSManager()->addSystem<MarketSystem>();
+
 		// Text Box Entity
 
 		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity("TEXTBOX_TEST");
 
 		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, 
-			R"(ThereoncewasamanfromNantucket,Whokeptallofhiscashinabucket,Buthisdaughter,namedNan,Ranawaywithaman,Andasforthebucket,Nantucket. There once was a man from Nantucket, Who kept all of his cash in a bucket, But his daughter, named Nan, Ran away with a man, And as for the bucket, Nantucket.)",
+			R"(Welcome to the Touhou Rainbow Market Game Beta!)",
 			240, 240, 5, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP);
 		gEngine->getECSManager()->addSystem<TextboxSystem>();
 

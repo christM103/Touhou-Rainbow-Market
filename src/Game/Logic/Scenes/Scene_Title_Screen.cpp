@@ -12,10 +12,6 @@ namespace TR {
 
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Title_Screen/Placeholder_Title.png", "TITLE", renderer);
 
-        gEngine->getECSManager()->addSystem<Engine::RenderSystem>();
-        gEngine->getECSManager()->addSystem<Engine::MotionSystem>();
-        gEngine->getECSManager()->addSystem<Engine::InputSystem>();
-
         // Creates the BGO
         Engine::Entity BGO = gEngine->getECSManager()->createEntity("BGO");
         gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
@@ -27,6 +23,11 @@ namespace TR {
         Engine::Entity TEXT = gEngine->getECSManager()->createEntity("TEXT");
         gEngine->getECSManager()->addComponent<Engine::TransformComponent>(TEXT, Engine::Vector2i{ (gEngine->getWindow()->getWidth() / 2), 600 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f }, true);
         gEngine->getECSManager()->addComponent<Engine::TextComponent>(TEXT, "Press Space to play!", 60, Engine::Vector4i(0, 0, 0, 255));
+
+        // Initilizing the Systems
+        gEngine->getECSManager()->addSystem<Engine::RenderSystem>();
+        gEngine->getECSManager()->addSystem<Engine::MotionSystem>();
+        gEngine->getECSManager()->addSystem<Engine::InputSystem>();
 
         return true;
     }

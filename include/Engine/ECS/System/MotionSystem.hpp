@@ -19,6 +19,11 @@ public:
 		isMultiVel = true,
 	};
 
+	enum ColType : bool {
+		noCollider = false,
+		hasCollider = true,
+	};
+
 	MotionSystem() = default;
 	~MotionSystem() = default;
 
@@ -37,7 +42,7 @@ public:
 	void quit(const SystemContext& ctx);
 
 private:
-	std::unordered_map<Entity, std::tuple<TransType, VelType>> _entities; // Entities within for the movemment system
+	std::unordered_map<Entity, std::tuple<TransType, VelType, ColType>> _entities; // Entities within for the movemment system
 };
 
 }
