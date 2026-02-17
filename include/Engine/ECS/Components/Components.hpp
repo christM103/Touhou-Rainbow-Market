@@ -9,6 +9,7 @@
 #include "Engine/ECS/Components/TextComponent.hpp"
 #include "Engine/ECS/Components/InputComponent.hpp"
 #include "Engine/ECS/Components/MouseComponent.hpp"
+#include "Engine/ECS/Components/CameraComponent.hpp"
 
 
 #include <typeindex>

@@ -27,6 +27,10 @@ namespace Engine {
         return true;
     }
 
+    bool AssetManager::loadTexture(std::string filePath, const char* assetName, SDL_Renderer* renderer) {
+        return loadTexture(filePath.c_str(), assetName, renderer);
+    }
+
     bool AssetManager::storeTexture(SDL_Texture* texture, const char* assetName, SDL_Renderer* renderer) {
 
         if (!texture) {

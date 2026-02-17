@@ -86,6 +86,7 @@ struct Vector2 {
     constexpr auto dot(const Vector2& v2) const noexcept {
         return x * v2.x + y * v2.y;
     }
+
 };
 
 template<typename T>

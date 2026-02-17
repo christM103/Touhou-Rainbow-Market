@@ -49,7 +49,7 @@ namespace Engine {
 			return a;
 		}
 
-		// Alias for render target tuple
+		// Alias for render target tuple (Entity, Render_Flags, Layer)
 		using RenderTarget = std::tuple<Entity, Render_Flags, uint16_t>;
 
 

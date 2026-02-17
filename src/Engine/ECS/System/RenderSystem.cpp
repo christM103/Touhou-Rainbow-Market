@@ -179,11 +179,13 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 	const AssetManager* assetManager, const Window* window) {
 
 	// Transformation Update Lambda (Updates Position, Size, Rotation, and Source
-	auto updateSpriteTransformation = [](const TransformComponent * position_data, auto& prevSprite) {
-		TransformComponent position_data_prev(prevSprite->getPosition(), prevSprite->getAngle(), prevSprite->getScale());
+	auto updateSpriteTransformation = [](const TransformComponent * position_data, const CameraComponent* camera, auto& prevSprite) {
+		TransformComponent position_data_prev(prevSprite->getPosition() - camera->position.position, prevSprite->getAngle(), prevSprite->getScale());
+		Vector2i camera_pos = position_data_prev.position - prevSprite->getPosition();
 		if (*position_data != position_data_prev) {
-			if (position_data->position != position_data_prev.position) {
-				prevSprite->setPos(position_data->position);
+			if ((position_data->position != position_data_prev.position) || 
+				 camera_pos != camera->position.position) {
+				prevSprite->setPos(position_data->position - camera->position.position);
 			}
 			if (position_data->rotation != position_data_prev.rotation) {
 				prevSprite->setAngle(position_data->rotation);
@@ -244,6 +246,7 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 	const TransformComponent* position_data;
 	const SpriteComponent* sprite_data;
 	const TextComponent* text_data;
+	const CameraComponent* camera = componentManager->getComponent<CameraComponent>(entityManager->getEntities().at("CAMERA"));
 
 	// Updates current render data by erasing any entities that currently do not exist
 
@@ -274,7 +277,7 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 		if (static_cast<uint8_t>(imageType & Render_Flags::isSingle)) {
 			position_data = componentManager->getComponent<TransformComponent>(entity);
 
-			updateSpriteTransformation(position_data, _sprite_set[entity].at(0));
+			updateSpriteTransformation(position_data, camera, _sprite_set[entity].at(0));
 			auto prevSprite = _sprite_set[entity].at(0).get();
 
 			if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {
@@ -292,7 +295,7 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 		else if (static_cast<uint8_t>(imageType & Render_Flags::isMulti)) {
 			for (uint8_t ind = 0; ind < _sprite_set[entity].size(); ind++) {
 				position_data = componentManager->getComponent<MultiTransformComponent>(entity)->transforms.at(ind).get();
-				updateSpriteTransformation(position_data, _sprite_set[entity].at(ind));
+				updateSpriteTransformation(position_data, camera, _sprite_set[entity].at(ind));
 
 				auto prevSprite = _sprite_set[entity].at(ind).get();
 				if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {

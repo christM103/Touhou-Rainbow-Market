@@ -12,6 +12,10 @@ namespace TR {
 
         gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Title_Screen/Placeholder_Title.png", "TITLE", renderer);
 
+        // Creates the camera
+        Engine::Entity CAMERA = gEngine->getECSManager()->createEntity("CAMERA");
+        gEngine->getECSManager()->addComponent<Engine::CameraComponent>(CAMERA);
+
         // Creates the BGO
         Engine::Entity BGO = gEngine->getECSManager()->createEntity("BGO");
         gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
@@ -28,6 +32,7 @@ namespace TR {
         gEngine->getECSManager()->addSystem<Engine::RenderSystem>();
         gEngine->getECSManager()->addSystem<Engine::MotionSystem>();
         gEngine->getECSManager()->addSystem<Engine::InputSystem>();
+        gEngine->getECSManager()->addSystem<Engine::CollisionSystem>();
 
         return true;
     }

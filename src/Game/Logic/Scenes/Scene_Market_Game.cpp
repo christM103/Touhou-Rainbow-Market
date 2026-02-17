@@ -9,89 +9,107 @@
 
 
 namespace TR {
-	//using Text = TextBox::Text_Box_Transitions;
-
 	Market_Game::Market_Game() {
 		_currState = SC_Main;
 		_nextState = _currState;
 		_market_scene_state ^= MG_Intro_Sceen;
-
-		//test_textbox.enableAttr(Text::TXT_ACTIVE);
-		//test_textbox.enableAttr(Text::TXT_UP_DOWN);
 	}
 
 	bool Market_Game::create(SDL_Renderer* renderer, Engine::Engine* gEngine) {
 
+		// Lambda for checking current player
+		auto playerCheck = [](Engine::ECSManager* ecsManager, Player_Data::Char_State player_data) {
+			return ecsManager->getComponent<PlayerComponent>(ecsManager->getEntities().at("PLAYER"))->current_char == player_data;
+			};
+
+		
+		// Variable definitions
+		const std::string GFX_FOLDER = "assets/gfx/sprites/";
+		Engine::ECSManager* ecsManager = gEngine->getECSManager();
+
+
 		/* Texture Initialization */
 
 		// Loading Background
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_BGO.png", "BGO", renderer);
+		const std::string BGO_GFX = GFX_FOLDER + "Market_Game/Placeholder_Game_BGO.png";
+		gEngine->getAssetManager()->loadTexture(BGO_GFX, "BGO_GFX", renderer);
 
 		// Loading Character Portraits
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_Null.png", "CHAR_NUL", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Portrait_R_S.png", "CHAR_REI", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Portrait_M_S.png", "CHAR_MAR", renderer);
-
-		// Loading Markets
+		const std::string CHAR_NUL = GFX_FOLDER + "Market_Game/Placeholder_Portrait_Null.png";
+		const std::string CHAR_REI = GFX_FOLDER + "Market_Game/Placeholder_Portrait_R_S.png";
+		const std::string CHAR_MAR = GFX_FOLDER + "Market_Game/Placeholder_Portrait_M_S.png";
+		gEngine->getAssetManager()->loadTexture(CHAR_NUL, "CHAR_NUL", renderer);
+		gEngine->getAssetManager()->loadTexture(CHAR_REI, "CHAR_REI", renderer);
+		gEngine->getAssetManager()->loadTexture(CHAR_MAR, "CHAR_MAR", renderer);
 
 		// Loading Text
-		//gEngine->getAssetManager()->storeTexture(balance_text.load(renderer), "TEXT_PBAL", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Box_BGO.png", "TXT_BOX_BG", renderer);
-		gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Box_Frame.png", "TXT_BOX_F", renderer);
+		const std::string TXT_BOX_BG = GFX_FOLDER + "Common/Placeholder_Box_BGO.png";
+		const std::string TXT_BOX_F = GFX_FOLDER + "Common/Placeholder_Box_Frame.png";
+		gEngine->getAssetManager()->loadTexture(TXT_BOX_BG, "TXT_BOX_BG", renderer);
+		gEngine->getAssetManager()->loadTexture(TXT_BOX_F, "TXT_BOX_F", renderer);
+
 
 		/* Sprite Creation */
 
 		// Create Background Sprite
-		Engine::Entity BGO = gEngine->getECSManager()->createEntity("BGO");
-		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ -100,-600 });
-		gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1500,1500 }, Engine::Vector2i(1500, 1500), "BGO");
+		Engine::Entity BGO = ecsManager->createEntity("BGO");
+		ecsManager->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ -100,-600 });
+		ecsManager->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1500,1500 }, Engine::Vector2i(1500, 1500), "BGO_GFX");
 
 		
 		// Creating Character Portraits Sprites
-		Engine::Entity PLAYER_PORTRAIT = gEngine->getECSManager()->createEntity("PLAYER_PORTRAIT");
-		gEngine->getECSManager()->addComponent<Engine::TransformComponent>(PLAYER_PORTRAIT, Engine::Vector2i{ 980,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+		Engine::Entity PLAYER_PORTRAIT = ecsManager->createEntity("PLAYER_PORTRAIT");
+		ecsManager->addComponent<Engine::TransformComponent>(PLAYER_PORTRAIT, Engine::Vector2i{ 980,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
 
-		if (gEngine->getECSManager()->getComponent<PlayerComponent>(gEngine->getECSManager()->getEntities().at("PLAYER"))->current_char == Player_Data::S_Reimu) {
-			gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_REI");
+		
+		// Initialize Portrait
+		if (playerCheck(ecsManager, Player_Data::S_Reimu)) {
+			ecsManager->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_REI");
 		}
-		else if (gEngine->getECSManager()->getComponent<PlayerComponent>(gEngine->getECSManager()->getEntities().at("PLAYER"))->current_char == Player_Data::S_Marisa) {
-			gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_MAR");
+		else if (playerCheck(ecsManager, Player_Data::S_Marisa)) {
+			ecsManager->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_MAR");
 		}
 		else {
-			gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_NUL");
+			ecsManager->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_NUL");
 		}
 
 
+		/* Object Creation */
+		
+		// Initialize Market Entities
 		for (int index = 0; index < 6; index++) {
-			Engine::Entity entity = gEngine->getECSManager()->createEntity("Market" + std::to_string(index));
-			auto* market = gEngine->getECSManager()->getComponent<PlayerComponent>(gEngine->getECSManager()->getEntities().at("PLAYER"))->player_data->getLand()->getMarket(index);
-			gEngine->getECSManager()->addComponent<MarketComponent>(entity, market);
+			Engine::Entity entity = ecsManager->createEntity("Market" + std::to_string(index));
+			auto* market = ecsManager->getComponent<PlayerComponent>(ecsManager->getEntities().at("PLAYER"))->player_data->getLand()->getMarket(index);
+			ecsManager->addComponent<MarketComponent>(entity, market);
 		}
+		ecsManager->addSystem<MarketSystem>();
 
-		gEngine->getECSManager()->addSystem<MarketSystem>();
-
-		// Text Box Entity
-
-		Engine::Entity TEXTBOX_TEST = gEngine->getECSManager()->createEntity("TEXTBOX_TEST");
-
-		gEngine->getECSManager()->addComponent<TextBoxComponent>(TEXTBOX_TEST, 
+		// Initialize Text Box Entity
+		Engine::Entity TEXTBOX_TEST = ecsManager->createEntity("TEXTBOX_TEST");
+		ecsManager->addComponent<TextBoxComponent>(TEXTBOX_TEST, 
 			R"(Welcome to the Touhou Rainbow Market Game Beta!)",
 			240, 240, 5, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP);
-		gEngine->getECSManager()->addSystem<TextboxSystem>();
+		ecsManager->addSystem<TextboxSystem>();
+
+		// Initialize Mouse Entity
+		if (ecsManager->allEntities<Engine::MouseComponent>() == nullptr) {
+			Engine::Entity newMouse = ecsManager->createEntity("MOUSE");
+			ecsManager->addComponent<Engine::MouseComponent>(newMouse);
+		}
 
 		return true;
-		
 	}
 
 	void Market_Game::update(Engine::Engine* gEngine) {
+		Engine::ECSManager* ecsManager = gEngine->getECSManager();
 
-		if (gEngine->getECSManager()->componentExists<TextBoxComponent>()) {
-			if (gEngine->getECSManager()->isSystemRunning<TextboxSystem>()) {
-				gEngine->getECSManager()->toggleSystem<TextboxSystem>(true);
+		if (ecsManager->componentExists<TextBoxComponent>()) {
+			if (ecsManager->isSystemRunning<TextboxSystem>()) {
+				ecsManager->toggleSystem<TextboxSystem>(true);
 			}
 		}
 		else {
-			gEngine->getECSManager()->toggleSystem<TextboxSystem>(false);
+			ecsManager->toggleSystem<TextboxSystem>(false);
 		}
 
 	}
