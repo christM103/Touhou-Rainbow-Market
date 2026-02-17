@@ -62,18 +62,12 @@ void TR::TextboxSystem::init(const Engine::EntityManager* entityManager, Engine:
 				_render_comp.layer = Engine::RenderLayerComponent::FG;
 
 				_input_comp.newKey(SDL_SCANCODE_SPACE);
-
-				_input_comp.newKey(SDL_SCANCODE_W);
-				_input_comp.newKey(SDL_SCANCODE_S);
-				_input_comp.newKey(SDL_SCANCODE_A);
-				_input_comp.newKey(SDL_SCANCODE_D);
 			}
 		}
 	}
 }
 void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager) {
 	Engine::TextComponent* _text_comp;
-	Engine::CameraComponent* camera = componentManager->getComponent<Engine::CameraComponent>(entityManager->getEntities().at("CAMERA"));
 
 	std::erase_if(_textboxes, [&](const auto& item) {
 		const auto& [entity, component] = item;
@@ -240,16 +234,6 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 			}
 
 			(textbox->dT < 360) ? textbox->dT += textbox->_textbox_speed : textbox->dT = 0;
-		}
-
-		if (componentManager->getComponent<Engine::InputComponent>(entity)->keyHeld(SDL_SCANCODE_W)) {
-			camera->position.position.y--;
-		} else if (componentManager->getComponent<Engine::InputComponent>(entity)->keyHeld(SDL_SCANCODE_S)) {
-			camera->position.position.y++;
-		} else if (componentManager->getComponent<Engine::InputComponent>(entity)->keyHeld(SDL_SCANCODE_A)) {
-			camera->position.position.x--;
-		} else if (componentManager->getComponent<Engine::InputComponent>(entity)->keyHeld(SDL_SCANCODE_D)) {
-			camera->position.position.x++;
 		}
 	}
 

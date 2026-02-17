@@ -13,13 +13,11 @@ void Engine::InputSystem::init(const EntityManager* entityManager, ComponentMana
 
 	if (buttonEntities) {
 		for (auto& entity : *buttonEntities) {
-			if (entity_inputs.at(Button).find(entity) == entity_inputs.at(Button).end()) {
-				for (auto& keys : componentManager->getComponent<InputComponent>(entity)->scancode) {
-					entity_inputs.at(Button).emplace(entity);
-					keyboard_keys.emplace(keys.first, KeyComponent(keys.first));
-					if (keys.second == nullptr) {
-						keys.second = &(keyboard_keys.at(keys.first));
-					}
+			for (auto& keys : componentManager->getComponent<InputComponent>(entity)->scancode) {
+				entity_inputs.at(Button).emplace(entity);
+				keyboard_keys.emplace(keys.first, KeyComponent(keys.first));
+				if (keys.second == nullptr) {
+					keys.second = &(keyboard_keys.at(keys.first));
 				}
 			}
 		}

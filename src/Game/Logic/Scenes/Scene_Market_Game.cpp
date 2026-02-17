@@ -25,6 +25,12 @@ namespace TR {
 		
 		// Variable definitions
 		const std::string GFX_FOLDER = "assets/gfx/sprites/";
+		const std::string CHAR_NUL = GFX_FOLDER + "Market_Game/Placeholder_Portrait_Null.png";
+		const std::string CHAR_REI = GFX_FOLDER + "Market_Game/Placeholder_Portrait_R_S.png";
+		const std::string CHAR_MAR = GFX_FOLDER + "Market_Game/Placeholder_Portrait_M_S.png";
+		const std::string TXT_BOX_BG = GFX_FOLDER + "Common/Placeholder_Box_BGO.png";
+		const std::string TXT_BOX_F = GFX_FOLDER + "Common/Placeholder_Box_Frame.png";
+
 		Engine::ECSManager* ecsManager = gEngine->getECSManager();
 
 
@@ -35,16 +41,11 @@ namespace TR {
 		gEngine->getAssetManager()->loadTexture(BGO_GFX, "BGO_GFX", renderer);
 
 		// Loading Character Portraits
-		const std::string CHAR_NUL = GFX_FOLDER + "Market_Game/Placeholder_Portrait_Null.png";
-		const std::string CHAR_REI = GFX_FOLDER + "Market_Game/Placeholder_Portrait_R_S.png";
-		const std::string CHAR_MAR = GFX_FOLDER + "Market_Game/Placeholder_Portrait_M_S.png";
 		gEngine->getAssetManager()->loadTexture(CHAR_NUL, "CHAR_NUL", renderer);
 		gEngine->getAssetManager()->loadTexture(CHAR_REI, "CHAR_REI", renderer);
 		gEngine->getAssetManager()->loadTexture(CHAR_MAR, "CHAR_MAR", renderer);
 
 		// Loading Text
-		const std::string TXT_BOX_BG = GFX_FOLDER + "Common/Placeholder_Box_BGO.png";
-		const std::string TXT_BOX_F = GFX_FOLDER + "Common/Placeholder_Box_Frame.png";
 		gEngine->getAssetManager()->loadTexture(TXT_BOX_BG, "TXT_BOX_BG", renderer);
 		gEngine->getAssetManager()->loadTexture(TXT_BOX_F, "TXT_BOX_F", renderer);
 

@@ -33,6 +33,7 @@ namespace TR {
         gEngine->getECSManager()->addSystem<Engine::MotionSystem>();
         gEngine->getECSManager()->addSystem<Engine::InputSystem>();
         gEngine->getECSManager()->addSystem<Engine::CollisionSystem>();
+        gEngine->getECSManager()->addSystem<Engine::CameraSystem>();
 
         return true;
     }
