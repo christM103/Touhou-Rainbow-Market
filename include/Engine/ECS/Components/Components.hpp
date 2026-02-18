@@ -10,7 +10,7 @@
 #include "Engine/ECS/Components/InputComponent.hpp"
 #include "Engine/ECS/Components/MouseComponent.hpp"
 #include "Engine/ECS/Components/CameraComponent.hpp"
-
+#include "Engine/ECS/Components/RenderComponent.hpp"
 
 #include <typeindex>
 #include <typeinfo>

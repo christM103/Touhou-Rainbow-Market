@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
 #include <memory>
 
 #include "Engine/Math/Rect.hpp"
@@ -36,6 +36,6 @@ namespace Engine {
     };
 
     struct MultiSpriteComponent {
-        std::unordered_map<uint8_t, std::shared_ptr<SpriteComponent>> sprites;
+        std::map<uint8_t, std::shared_ptr<SpriteComponent>> sprites;
     };
 }

@@ -27,6 +27,7 @@ bool Game::create() {
     playerSprite = new Engine::Sprite(gEngine->getAssetManager()->getTexture("player"), 64, 64);
     */
     _currScene->create(renderer, gEngine);
+    gEngine->getECSManager()->create();
     return true;
 }
 
@@ -71,6 +72,6 @@ void Game::move_state(std::unique_ptr<TR::Scene> newState) {
 
 	// Reset to current sprite set
 	gEngine->getAssetManager()->clear();
-    _currScene->create(renderer, gEngine);
     gEngine->getECSManager()->create();
+    _currScene->create(renderer, gEngine);
 }

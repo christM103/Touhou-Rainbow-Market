@@ -4,7 +4,7 @@
 
 
 
-void Engine::InputSystem::init(const EntityManager* entityManager, ComponentManager* componentManager) {
+void Engine::InputSystem::initInput(const EntityManager* entityManager, ComponentManager* componentManager) {
 
 
 	const auto* buttonEntities = componentManager->allEntities<InputComponent>();
@@ -46,8 +46,7 @@ void Engine::InputSystem::init(const EntityManager* entityManager, ComponentMana
 
 }
 
-void Engine::InputSystem::updateInput(const EntityManager* entityManager, ComponentManager* componentManager, const Input* inputManager) {
-
+void Engine::InputSystem::updateEntities(EntityManager* entityManager, ComponentManager* componentManager) {
 
 	// Erases any entity that no longer exists
 	for (auto cat : { Button, Keyboard, Mouse }) {
@@ -64,7 +63,26 @@ void Engine::InputSystem::updateInput(const EntityManager* entityManager, Compon
 	/* Potentially implement lambda for searching through the entity list to remove an entity */
 
 	// Update for any added entites within the engine
-	init(entityManager, componentManager);
+
+	if (const auto& entities = componentManager->allEntities<InputComponent>()) {
+		if (entities->size() > entity_inputs.at(Button).size()) {
+			initInput(entityManager, componentManager);
+		}
+	}
+	else if (const auto& entities = componentManager->allEntities<KeyboardComponent>()) {
+		if (entities->size() > entity_inputs.at(Keyboard).size()) {
+			initInput(entityManager, componentManager);
+		}
+	}
+	else if (const auto& entities = componentManager->allEntities<MouseComponent>()) {
+		if (entities->size() > entity_inputs.at(Mouse).size()) {
+			initInput(entityManager, componentManager);
+		}
+	}
+	
+}
+
+void Engine::InputSystem::updateInput(const Input* inputManager) {
 
 	// Updates all stored keys
 	if (!keyboard_keys.empty()) {
@@ -142,7 +160,7 @@ void Engine::InputSystem::create(const SystemContext& ctx) {
 		return;
 	}
 	else {
-		this->init(ctx.entityManager, ctx.componentManager);
+		this->initInput(ctx.entityManager, ctx.componentManager);
 	}
 }
 
@@ -151,7 +169,8 @@ void Engine::InputSystem::update(const SystemContext& ctx) {
 		return;
 	}
 	else {
-		this->updateInput(ctx.entityManager, ctx.componentManager, ctx.input);
+		this->updateEntities(ctx.entityManager, ctx.componentManager);
+		this->updateInput(ctx.input);
 	}
 
 }

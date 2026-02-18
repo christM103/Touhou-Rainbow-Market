@@ -13,44 +13,21 @@
 namespace Engine {
 	class RenderSystem {
 	public:
-		enum class Render_Flags : uint8_t {
-			Null = 0,
+		struct RenderBody {
+			Entity _ent{};
+			RenderComponent* _render{};
+			std::vector<std::unique_ptr<Sprite>> _sprite_set{};
+			uint16_t _layer{};
 
-			isSingle = 1 << 1,
-			isMulti = 1 << 2,
+			RenderBody(Entity e, RenderComponent* r, std::vector<std::unique_ptr<Sprite>> s) 
+				: _ent(e), _render(r), _sprite_set(std::move(s)), _layer(r->_layer_data->layer) {}
 
-			isSprite = 1 << 3,
-			isText = 1 << 4,
+			RenderBody() = default;
+			RenderBody(const RenderBody&) = delete;
+			RenderBody& operator=(const RenderBody&) = delete;
+			RenderBody(RenderBody&&) noexcept = default;
+			RenderBody& operator=(RenderBody&&) noexcept = default;
 		};
-
-		// Bitwise operator helpers for Render_Flags
-		friend constexpr Render_Flags operator|(Render_Flags a, Render_Flags b) noexcept {
-			return static_cast<Render_Flags>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
-		}
-		friend constexpr Render_Flags operator&(Render_Flags a, Render_Flags b) noexcept {
-			return static_cast<Render_Flags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
-		}
-		friend constexpr Render_Flags operator^(Render_Flags a, Render_Flags b) noexcept {
-			return static_cast<Render_Flags>(static_cast<uint8_t>(a) ^ static_cast<uint8_t>(b));
-		}
-		friend constexpr Render_Flags operator~(Render_Flags a) noexcept {
-			return static_cast<Render_Flags>(~static_cast<uint8_t>(a));
-		}
-		friend Render_Flags& operator|=(Render_Flags& a, Render_Flags b) noexcept {
-			a = a | b;
-			return a;
-		}
-		friend Render_Flags& operator&=(Render_Flags& a, Render_Flags b) noexcept {
-			a = a & b;
-			return a;
-		}
-		friend Render_Flags& operator^=(Render_Flags& a, Render_Flags b) noexcept {
-			a = a ^ b;
-			return a;
-		}
-
-		// Alias for render target tuple (Entity, Render_Flags, Layer)
-		using RenderTarget = std::tuple<Entity, Render_Flags, uint16_t>;
 
 
 		// Constructor and Destructor
@@ -64,14 +41,24 @@ namespace Engine {
 		///@param entityManager The set of entities
 		///@param componentManager The set of components that the entity holds
 		///@param assetManager The texture manager
-		void init(const EntityManager* entityManager, const ComponentManager* componentManager,
-			const AssetManager* assetManager, const Window* window);
-		
-		void draw(const EntityManager* entityManager, const ComponentManager* componentManager,
-			const AssetManager* assetManager, const Window* window);
+		void initRender(ComponentManager* componentManager);
 
-		void update(const EntityManager* entityManager, const ComponentManager* componentManager,
-			const AssetManager* assetManager, const Window* window);
+		/// @brief Checks for any collider objects were removed or created
+		/// @param entityManager For checking whether entities were removed
+		/// @param componentManager For the init of the component manager
+		void updateEntities(EntityManager* entityManager, ComponentManager* componentManager);
+		
+		///@brief Updates the sprite objects within the sprite set
+		///@param componentManager The set of components that the entity holds
+		///@param assetManager The texture manager
+		void updateRender(const ComponentManager* componentManager, const AssetManager* assetManager, const Window* window);
+
+		///@brief Draws all of the sprites currently within the sprite set onto the screen
+		///@param assetManager The texture manager for loading the sprites
+		///@param window The window that displays the sprites
+		void drawRender(const AssetManager* assetManager, const Window* window);
+
+		
 
 		// Overloaded functions
 
@@ -84,8 +71,8 @@ namespace Engine {
 		void quit(const SystemContext& ctx);
 
 	private:
-		std::deque<RenderTarget> _render_targets{ }; // Set of renderable entities
-		std::map<Entity, std::vector<std::unique_ptr<Sprite>>> _sprite_set{ }; // Set of multi sprite objects
+		std::vector<RenderBody> _sprite_set{ }; // Set of multi sprite objects
+		CameraComponent* _camera;
 	};
 
 	// Define the Render_Flags enum separately (flags only; no member functions inside enum)

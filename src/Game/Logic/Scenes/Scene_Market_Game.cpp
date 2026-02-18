@@ -80,7 +80,8 @@ namespace TR {
 		// Initialize Market Entities
 		for (int index = 0; index < 6; index++) {
 			Engine::Entity entity = ecsManager->createEntity("Market" + std::to_string(index));
-			auto* market = ecsManager->getComponent<PlayerComponent>(ecsManager->getEntities().at("PLAYER"))->player_data->getLand()->getMarket(index);
+			Player_Data* player = ecsManager->getComponent<PlayerComponent>(ecsManager->getEntities().at("PLAYER"))->player_data;
+			auto* market = player->getLand()->getMarket(index);
 			ecsManager->addComponent<MarketComponent>(entity, market);
 		}
 		ecsManager->addSystem<MarketSystem>();

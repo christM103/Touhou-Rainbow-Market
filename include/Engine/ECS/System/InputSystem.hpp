@@ -15,9 +15,14 @@ namespace Engine {
 		InputSystem() = default;
 		~InputSystem() = default;
 
-		void init(const EntityManager* entityManager, ComponentManager* componentManager);
+		void initInput(const EntityManager* entityManager, ComponentManager* componentManager);
 
-		void updateInput(const EntityManager* entityManager, ComponentManager* componentManager, const Input* inputManager);
+		/// @brief Checks for any collider objects were removed or created
+		/// @param entityManager For checking whether entities were removed
+		/// @param componentManager For the init of the component manager
+		void updateEntities(EntityManager* entityManager, ComponentManager* componentManager);
+
+		void updateInput(const Input* inputManager);
 
 		// Overloaded functions
 

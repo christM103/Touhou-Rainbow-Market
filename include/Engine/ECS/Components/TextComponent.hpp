@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <memory>
 
 #include "Engine/Math/Vector2.hpp"
@@ -55,6 +55,6 @@ namespace Engine {
 	};
 
 	struct MultiTextComponent {
-		std::unordered_map<uint8_t, std::shared_ptr<TextComponent>> text;
+		std::map<uint8_t, std::shared_ptr<TextComponent>> text;
 	};
 }

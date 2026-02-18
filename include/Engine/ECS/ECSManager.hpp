@@ -108,7 +108,6 @@ namespace Engine {
         template<typename SystemType>
         void addSystem() {
             systemManager->addSystem<SystemType>();
-            systemManager->create();
         }
 
 		template<typename SystemType>

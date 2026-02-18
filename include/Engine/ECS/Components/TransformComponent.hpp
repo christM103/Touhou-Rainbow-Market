@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <unordered_map>
+#include <map>
 #include <memory>
 
 #include "Engine/Math/Rect.hpp"
@@ -29,6 +29,6 @@ namespace Engine {
     };
 
     struct MultiTransformComponent {
-        std::unordered_map<uint8_t, std::shared_ptr<TransformComponent>> transforms;
+        std::map<uint8_t, std::shared_ptr<TransformComponent>> transforms;
     };
 } // namespace Engine

@@ -7,11 +7,12 @@
 
 Engine::RenderSystem::~RenderSystem() {
 	_sprite_set.clear();
-	_render_targets.clear();
 }
 
-void Engine::RenderSystem::init(const EntityManager* entityManager, const ComponentManager* componentManager, 
-	const AssetManager* assetManager, const Window* window) {
+void Engine::RenderSystem::initRender(ComponentManager* componentManager) {
+
+	RenderComponent* render_data;
+	
 	const TransformComponent* position_data;
 	const SpriteComponent* sprite_data;
 	const TextComponent* text_data;
@@ -20,182 +21,187 @@ void Engine::RenderSystem::init(const EntityManager* entityManager, const Compon
 	const MultiSpriteComponent* multi_sprite_data;
 	const MultiTextComponent* multi_text_data;
 
-	/* Possible Implementation: Camera */
-
-	uint16_t layer;
-	Render_Flags renderflags;
+	RenderLayerComponent* layer_data;
 
 	// Initializes any entities that are renderable targets
-	for (const auto& [key, entity] : entityManager->getEntities()) {
-		if (_sprite_set.find(entity) == _sprite_set.end()) {
+	
 
-			renderflags = Render_Flags::Null;
+	// For single sprite objects
+	if (const std::unordered_set<Entity>* transformComp = componentManager->allEntities<TransformComponent>()) {
+		for (Entity entity : *transformComp) {
+			if (componentManager->hasComponent<RenderComponent>(entity)) {
+				continue;
+			}
+			position_data = componentManager->getComponent<TransformComponent>(entity);
+			sprite_data = nullptr;
+			text_data = nullptr;
 
-			// Manages the drawing layer of the entity
-			if (componentManager->hasComponent<RenderLayerComponent>(entity)) {
-				layer = componentManager->getComponent<RenderLayerComponent>(entity)->layer;
+			if (componentManager->hasComponent<TextComponent>(entity)) {
+				text_data = componentManager->getComponent<TextComponent>(entity);
+			}
+			else if (componentManager->hasComponent<SpriteComponent>(entity)) {
+				sprite_data = componentManager->getComponent<SpriteComponent>(entity);
 			}
 			else {
-				layer = RenderLayerComponent::BG;
+				componentManager->removeComponent<TransformComponent>(entity);
+				continue;
 			}
 
-			// Manage the render flags of the object
-			if (componentManager->hasComponent<TransformComponent>(entity)) {
-				renderflags |= Render_Flags::isSingle;
-				if (componentManager->hasComponent<TextComponent>(entity)) {
-					renderflags |= Render_Flags::isText;
-				}
-				else if (componentManager->hasComponent<SpriteComponent>(entity)) {
-					renderflags |= Render_Flags::isSprite;
-				}
+			if (componentManager->hasComponent<RenderLayerComponent>(entity)) {
+				layer_data = componentManager->getComponent<RenderLayerComponent>(entity);
 			}
-			else if (componentManager->hasComponent<MultiTransformComponent>(entity)) {
-				renderflags |= Render_Flags::isMulti;
-				if (componentManager->hasComponent<MultiTextComponent>(entity)) {
-					renderflags |= Render_Flags::isText;
-				}
-				if (componentManager->hasComponent<MultiSpriteComponent>(entity)) {
-					renderflags |= Render_Flags::isSprite;
-				}
+			else {
+				layer_data = &componentManager->addComponent<RenderLayerComponent>(entity, RenderLayerComponent::BG);
 			}
 
-			// Allow the object to be a render object ONLY with a valid render flag
-			if (((renderflags & Render_Flags::isSprite) != Render_Flags::Null) || ((renderflags & Render_Flags::isText) != Render_Flags::Null)) {
-				_render_targets.push_back({ entity, renderflags, layer });
+			componentManager->addComponent<RenderComponent>(entity, layer_data, position_data, sprite_data, text_data);
+		}
+	}
+	
+	// For multi-sprite objects
+	if (const std::unordered_set<Entity>* multitransComp = componentManager->allEntities<MultiTransformComponent>()) {
+		for (Entity entity : *multitransComp) {
+			if (componentManager->hasComponent<RenderComponent>(entity)) {
+				continue;
 			}
+			multi_position_data = componentManager->getComponent<MultiTransformComponent>(entity);
+			multi_sprite_data = nullptr;
+			multi_text_data = nullptr;
+
+			if (componentManager->hasComponent<MultiTextComponent>(entity)) {
+				multi_text_data = componentManager->getComponent<MultiTextComponent>(entity);
+			}
+			if (componentManager->hasComponent<MultiSpriteComponent>(entity)) {
+				multi_sprite_data = componentManager->getComponent<MultiSpriteComponent>(entity);
+			}
+			if (!multi_text_data && !multi_sprite_data) {
+				componentManager->removeComponent<MultiTransformComponent>(entity);
+				continue;
+			}
+
+			if (componentManager->hasComponent<RenderLayerComponent>(entity)) {
+				layer_data = componentManager->getComponent<RenderLayerComponent>(entity);
+			}
+			else {
+				layer_data = &componentManager->addComponent<RenderLayerComponent>(entity, RenderLayerComponent::BG);
+			}
+
+			componentManager->addComponent<RenderComponent>(entity, layer_data, multi_position_data, multi_sprite_data, multi_text_data);
 		}
 	}
 
 	// Initialize the sprites for each renderable target
-	for (const auto& renderTarget : _render_targets) {
-		auto entity = std::get<0>(renderTarget);
-		auto imageType = std::get<1>(renderTarget);
+	if (auto* renderable_targets = componentManager->allEntities<RenderComponent>()) {
+		for (const auto entity : *renderable_targets) {
+			auto it = std::find_if(_sprite_set.begin(), _sprite_set.end(), [&](const auto& render) {
+				return entity == render._ent;
+				});
+			if (it == _sprite_set.end()) {
+				render_data = componentManager->getComponent<RenderComponent>(entity);
+				std::vector<std::unique_ptr<Sprite>> sprites;
+				sprite_data = render_data->_sprite_data;
+				text_data = render_data->_text_data;
+				multi_position_data = render_data->_multi_position_data;
+				multi_sprite_data = render_data->_multi_sprite_data;
+				multi_text_data = render_data->_multi_text_data;
 
-		if (_sprite_set.find(entity) == _sprite_set.end()) {
-			if ((imageType & Render_Flags::isSingle) != Render_Flags::Null) {
-				position_data = componentManager->getComponent<TransformComponent>(entity);
-				if ((imageType & Render_Flags::isSprite) != Render_Flags::Null) {
-					sprite_data = componentManager->getComponent<SpriteComponent>(entity);
-					std::vector<std::unique_ptr<Sprite>> tempV;
-					tempV.emplace_back(std::make_unique<Sprite>(sprite_data->getResourceID(), sprite_data->getSize().x, sprite_data->getSize().y));
-					_sprite_set.emplace( entity, std::move(tempV) );
+				// Initialize single sprite entities
+				if ((render_data->_flags & Render_Flags::isSingle) != Render_Flags::Null) {
+					if ((render_data->_flags & Render_Flags::isSprite) != Render_Flags::Null) {
+						sprites.emplace_back(std::make_unique<Sprite>(sprite_data->getResourceID(), sprite_data->getSize().x, sprite_data->getSize().y));
+					}
+					if ((render_data->_flags & Render_Flags::isText) != Render_Flags::Null) {
+						sprites.emplace_back(std::make_unique<Text>(text_data->getText(), text_data->getTextSize()));
+					}
 				}
-				if ((imageType & Render_Flags::isText) != Render_Flags::Null) {
-					text_data = componentManager->getComponent<TextComponent>(entity);
-					std::vector<std::unique_ptr<Sprite>> tempV;
-					tempV.emplace_back(std::make_unique<Text>(text_data->getText(), text_data->getTextSize()));
-					_sprite_set.emplace( entity, std::move(tempV) );
-				}
-			}
-			else if ((imageType & Render_Flags::isMulti) != Render_Flags::Null) {
-				multi_position_data = componentManager->getComponent<MultiTransformComponent>(entity);
-				_sprite_set.try_emplace(entity);
-				for (auto& transformComp : multi_position_data->transforms) {
-					if ((imageType & Render_Flags::isSprite) != Render_Flags::Null) {
-						multi_sprite_data = componentManager->getComponent<MultiSpriteComponent>(entity);
-						for (auto& spriteComp : multi_sprite_data->sprites) {
-							if (spriteComp.first == transformComp.first) {
-								_sprite_set[entity].emplace_back(
-									std::make_unique<Sprite>(spriteComp.second->getResourceID(), spriteComp.second->getSize().x, spriteComp.second->getSize().y));
+				// Initialize multi sprite entities
+				else if ((render_data->_flags & Render_Flags::isMulti) != Render_Flags::Null) {
+					for (auto& [_trID, _trData] : multi_position_data->transforms) {
+						if ((render_data->_flags & Render_Flags::isSprite) != Render_Flags::Null) {
+							for (auto& [_spID, _spData] : multi_sprite_data->sprites) {
+								if (_spID == _trID) {
+									sprites.emplace_back(std::make_unique<Sprite>(_spData->getResourceID(), _spData->getSize().x, _spData->getSize().y));
+								}
 							}
 						}
-					}
-					if ((imageType & Render_Flags::isText) != Render_Flags::Null) {
-						multi_text_data = componentManager->getComponent<MultiTextComponent>(entity);
-						for (auto& spriteComp : multi_text_data->text) {
-							if (spriteComp.first == transformComp.first) {
-								_sprite_set[entity].emplace_back(std::make_unique<Text>(spriteComp.second->getText(), spriteComp.second->getTextSize()));
+						if ((render_data->_flags & Render_Flags::isText) != Render_Flags::Null) {
+							for (auto& [_txID, _spData] : multi_text_data->text) {
+								if (_txID == _trID) {
+									sprites.emplace_back(std::make_unique<Text>(_spData->getText(), _spData->getTextSize()));
+								}
 							}
 						}
 					}
 				}
+
+				_sprite_set.emplace_back(RenderBody(entity, render_data, std::move(sprites)));
 			}
 		}
-		
+	}	
+
+	if (!_camera) {
+		if (auto* cameras = componentManager->allEntities<CameraComponent>()) {
+			_camera = componentManager->getComponent<CameraComponent>(*cameras->begin());
+		}
 	}
 
-	// Update all the newly created render entity assets
-	this->update(entityManager, componentManager, assetManager, window);
 }
 
+void Engine::RenderSystem::updateEntities(EntityManager* entityManager, ComponentManager* componentManager) {
+	// Updates current render data by erasing any entities that currently do not exist
 
-void Engine::RenderSystem::draw(const EntityManager* entityManager, const ComponentManager* componentManager,
-	const AssetManager* assetManager, const Window* window) {
-
-	// Updates the current render targets
-	this->update(entityManager, componentManager, assetManager, window);
-	const TransformComponent* position_data;
-
-	// Sorts the render targets by layer order
-	std::sort(_render_targets.begin(), _render_targets.end(),
-		[](const RenderTarget& a, const RenderTarget& b) {
-			int layerA = std::get<2>(a);
-			int layerB = std::get<2>(b);
-			if (layerA != layerB) {
-				return layerA < layerB;
-			}
-			return std::get<0>(a) < std::get<0>(b);
+	std::erase_if(_sprite_set, [&](const auto& item) {
+		const auto& entity = item._ent;
+		const auto& entMap = entityManager->getEntities();
+		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
+			return pair.second == entity;
+			});
+		return (it == entMap.end());
 		});
 
+	auto* trans = componentManager->allEntities<TransformComponent>();
+	auto* multi = componentManager->allEntities<MultiTransformComponent>();
 
-	// Draws all of the render targets onto the screen
-	for (const auto& renderTarget : _render_targets) {
-		auto entity = std::get<0>(renderTarget);
-		auto imageType = std::get<1>(renderTarget);
-
-		if ((imageType & Render_Flags::isMulti) != Render_Flags::Null) {
-			for (auto& pos_data : componentManager->getComponent<MultiTransformComponent>(entity)->transforms) {
-				position_data = pos_data.second.get();
-				if (position_data->centered) {
-					for (auto& sprite : _sprite_set.at(entity)) {
-						sprite->draw_center(window->getRenderer(), assetManager);
-					}
-				}
-				else {
-					for (auto& sprite : _sprite_set.at(entity)) {
-						sprite->draw(window->getRenderer(), assetManager);
-					}
-				}
-			}
-		}
-		else {
-			position_data = componentManager->getComponent<TransformComponent>(entity);
-			if (position_data->centered) {
-				for (auto& sprite : _sprite_set.at(entity)) {
-					sprite->draw_center(window->getRenderer(), assetManager);
-				}
-			}
-			else {
-				for (auto& sprite : _sprite_set.at(entity)) {
-					sprite->draw(window->getRenderer(), assetManager);
-				}
-			}
-		}
-		
+	if (!trans || !multi) {
+		this->initRender(componentManager);
+	}
+	else if (_sprite_set.size() != (trans->size() + multi->size())) {
+		this->initRender(componentManager);
 	}
 }
 
-void Engine::RenderSystem::update(const EntityManager* entityManager, const ComponentManager* componentManager,
+void Engine::RenderSystem::updateRender(const ComponentManager* componentManager,
 	const AssetManager* assetManager, const Window* window) {
 
 	// Transformation Update Lambda (Updates Position, Size, Rotation, and Source
-	auto updateSpriteTransformation = [](const TransformComponent * position_data, const CameraComponent* camera, auto& prevSprite) {
-		TransformComponent position_data_prev(prevSprite->getPosition() - camera->position.position, prevSprite->getAngle(), prevSprite->getScale());
+	auto updateSpriteTransformation = [&](const TransformComponent* position_data, auto& prevSprite) {
+		TransformComponent position_data_prev;
+		if (_camera) {
+			position_data_prev = TransformComponent(prevSprite->getPosition() - _camera->position.position, prevSprite->getAngle(), prevSprite->getScale());
+		}
+		else {
+			position_data_prev = TransformComponent(prevSprite->getPosition(), prevSprite->getAngle(), prevSprite->getScale());
+		}
 		Vector2i camera_pos = position_data_prev.position - prevSprite->getPosition();
+
 		if (*position_data != position_data_prev) {
-			if ((position_data->position != position_data_prev.position) || 
-				 camera_pos != camera->position.position) {
-				prevSprite->setPos(position_data->position - camera->position.position);
+			if (position_data->position != position_data_prev.position) {
+				prevSprite->setPos(position_data->position);
 			}
 			if (position_data->rotation != position_data_prev.rotation) {
 				prevSprite->setAngle(position_data->rotation);
 			}
 			if (position_data->scale != position_data_prev.scale) {
 				prevSprite->setScale(position_data->scale);
-			}	
+			}
 		}
-
-	};
+		
+		if (_camera) {
+			if (camera_pos != _camera->position.position) {
+				prevSprite->setPos(position_data->position + camera_pos);
+			}
+		}
+		};
 
 	// Sprite Update Lambda (Updates attributes when the object is a sprite)
 	auto updateSpriteData = [](const SpriteComponent* sprite_data, Sprite* prevSprite) {
@@ -214,7 +220,7 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 			}
 		}
 
-	};
+		};
 
 	// Text Update Lambda (Updates attributes when the object is a text object)
 	auto updateTextData = [](const TextComponent* text_data, Text* prevText) {
@@ -241,111 +247,145 @@ void Engine::RenderSystem::update(const EntityManager* entityManager, const Comp
 		}
 		return false;
 
-	};
+		};
 
 	const TransformComponent* position_data;
 	const SpriteComponent* sprite_data;
 	const TextComponent* text_data;
-	const CameraComponent* camera = componentManager->getComponent<CameraComponent>(entityManager->getEntities().at("CAMERA"));
-
-	// Updates current render data by erasing any entities that currently do not exist
-
-	std::erase_if(_render_targets, [&](const auto& item) {
-		const auto& [entity, flags, layer] = item;
-		const auto& entMap = entityManager->getEntities();
-		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
-			return pair.second == entity;
-			});
-		return (it == entMap.end());
-		});
-
-	std::erase_if(_sprite_set, [&](const auto& item) {
-		const auto& [entity, vector] = item;
-		const auto& entMap = entityManager->getEntities();
-		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
-			return pair.second == entity;
-			});
-		return (it == entMap.end());
-		});
 
 
 	// Updates each individual renderable entity
-	for (const auto& renderTarget : _render_targets) {
-		auto entity = std::get<0>(renderTarget);
-		auto imageType = std::get<1>(renderTarget);
+	for (auto& renderTarget : _sprite_set) {
+		auto entity = renderTarget._ent;
+		auto imageType = renderTarget._render->_flags;
 
-		if (static_cast<uint8_t>(imageType & Render_Flags::isSingle)) {
-			position_data = componentManager->getComponent<TransformComponent>(entity);
+		if (renderTarget._layer != renderTarget._render->_layer_data->layer) {
+			renderTarget._layer = renderTarget._render->_layer_data->layer;
+		}
 
-			updateSpriteTransformation(position_data, camera, _sprite_set[entity].at(0));
-			auto prevSprite = _sprite_set[entity].at(0).get();
+		if ((imageType & Render_Flags::isSingle) != Render_Flags::Null) {
+			position_data = renderTarget._render->_position_data;
+
+			updateSpriteTransformation(position_data, renderTarget._sprite_set.at(0));
+			auto prevSprite = renderTarget._sprite_set.at(0).get();
 
 			if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {
-				text_data = componentManager->getComponent<TextComponent>(entity);
+				text_data = renderTarget._render->_text_data;
 				if (updateTextData(text_data, sprite)) {
 					sprite->load(window->getRenderer(), "txtEnt" + std::to_string(entity), assetManager, sprite->getDestinationRect());
-				}				
+				}
 			}
 			else {
-				sprite_data = componentManager->getComponent<SpriteComponent>(entity);
+				sprite_data = renderTarget._render->_sprite_data;
 				updateSpriteData(sprite_data, prevSprite);
 			}
 
 		}
-		else if (static_cast<uint8_t>(imageType & Render_Flags::isMulti)) {
-			for (uint8_t ind = 0; ind < _sprite_set[entity].size(); ind++) {
-				position_data = componentManager->getComponent<MultiTransformComponent>(entity)->transforms.at(ind).get();
-				updateSpriteTransformation(position_data, camera, _sprite_set[entity].at(ind));
+		else if ((imageType & Render_Flags::isMulti) != Render_Flags::Null) {
+			for (auto& [ind, data] : renderTarget._render->_multi_position_data->transforms) {
 
-				auto prevSprite = _sprite_set[entity].at(ind).get();
+				updateSpriteTransformation(data.get(), renderTarget._sprite_set.at(ind));
+
+				auto prevSprite = renderTarget._sprite_set.at(ind).get();
 				if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {
-					text_data = componentManager->getComponent<MultiTextComponent>(entity)->text.at(ind).get();
+					text_data = renderTarget._render->_multi_text_data->text.at(ind).get();
 					if (updateTextData(text_data, sprite)) {
 						sprite->load(window->getRenderer(), "txtEnt" + std::to_string(entity), assetManager, sprite->getDestinationRect());
 					}
 				}
 				else {
-					sprite_data = componentManager->getComponent<MultiSpriteComponent>(entity)->sprites.at(ind).get();
+					sprite_data = renderTarget._render->_multi_sprite_data->sprites.at(ind).get();
 					updateSpriteData(sprite_data, prevSprite);
 				}
 
 			}
 		}
-		
+
 	}
 
 }
+
+void Engine::RenderSystem::drawRender(const AssetManager* assetManager, const Window* window) {
+
+	// Lambda for drawing sprites
+	auto spriteRenderer = [&](const TransformComponent* position_data, const auto& _sprite_set) {
+		if (position_data->centered) {
+			for (auto& sprite : _sprite_set) {
+				sprite->draw_center(window->getRenderer(), assetManager);
+			}
+		}
+		else {
+			for (auto& sprite : _sprite_set) {
+				sprite->draw(window->getRenderer(), assetManager);
+			}
+		}
+		return;
+		};
+
+	// Updates the current render targets
+	const TransformComponent* position_data;
+
+	// Sorts the render targets by layer order
+	std::sort(_sprite_set.begin(), _sprite_set.end(),
+		[](const RenderBody& a, const RenderBody& b) {
+			int layerA = a._layer;
+			int layerB = b._layer;
+			if (layerA != layerB) {
+				return layerA < layerB;
+			}
+			return a._ent < b._ent;
+		});
+
+
+	// Draws all of the render targets onto the screen
+	for (const auto& renderTarget : _sprite_set) {
+		auto entity = renderTarget._ent;
+		auto imageType = renderTarget._render->_flags;
+
+		if ((imageType & Render_Flags::isMulti) != Render_Flags::Null) {
+			for (auto& pos_data : renderTarget._render->_multi_position_data->transforms) {
+				position_data = pos_data.second.get();
+				spriteRenderer(position_data, renderTarget._sprite_set);
+			}
+		}
+		else {
+			spriteRenderer(renderTarget._render->_position_data, renderTarget._sprite_set);
+		}
+	}
+}
+
+
 
 /// * System Overloaded Functions
 
 void Engine::RenderSystem::create(const SystemContext& ctx) {
-	if (!ctx.entityManager || !ctx.assetManager || !ctx.componentManager || !ctx.window) {
+	if (!ctx.componentManager) {
 		return;
 	}
 	else {
-		this->init(ctx.entityManager, ctx.componentManager, ctx.assetManager, ctx.window);
+		this->initRender(ctx.componentManager);
 	}
 }
 
 void Engine::RenderSystem::update(const SystemContext& ctx) {
-	if (!ctx.entityManager || !ctx.assetManager || !ctx.componentManager || !ctx.window) {
+	if (!ctx.entityManager || !ctx.componentManager) {
 		return;
 	}
 	else {
-		this->init(ctx.entityManager, ctx.componentManager, ctx.assetManager, ctx.window);
+		this->updateEntities(ctx.entityManager, ctx.componentManager);
 	}
 }
 
 void Engine::RenderSystem::render(const SystemContext& ctx) {
-	if (!ctx.entityManager || !ctx.assetManager || !ctx.componentManager || !ctx.window) {
+	if (!ctx.assetManager || !ctx.componentManager || !ctx.window) {
 		return;
 	}
 	else {
-		this->draw(ctx.entityManager, ctx.componentManager, ctx.assetManager, ctx.window);
+		this->updateRender(ctx.componentManager, ctx.assetManager, ctx.window);
+		this->drawRender(ctx.assetManager, ctx.window);
 	}
 }
 
 void Engine::RenderSystem::quit(const SystemContext& ctx) {
-	_render_targets.clear();
 	_sprite_set.clear();
 }

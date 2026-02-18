@@ -8,16 +8,17 @@ void Engine::CameraSystem::initCamera(ComponentManager* componentManager) {
 		return;
 	}
 
-	_camera_entity = *cameras->begin();
-	_current_camera = componentManager->getComponent<CameraComponent>(_camera_entity);
+	if (_camera_entity == 0 || _camera_entity != *cameras->begin()) {
+		_camera_entity = *cameras->begin();
+		_current_camera = componentManager->getComponent<CameraComponent>(_camera_entity);
 
-	InputComponent& input_comp = componentManager->addComponent<InputComponent>(_camera_entity);
+		InputComponent& input_comp = componentManager->addComponent<InputComponent>(_camera_entity);
 
-	input_comp.newKey(SDL_SCANCODE_W);
-	input_comp.newKey(SDL_SCANCODE_S);
-	input_comp.newKey(SDL_SCANCODE_A);
-	input_comp.newKey(SDL_SCANCODE_D);
-
+		input_comp.newKey(SDL_SCANCODE_W);
+		input_comp.newKey(SDL_SCANCODE_S);
+		input_comp.newKey(SDL_SCANCODE_A);
+		input_comp.newKey(SDL_SCANCODE_D);
+	}
 
 }
 

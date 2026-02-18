@@ -3,7 +3,7 @@
 #include "Game/Objects/Systems/Market/MarketSystem.hpp"
 #include <ranges>
 
-void TR::MarketSystem::marketInit(Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager) {
+void TR::MarketSystem::marketInit(Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager) {
 	assetManager->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketFree_S.png", "MKT_NULL", windowManager->getRenderer());
 
 	const auto& entities = componentManager->allEntities<MarketComponent>();
@@ -39,10 +39,32 @@ void TR::MarketSystem::marketInit(Engine::EntityManager* entityManager, Engine::
 	for (auto& entity : marketEntities) {
 		Engine::Vector2i pos = componentManager->getComponent<Engine::MultiTransformComponent>(entity)->transforms.at(0).get()->position;
 		componentManager->addComponent<Engine::ColliderComponent>(entity, 
-			Engine::Rectf(static_cast<float>(pos.x) + 25.0, static_cast<float>(pos.y) + 25.0, 150.0, 150.0), Engine::Vector2f(), false, true);
+			Engine::Rectf(static_cast<float>(pos.x) + 25.0f, static_cast<float>(pos.y) + 25.0f, 150.0f, 150.0f), Engine::Vector2f(), false, true);
 	}
 
 	 
+}
+
+void TR::MarketSystem::updateEntities(Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager) {
+	// Updates current render data by erasing any entities that currently do not exist
+
+	std::erase_if(_markets, [&](const auto& item) {
+		const auto& [entity, data] = item;
+		const auto& entMap = entityManager->getEntities();
+		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
+			return pair.second == entity;
+			});
+		return (it == entMap.end());
+		});
+
+	auto* markets = componentManager->allEntities<MarketComponent>();
+
+	if (!markets) {
+		return;
+	}
+	if (_markets.size() != 6) {
+		this->marketInit(componentManager, windowManager, assetManager);
+	}
 }
 
 void TR::MarketSystem::marketUpdate(Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager) {
@@ -62,19 +84,20 @@ void TR::MarketSystem::marketUpdate(Engine::EntityManager* entityManager, Engine
 }
 
 void TR::MarketSystem::create(const Engine::SystemContext& ctx) {
-	if (!ctx.entityManager || !ctx.componentManager || !ctx.window || !ctx.assetManager) {
+	if (!ctx.componentManager || !ctx.window || !ctx.assetManager) {
 		return;
 	}
 	else {
-		marketInit(ctx.entityManager, ctx.componentManager, ctx.window, ctx.assetManager);
+		marketInit(ctx.componentManager, ctx.window, ctx.assetManager);
 	}
 }
 
 void TR::MarketSystem::update(const Engine::SystemContext& ctx) {
-	if (!ctx.entityManager || !ctx.componentManager || !ctx.window) {
+	if (!ctx.entityManager || !ctx.componentManager || !ctx.assetManager || !ctx.window) {
 		return;
 	}
 	else {
+		updateEntities(ctx.entityManager, ctx.componentManager, ctx.window, ctx.assetManager);
 		marketUpdate(ctx.entityManager, ctx.componentManager, ctx.window);
 	}
 }
