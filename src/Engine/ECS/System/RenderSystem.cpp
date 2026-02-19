@@ -174,7 +174,7 @@ void Engine::RenderSystem::updateRender(const ComponentManager* componentManager
 	const AssetManager* assetManager, const Window* window) {
 
 	// Transformation Update Lambda (Updates Position, Size, Rotation, and Source
-	auto updateSpriteTransformation = [&](const TransformComponent* position_data, auto& prevSprite) {
+	auto updateSpriteTransformation = [&](const TransformComponent* position_data, uint16_t layer,  auto& prevSprite) {
 		TransformComponent position_data_prev;
 		if (_camera) {
 			position_data_prev = TransformComponent(prevSprite->getPosition() - _camera->position.position, prevSprite->getAngle(), prevSprite->getScale());
@@ -183,7 +183,7 @@ void Engine::RenderSystem::updateRender(const ComponentManager* componentManager
 			position_data_prev = TransformComponent(prevSprite->getPosition(), prevSprite->getAngle(), prevSprite->getScale());
 		}
 		Vector2i camera_pos = position_data_prev.position - prevSprite->getPosition();
-
+		
 		if (*position_data != position_data_prev) {
 			if (position_data->position != position_data_prev.position) {
 				prevSprite->setPos(position_data->position);
@@ -196,9 +196,12 @@ void Engine::RenderSystem::updateRender(const ComponentManager* componentManager
 			}
 		}
 		
-		if (_camera) {
-			if (camera_pos != _camera->position.position) {
-				prevSprite->setPos(position_data->position + camera_pos);
+		
+		if (layer < RenderLayerComponent::HUD) {
+			if (_camera) {
+				if (camera_pos != _camera->position.position) {
+					prevSprite->setPos(position_data->position + camera_pos);
+				}
 			}
 		}
 		};
@@ -266,7 +269,7 @@ void Engine::RenderSystem::updateRender(const ComponentManager* componentManager
 		if ((imageType & Render_Flags::isSingle) != Render_Flags::Null) {
 			position_data = renderTarget._render->_position_data;
 
-			updateSpriteTransformation(position_data, renderTarget._sprite_set.at(0));
+			updateSpriteTransformation(position_data, renderTarget._layer, renderTarget._sprite_set.at(0));
 			auto prevSprite = renderTarget._sprite_set.at(0).get();
 
 			if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {
@@ -284,7 +287,7 @@ void Engine::RenderSystem::updateRender(const ComponentManager* componentManager
 		else if ((imageType & Render_Flags::isMulti) != Render_Flags::Null) {
 			for (auto& [ind, data] : renderTarget._render->_multi_position_data->transforms) {
 
-				updateSpriteTransformation(data.get(), renderTarget._sprite_set.at(ind));
+				updateSpriteTransformation(data.get(), renderTarget._layer, renderTarget._sprite_set.at(ind));
 
 				auto prevSprite = renderTarget._sprite_set.at(ind).get();
 				if (auto* sprite = dynamic_cast<Text*>(prevSprite)) {

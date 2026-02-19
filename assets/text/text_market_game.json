@@ -1,11 +1,11 @@
 {
-    "Game Intro": {
-        "prompt": "none",
-        "text": "Welcome to the Touhou Rainbow Market Game Beta!"
-    },
+  "Game Intro": {
+    "text": "Welcome to the Touhou Rainbow Market Game Beta!",
+    "prompt": "none"
+  },
     "First Turn": {
         "prompt": "y/n",
-        "text": "Is this your first time playing the game?"
+        
     },
     "Prompt 1": {
         "prompt": "y/n",

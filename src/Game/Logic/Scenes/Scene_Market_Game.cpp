@@ -74,6 +74,8 @@ namespace TR {
 			ecsManager->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_NUL");
 		}
 
+		ecsManager->addComponent<Engine::RenderLayerComponent>(PLAYER_PORTRAIT, Engine::RenderLayerComponent::HUD);
+
 
 		/* Object Creation */
 		

@@ -4,14 +4,28 @@
 
 
 
-void Engine::MotionSystem::init(const EntityManager* entityManager, ComponentManager* componentManager) {
+void Engine::MotionSystem::initMotion(const EntityManager* entityManager, ComponentManager* componentManager) {
 	TransType trans;
 	VelType vel;
 	ColType col;
+	AccelType accel;
+	std::unordered_set<Entity> totalEntites;
 
-	for (const auto& [key, entity] : entityManager->getEntities()) {
+	if (auto* velocities = componentManager->allEntities<VelocityComponent>()) {
+		totalEntites.insert(velocities->begin(), velocities->end());
+	}
+	if (auto* multivelocities = componentManager->allEntities<MultiVelocityComponent>()) {
+		totalEntites.insert(multivelocities->begin(), multivelocities->end());
+	}
+	if (auto* accelerations = componentManager->allEntities<AccelerationComponent>()) {
+		totalEntites.insert(accelerations->begin(), accelerations->end());
+	}
+	if (auto* multiaccelerations = componentManager->allEntities<MultiAccelerationComponent>()) {
+		totalEntites.insert(multiaccelerations->begin(), multiaccelerations->end());
+	}
+
+	for (const auto& entity : totalEntites) {
 		if (_entities.find(entity) == _entities.end()) {
-
 			if (componentManager->hasComponent<ColliderComponent>(entity)) {
 				col = hasCollider;
 			}
@@ -30,17 +44,58 @@ void Engine::MotionSystem::init(const EntityManager* entityManager, ComponentMan
 			}
 
 			if (componentManager->hasComponent<VelocityComponent>(entity)) {
+				if (componentManager->hasComponent<AccelerationComponent>(entity)) {
+					accel = isSingleAccel;
+				}
+				else {
+					accel = noAccel;
+				}
 				vel = isSingleVel;
 			}
 			else if (componentManager->hasComponent<MultiVelocityComponent>(entity)) {
+				if (componentManager->hasComponent<AccelerationComponent>(entity)) {
+					accel = isMultiAccel;
+				}
+				else {
+					accel = noAccel;
+				}
 				vel = isMultiVel;
 			}
 			else {
 				continue;
 			}
 
-			_entities.emplace(entity, std::make_tuple(trans, vel, col));
+			_entities.emplace(entity, MotionObject(trans, vel, accel, col));
 		}
+	}
+
+}
+
+void Engine::MotionSystem::updateEntities(EntityManager* entityManager, ComponentManager* componentManager) {
+	std::erase_if(_entities, [&](const auto& item) {
+		const auto& [entity, data] = item;
+		const auto& entMap = entityManager->getEntities();
+		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
+			return pair.second == entity;
+			});
+		return (it == entMap.end());
+		});
+
+	auto* velEntities = componentManager->allEntities<VelocityComponent>();
+	auto* multiVelEntities = componentManager->allEntities<MultiVelocityComponent>();
+
+	size_t totalEntities = 0;
+
+	if (velEntities) {
+		totalEntities += velEntities->size();
+	}
+
+	if (multiVelEntities) {
+		totalEntities += multiVelEntities->size();
+	}
+
+	if (_entities.size() != totalEntities) {
+		this->initMotion(entityManager, componentManager);
 	}
 }
 
@@ -65,26 +120,13 @@ void Engine::MotionSystem::movementUpdate(const EntityManager* entityManager, Co
 		colliderComp->bounds.size += velocityComp->scalar;
 		};
 
-	std::erase_if(_entities, [&](const auto& item) {
-		const auto& [entity, data] = item;
-		const auto& entMap = entityManager->getEntities();
-		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
-			return pair.second == entity;
-			});
-		return (it == entMap.end());
-		});
-
-	this->init(entityManager, componentManager);
-
-	for (const auto& pair: _entities) {
-		auto& entity = std::get<0>(pair);
-		auto& entity_type = std::get<1>(pair);
-		if (std::get<0>(entity_type) == isSingleTrans) {
+	for (const auto& [entity, entity_type] : _entities) {
+		if (entity_type.transformationType == isSingleTrans) {
 			transformComp = componentManager->getComponent<TransformComponent>(entity);
-			if (std::get<1>(entity_type) == isSingleVel) {
+			if (entity_type.velocityType == isSingleVel) {
 				velocityComp = componentManager->getComponent<VelocityComponent>(entity);
 				transformationMutator(transformComp, velocityComp);
-				if (std::get<2>(entity_type) == hasCollider) {
+				if (entity_type.colliderType == hasCollider) {
 					colliderComp = componentManager->getComponent<ColliderComponent>(entity);
 					colliderMutator(colliderComp, velocityComp);
 				}
@@ -92,12 +134,12 @@ void Engine::MotionSystem::movementUpdate(const EntityManager* entityManager, Co
 		}
 		else {
 			multiTransComp = componentManager->getComponent<MultiTransformComponent>(entity);
-			if (std::get<1>(entity_type) == isSingleVel) {
+			if (entity_type.velocityType == isSingleVel) {
 				velocityComp = componentManager->getComponent<VelocityComponent>(entity);
 				for (const auto& pair : multiTransComp->transforms) {
 					transformationMutator(std::get<1>(pair).get(), velocityComp);
 				}
-				if (std::get<2>(entity_type) == hasCollider) {
+				if (entity_type.colliderType == hasCollider) {
 					colliderComp = componentManager->getComponent<ColliderComponent>(entity);
 					colliderMutator(colliderComp, velocityComp);
 				}
@@ -122,7 +164,7 @@ void Engine::MotionSystem::create(const SystemContext& ctx) {
 		return;
 	}
 	else {
-		init(ctx.entityManager, ctx.componentManager);
+		this->initMotion(ctx.entityManager, ctx.componentManager);
 	}
 }
 
@@ -131,7 +173,8 @@ void Engine::MotionSystem::update(const SystemContext& ctx) {
 		return;
 	}
 	else {
-		movementUpdate(ctx.entityManager, ctx.componentManager);
+		this->updateEntities(ctx.entityManager, ctx.componentManager);
+		this->movementUpdate(ctx.entityManager, ctx.componentManager);
 	}
 }
 

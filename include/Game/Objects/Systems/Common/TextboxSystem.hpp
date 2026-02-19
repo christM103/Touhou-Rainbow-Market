@@ -12,8 +12,12 @@ namespace TR {
 		TextboxSystem() = default;
 		~TextboxSystem();
 
-		void init(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager);
+		void initTextbox(Engine::ComponentManager* componentManager, Engine::Window* windowManager);
+
+		void updateEntity(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager);
+
 		void updateRender(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager);
+
 		std::string textFormatting(std::string font, int size, std::string text);
 
 		// Overloaded functions
