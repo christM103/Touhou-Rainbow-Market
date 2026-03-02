@@ -88,11 +88,6 @@ namespace TR {
 		}
 		ecsManager->addSystem<MarketSystem>();
 
-		// Initialize Text Box Entity
-		Engine::Entity TEXTBOX_TEST = ecsManager->createEntity("TEXTBOX_TEST");
-		ecsManager->addComponent<TextBoxComponent>(TEXTBOX_TEST, 
-			R"(Welcome to the Touhou Rainbow Market Game Beta!)",
-			240, 240, 5, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP);
 		ecsManager->addSystem<TextboxSystem>();
 
 		// Initialize Mouse Entity
@@ -106,6 +101,43 @@ namespace TR {
 
 	void Market_Game::update(Engine::Engine* gEngine) {
 		Engine::ECSManager* ecsManager = gEngine->getECSManager();
+		switch (uint16_t state = (_market_scene_state & Main_Game_Timeline_States)) {
+			TextBoxComponent* textbox;
+
+			case MG_Intro_Sceen:
+				// Initialize Text Box Entity
+				if (ecsManager->getEntities().find("TEXTBOX_TEST") == ecsManager->getEntities().end()) {
+					Engine::Entity TEXTBOX_TEST = ecsManager->createEntity("TEXTBOX_TEST");
+					ecsManager->addComponent<TextBoxComponent>(TEXTBOX_TEST,
+						"Welcome to the Touhou Rainbow Market Game Beta!",
+						240, 240, 5, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP,
+						TextBoxComponent::WIDTH_MEDIUM | TextBoxComponent::HEIGHT_MEDIUM, 30);
+				}
+				textbox = ecsManager->getComponent<TextBoxComponent>(ecsManager->getEntities().at("TEXTBOX_TEST"));
+
+				if ((textbox->_textbox_flags & textbox->TXT_COMPLETE) != textbox->TXTBOX_NULL) {
+					_market_scene_state ^= MG_Intro_Sceen;
+					_market_scene_state ^= MG_Market_Prompt;
+				}
+				break;
+			case MG_Market_Prompt:
+				textbox = ecsManager->getComponent<TextBoxComponent>(ecsManager->getEntities().at("TEXTBOX_TEST"));
+				if (textbox->_textbox_next.empty() && (textbox->_textbox_flags & textbox->TXT_COMPLETE) != textbox->TXTBOX_NULL) {
+					if (textbox->_textbox_text != "Would you like to have Mystia's market?\n") {
+						textbox->_textbox_next = "Would you like to have Mystia's market?\n";
+					}
+				}
+				if ((textbox->_textbox_flags & textbox->INPUT_PRESSED) != textbox->TXTBOX_NULL && 
+					(textbox->_textbox_style & textbox->WIDTH_MEDIUM) != textbox->NULL_BOX) {
+					textbox->_textbox_style ^= TextBoxComponent::WIDTH_SMALL;
+					textbox->_textbox_style ^= TextBoxComponent::WIDTH_MEDIUM;
+				}
+				
+				break;
+			default:
+				break;
+		}
+
 
 		if (ecsManager->componentExists<TextBoxComponent>()) {
 			if (ecsManager->isSystemRunning<TextboxSystem>()) {

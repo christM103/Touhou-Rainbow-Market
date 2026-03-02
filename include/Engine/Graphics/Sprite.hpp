@@ -182,7 +182,7 @@ namespace Engine {
 
         /// @brief Sets the size of the sprite.
         /// @param A Vector2i of the size of the sprite
-        void setSize(Vector2i size) { _dest_rect.position = size; setSizeCrop(size); }
+        void setSize(Vector2i size) { _dest_rect.size = size; }
         
         /// @brief Sets the position of the crop.
         /// @param A Vector2i of the size of the crop
@@ -190,7 +190,7 @@ namespace Engine {
 
         /// @brief Sets the size of the crop.
         /// @param A Vector2i of the size of the crop
-        void setSizeCrop(Vector2i size) { _src_rect.position = size; }
+        void setSizeCrop(Vector2i size) { _src_rect.size = size; }
         
 
         /// @brief Sets the size of the sprite.

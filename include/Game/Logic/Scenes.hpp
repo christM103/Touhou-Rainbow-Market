@@ -63,10 +63,11 @@ namespace TR {
     public:
 
         /// @brief List of possible game states
-        enum Main_Game_States : uint16_t {
+        enum Main_Game_States : uint32_t {
             MG_Null_State = 0,
             MG_Main_Game = 1 << 0,
             MG_Pause = 1 << 1,
+
             MG_Intro_Sceen = 1 << 2,
             MG_Help_Screen = 1 << 3,
             MG_Market_Prompt = 1 << 4,
@@ -80,6 +81,10 @@ namespace TR {
             MG_Market_Action = 1 << 12
         };
 
+        static constexpr uint32_t Main_Game_Timeline_States
+        { MG_Intro_Sceen | MG_Help_Screen | MG_Market_Prompt | MG_Turn_Intro | MG_Text_Prompt | MG_Highlight_Market | MG_Highlight_Action | MG_Choosing_Player_Land | MG_Choosing_Enemy_Land |
+            MG_End_Of_Turn };
+
         Market_Game();
         explicit Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players);
 
@@ -89,7 +94,7 @@ namespace TR {
         void state_machine(Engine::Engine* gEngine, Player_Set& player_set);
 
     private:
-        uint16_t _market_scene_state{ MG_Null_State };
+        uint32_t _market_scene_state{ MG_Null_State };
     };
 
     

@@ -72,7 +72,7 @@ namespace Engine {
 
 	private:
 		std::vector<RenderBody> _sprite_set{ }; // Set of multi sprite objects
-		CameraComponent* _camera;
+		CameraComponent* _camera{};
 	};
 
 	// Define the Render_Flags enum separately (flags only; no member functions inside enum)

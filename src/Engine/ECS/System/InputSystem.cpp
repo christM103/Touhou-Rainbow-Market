@@ -69,12 +69,12 @@ void Engine::InputSystem::updateEntities(EntityManager* entityManager, Component
 			initInput(entityManager, componentManager);
 		}
 	}
-	else if (const auto& entities = componentManager->allEntities<KeyboardComponent>()) {
+	if (const auto& entities = componentManager->allEntities<KeyboardComponent>()) {
 		if (entities->size() > entity_inputs.at(Keyboard).size()) {
 			initInput(entityManager, componentManager);
 		}
 	}
-	else if (const auto& entities = componentManager->allEntities<MouseComponent>()) {
+	if (const auto& entities = componentManager->allEntities<MouseComponent>()) {
 		if (entities->size() > entity_inputs.at(Mouse).size()) {
 			initInput(entityManager, componentManager);
 		}
