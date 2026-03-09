@@ -3,7 +3,6 @@
 
 namespace TR {
 	struct ButtonComponent {
-		Engine::Vector2i position;
 		bool activated;
 	};
 }

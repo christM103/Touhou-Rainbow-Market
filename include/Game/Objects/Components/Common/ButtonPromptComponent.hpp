@@ -10,7 +10,14 @@ namespace TR {
 			FALSE = 2 << 1
 		};
 
-		ButtonComponent True, False;
+		ButtonComponent _buttonTrue{ false }, _buttonFalse{ false };
+		Engine::Vector2i position;
+
+		ButtonPromptComponent(Engine::Vector2i pos = Engine::Vector2i()) : position(pos) {}
+
+		ButtonPromptComponent(int x = 0, int y = 0) {
+			ButtonPromptComponent(Engine::Vector2i{ x, y });
+		}
 
 	};
 }
