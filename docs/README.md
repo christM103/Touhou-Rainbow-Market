@@ -101,7 +101,7 @@ On Linux, run the following command from the project's root directory:
 
 Touhou Rainbow Team
 * [Mango182](https://github.com/Mango182)
-* [Chrisfantasy](https://github.com/christM103)
+* [christM103](https://github.com/christM103)
 * Keymaster
 
 ---
