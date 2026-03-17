@@ -2,14 +2,10 @@
 
 #pragma once
 
-#include "Engine/Core/Engine.hpp"
-#include "Game/Logic/Player.hpp"
-//#include "Game/event.hpp"
-
-using Player_Set = std::vector<std::shared_ptr<TR::Player_Data>>;
+#include "Game/Logic/Globals.hpp"
 
 namespace TR {
-
+    
     constexpr Engine::Vector2i TXT_A = Engine::Vector2i(205, 219);
 
     /// @brief Generic Game Scene
@@ -26,8 +22,8 @@ namespace TR {
 
         ~Scene() = default;
 
-        virtual bool create(SDL_Renderer* renderer, Engine::Engine* gEngine) = 0;
-        virtual void update(Engine::Engine* gEngine) = 0;
+        virtual bool create() = 0;
+        virtual void update() = 0;
 
         inline Scene_ID getSceneCurr() { return _currState; }
         inline Scene_ID getSceneNext() { return _nextState; }
@@ -44,8 +40,8 @@ namespace TR {
     public:
         Title_Screen();
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine) override;
-        void update(Engine::Engine* gEngine) override;
+        bool create() override;
+        void update() override;
 
     };
 
@@ -54,8 +50,8 @@ namespace TR {
     public:
         Char_Select();
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine) override;
-        void update(Engine::Engine* gEngine) override;
+        bool create() override;
+        void update() override;
     };
 
     /// @brief Main Market Game Scene
@@ -88,10 +84,8 @@ namespace TR {
         Market_Game();
         explicit Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players);
 
-        bool create(SDL_Renderer* renderer, Engine::Engine* gEngine);
-        void update(Engine::Engine* gEngine) override;
-
-        void state_machine(Engine::Engine* gEngine, Player_Set& player_set);
+        bool create() override;
+        void update() override;
 
     private:
         uint32_t _market_scene_state{ MG_Null_State };

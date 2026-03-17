@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include "Engine/Math/Vector2.hpp"
 
 namespace Engine {
     class Window {
@@ -20,6 +21,10 @@ namespace Engine {
         /// @brief Gets the height of the window.
         /// @return Height of the window
         int getHeight() const { return height; }
+
+		/// @brief Gets the size of the window as a Vector2i.
+		/// @return Size of the window as Vector2i
+		Vector2i getSize() const { return Vector2i(width, height); }
 
         /// @brief Gets the SDL_Renderer associated with the window.
         /// @return Pointer to the SDL_Renderer

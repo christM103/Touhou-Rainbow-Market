@@ -22,6 +22,10 @@ namespace Engine {
 			scancode.emplace(key, nullptr);
 		}
 
+		void removeKey(Keycode key) {
+			scancode.erase(key);
+		}
+
 		bool keyPressed(Keycode key) {
 			if (scancode.find(key) != scancode.end()) {
 				return scancode.at(key)->isPressed;

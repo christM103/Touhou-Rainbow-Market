@@ -60,13 +60,33 @@ void Engine::InputSystem::updateEntities(EntityManager* entityManager, Component
 			});
 	}
 
-	/* Potentially implement lambda for searching through the entity list to remove an entity */
+	// Erases any keys that no longer exists
+	std::erase_if(keyboard_keys, [&](const auto& item) {
+		const auto& key = item.first;
+		for (auto& entity : entity_inputs.at(Button)) {
+			if (componentManager->getComponent<InputComponent>(entity)->scancode.find(key) != componentManager->getComponent<InputComponent>(entity)->scancode.end()) {
+				return false;
+			}
+		}
+		return true;
+		});
 
 	// Update for any added entites within the engine
-
 	if (const auto& entities = componentManager->allEntities<InputComponent>()) {
 		if (entities->size() > entity_inputs.at(Button).size()) {
 			initInput(entityManager, componentManager);
+		}
+
+		for (auto& entity : *entities) {
+			auto& scancode = componentManager->getComponent<InputComponent>(entity)->scancode;
+			if (scancode.size() != keyboard_keys.size()) {
+				for (auto& keys : scancode) {
+					keyboard_keys.emplace(keys.first, KeyComponent(keys.first));
+					if (keys.second == nullptr) {
+						keys.second = &(keyboard_keys.at(keys.first));
+					}
+				}
+			}
 		}
 	}
 	if (const auto& entities = componentManager->allEntities<KeyboardComponent>()) {

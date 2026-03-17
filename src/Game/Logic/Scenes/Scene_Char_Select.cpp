@@ -9,59 +9,60 @@ namespace TR {
         _nextState = _currState;
     }
 
-    bool Char_Select::create(SDL_Renderer* renderer, Engine::Engine* gEngine) {
-        gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Char_Select/Placeholder_CharS_BG.png", "BGO", renderer);
-        gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_R.png", "Portait_R", renderer);
-        gEngine->getAssetManager()->loadTexture("assets/gfx/sprites/Common/Placeholder_Portrait_M.png", "Portait_M", renderer);
+    bool Char_Select::create() {
+		// Load the background and portrait textures
+        gState.gAssets->loadTexture(gState.GFX_FOLDER + "Char_Select/Placeholder_CharS_BG.png", "BGO", gState.gRenderer);
+        gState.gAssets->loadTexture(gState.GFX_FOLDER + "Common/Placeholder_Portrait_R.png", "Portait_R", gState.gRenderer);
+        gState.gAssets->loadTexture(gState.GFX_FOLDER + "Common/Placeholder_Portrait_M.png", "Portait_M", gState.gRenderer);
 
         // Creates the Backgrounds
-        Engine::Entity BGO = gEngine->getECSManager()->createEntity("BGO");
-        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(BGO, Engine::Vector2i{ 0,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
-        gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti{ 0,0,1280,720 }, Engine::Vector2i(1280, 720), "BGO");
-        gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(BGO, Engine::RenderLayerComponent::BG);
-        auto& input = gEngine->getECSManager()->addComponent<Engine::InputComponent>(BGO);
-        input.newKey(SDL_SCANCODE_LEFT);
-        input.newKey(SDL_SCANCODE_RIGHT);
+        Engine::Entity BGO = gState.gECS->createEntity("BGO");
+        gState.gECS->addComponent<Engine::TransformComponent>(BGO);
+        gState.gECS->addComponent<Engine::SpriteComponent>(BGO, Engine::Recti(Engine::Vector2i{}, gState.gWindow->getSize()), gState.gWindow->getSize(), "BGO");
+        gState.gECS->addComponent<Engine::RenderLayerComponent>(BGO, Engine::RenderLayerComponent::BG);
 
         // Creates the Portaits
-        Engine::Entity REIMU = gEngine->getECSManager()->createEntity("REIMU");
-        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(REIMU, Engine::Vector2i{ 20,30 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
-        gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(REIMU, Engine::Recti{ 0,0,600,600 }, Engine::Vector2i(600, 600), "Portait_R");
-        gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(REIMU, Engine::RenderLayerComponent::SPRITE);
+        Engine::Entity REIMU = gState.gECS->createEntity("REIMU");
+        gState.gECS->addComponent<Engine::TransformComponent>(REIMU, Engine::Vector2i{ 20,30 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+        gState.gECS->addComponent<Engine::SpriteComponent>(REIMU, Engine::Recti{ 0,0,600,600 }, Engine::Vector2i(600, 600), "Portait_R");
+        gState.gECS->addComponent<Engine::RenderLayerComponent>(REIMU, Engine::RenderLayerComponent::SPRITE);
 
-        Engine::Entity MARISA = gEngine->getECSManager()->createEntity("MARISA");
-        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(MARISA, Engine::Vector2i{ 660,30 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
-        gEngine->getECSManager()->addComponent<Engine::SpriteComponent>(MARISA, Engine::Recti{ 0,0,600,600 }, Engine::Vector2i(600, 600), "Portait_M");
-        gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(MARISA, Engine::RenderLayerComponent::SPRITE);
+        Engine::Entity MARISA = gState.gECS->createEntity("MARISA");
+        gState.gECS->addComponent<Engine::TransformComponent>(MARISA, Engine::Vector2i{ 660,30 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
+        gState.gECS->addComponent<Engine::SpriteComponent>(MARISA, Engine::Recti{ 0,0,600,600 }, Engine::Vector2i(600, 600), "Portait_M");
+        gState.gECS->addComponent<Engine::RenderLayerComponent>(MARISA, Engine::RenderLayerComponent::SPRITE);
 
         // Creates the Text
-        Engine::Entity TEXT = gEngine->getECSManager()->createEntity("TEXT");
-        gEngine->getECSManager()->addComponent<Engine::TransformComponent>(TEXT, Engine::Vector2i{ gEngine->getWindow()->getWidth() / 2, 650 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f }, true);
-        gEngine->getECSManager()->addComponent<Engine::TextComponent>(TEXT, "Choose your character using the left and right arrow keys", 40, Engine::Vector4i(0, 0, 0, 255));
-        gEngine->getECSManager()->addComponent<Engine::RenderLayerComponent>(TEXT, Engine::RenderLayerComponent::FG);
+        Engine::Entity TEXT = gState.gECS->createEntity("TEXT");
+        gState.gECS->addComponent<Engine::TransformComponent>(TEXT, Engine::Vector2i{ gState.gWindow->getWidth() / 2, 650 }).centered = true;
+        gState.gECS->addComponent<Engine::TextComponent>(TEXT, "Choose your character using the left and right arrow keys", 40, Engine::Vector4i(0, 0, 0, 255));
+        gState.gECS->addComponent<Engine::RenderLayerComponent>(TEXT, Engine::RenderLayerComponent::FG);
+
+		// Initialize the input for the scene
+        gState.gInput->newKey(SDL_SCANCODE_LEFT);
+        gState.gInput->newKey(SDL_SCANCODE_RIGHT);
 
         return true;
     }
 
-    void Char_Select::update(Engine::Engine* gEngine) {
-        if (gEngine->getECSManager()->getComponent<Engine::InputComponent>(gEngine->getECSManager()->getEntities().at("BGO"))->keyPressed(SDL_SCANCODE_LEFT) ||
-            gEngine->getECSManager()->getComponent<Engine::InputComponent>(gEngine->getECSManager()->getEntities().at("BGO"))->keyPressed(SDL_SCANCODE_RIGHT)) {
+    void Char_Select::update() {
+        if (gState.gInput->keyPressed(SDL_SCANCODE_LEFT) || gState.gInput->keyPressed(SDL_SCANCODE_RIGHT)) {
 
-            _nextState = SC_Main;
+            this->setSceneNext(SC_Main);
 
-            gEngine->getECSManager()->destroyEntity("REIMU");
-            gEngine->getECSManager()->destroyEntity("MARISA");
-            gEngine->getECSManager()->destroyEntity("TEXT");
+            gState.gECS->destroyEntity("REIMU");
+            gState.gECS->destroyEntity("MARISA");
+            gState.gECS->destroyEntity("TEXT");
 
-            Engine::Entity PLAYER = gEngine->getECSManager()->createEntity("PLAYER");
-            if (gEngine->getECSManager()->getComponent<Engine::InputComponent>(gEngine->getECSManager()->getEntities().at("BGO"))->keyPressed(SDL_SCANCODE_LEFT)) {
-                gEngine->getECSManager()->addComponent<PlayerComponent>(PLAYER, Player_Data::S_Reimu, Player_Data::PI_Player_1);
+            Engine::Entity PLAYER = gState.gECS->createEntity("PLAYER");
+            if (gState.gInput->keyPressed(SDL_SCANCODE_LEFT)) {
+                gState.gPlayer = &gState.gECS->addComponent<PlayerComponent>(PLAYER, Player_Data::S_Reimu, Player_Data::PI_Player_1);
             }
-            else if (gEngine->getECSManager()->getComponent<Engine::InputComponent>(gEngine->getECSManager()->getEntities().at("BGO"))->keyPressed(SDL_SCANCODE_RIGHT)) {
-                gEngine->getECSManager()->addComponent<PlayerComponent>(PLAYER, Player_Data::S_Marisa, Player_Data::PI_Player_1);
+            else if (gState.gInput->keyPressed(SDL_SCANCODE_RIGHT)) {
+                gState.gPlayer = &gState.gECS->addComponent<PlayerComponent>(PLAYER, Player_Data::S_Marisa, Player_Data::PI_Player_1);
             }
-            gEngine->getECSManager()->addSystem<PlayerSystem>();
-            gEngine->getECSManager()->destroyEntity("BGO");
+            gState.gECS->addSystem<PlayerSystem>();
+            gState.gECS->destroyEntity("BGO");
 
         }
     }
