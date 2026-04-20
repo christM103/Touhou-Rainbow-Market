@@ -45,6 +45,7 @@ void TR::TextboxSystem::initTextbox(Engine::ComponentManager* componentManager, 
 				calculateSize(textbox);
 				position = textbox->_textbox_position;
 				if ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) {
+					textbox->_textbox_flags |= textbox->_textbox_entry;
 					if ((textbox->_textbox_flags & TextBoxComponent::TRANSITION_LEFT) != TextBoxComponent::TXTBOX_NULL) {
 						position.x = windowManager->getWidth();
 					}
@@ -118,30 +119,61 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 
 		this->calculateSize(textbox, true);
 		Engine::Vector2i current_size = _bottom_right->position - _top_left->position + Engine::Vector2i{32, 32};
-		if (current_size != textbox->_textbox_size) {
-			textbox->_textbox_flags |= TextBoxComponent::RESIZE;
-		}
-		else {
-			textbox->_textbox_flags &= ~TextBoxComponent::RESIZE;
-		}
 
 		// The enter transition is active
 		if ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) {
+			if ((textbox->_textbox_flags & textbox->_textbox_entry) == TextBoxComponent::TXTBOX_NULL) {
+				textbox->_textbox_flags |= textbox->_textbox_entry;
+			}
 			velocity = textboxTransition(textbox, _top_left, TextBoxComponent::ENTER, Engine::Vector2i(windowManager->getWidth(), windowManager->getHeight()));
 			componentManager->addComponent<Engine::VelocityComponent>(entity, velocity);
 		}
 		// The exit transition is active
 		else if ((textbox->_textbox_flags & TextBoxComponent::EXIT) != TextBoxComponent::TXTBOX_NULL) {
+			if ((textbox->_textbox_flags & textbox->_textbox_exit) == TextBoxComponent::TXTBOX_NULL) {
+				textbox->_textbox_flags |= textbox->_textbox_exit;
+			}
 			velocity = textboxTransition(textbox, _top_left, TextBoxComponent::EXIT, Engine::Vector2i(windowManager->getWidth(), windowManager->getHeight()));
 			componentManager->addComponent<Engine::VelocityComponent>(entity, velocity);
 		}
 		// The textbox is resizing
-		else if ((textbox->_textbox_flags & TextBoxComponent::RESIZE) != TextBoxComponent::TXTBOX_NULL) {
+		else if ((textbox->_textbox_flags & TextBoxComponent::RESIZE) != TextBoxComponent::TXTBOX_NULL || (textbox->_textbox_flags & TextBoxComponent::REFACTOR) != TextBoxComponent::TXTBOX_NULL) {
+			velocity = this->textboxTransition(textbox, _top_left, TextBoxComponent::RESIZE, Engine::Vector2i(windowManager->getWidth(), windowManager->getHeight()));
+			componentManager->addComponent<Engine::VelocityComponent>(entity, velocity);
 			this->setStructure(textbox, _sprites, _positions, _top_left->position);
 		}
 		// The textbox is static
-		else if ((textbox->_textbox_flags & TextBoxComponent::RESIZE) == TextBoxComponent::TXTBOX_NULL) {
+		else {
 			std::string currentText = _text_comp->getText();
+
+			if (_top_left->position != textbox->_textbox_position) {
+				textbox->_textbox_flags |= TextBoxComponent::REFACTOR;
+
+				if (_top_left->position.x > textbox->_textbox_position.x) {
+					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_LEFT;
+				}
+				else if (_top_left->position.x < textbox->_textbox_position.x) {
+					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_RIGHT;
+				}
+				if (_top_left->position.y < textbox->_textbox_position.y) {
+					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_UP;
+				}
+				else if (_top_left->position.y > textbox->_textbox_position.y) {
+					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_DOWN;
+				}
+
+			}
+			else {
+				textbox->_textbox_flags &= ~TextBoxComponent::REFACTOR;
+			}
+
+			if (current_size != textbox->_textbox_size) {
+				textbox->_textbox_flags |= TextBoxComponent::RESIZE;
+			}
+			else {
+				textbox->_textbox_flags &= ~TextBoxComponent::RESIZE;
+			}
+
 			_input_comp->keyPressed(SDL_SCANCODE_SPACE) ? textbox->_textbox_flags |= TextBoxComponent::INPUT_PRESSED : textbox->_textbox_flags &= ~TextBoxComponent::INPUT_PRESSED;
 			switch (uint16_t state = (textbox->_textbox_flags & textbox_states)) {
 				case TextBoxComponent::TXT_CONTINUE:
@@ -267,11 +299,11 @@ void TR::TextboxSystem::calculateSize(TextBoxComponent* textbox, bool isDynamic,
 	}
 	switch (uint8_t hF = (textbox->_textbox_style & height_flags)) {
 	case TextBoxComponent::HEIGHT_TINY:
-		setSize(false, 100);
-		textbox->_textMax = 2;
+		setSize(false, 200);
+		textbox->_textMax = 3;
 		break;
 	case TextBoxComponent::HEIGHT_SMALL:
-		setSize(false, 200);
+		setSize(false, 300);
 		textbox->_textMax = 4;
 		break;
 	case TextBoxComponent::HEIGHT_MEDIUM:
@@ -337,34 +369,47 @@ void TR::TextboxSystem::setStructure(TextBoxComponent* textbox, Engine::MultiSpr
 Engine::Vector2f TR::TextboxSystem::textboxTransition(TextBoxComponent* textbox, Engine::TransformComponent* transform, TextBoxComponent::TextBoxFlags direction, Engine::Vector2i window) {
 	uint16_t movement_flags = TextBoxComponent::TRANSITION_LEFT | TextBoxComponent::TRANSITION_RIGHT | TextBoxComponent::TRANSITION_UP | TextBoxComponent::TRANSITION_DOWN;
 	float hor = 0.0, vert = 0.0;
-	int limitLeft = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.x : -textbox->_textbox_size.x;
-	int limitRight = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.x : window.x;
-	int limitUp = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.y : -textbox->_textbox_size.y;
-	int limitDown = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.y : window.y;
+	int limitLeft, limitRight, limitUp, limitDown;
+	if ((textbox->_textbox_flags & TextBoxComponent::REFACTOR) != TextBoxComponent::TXTBOX_NULL) {
+		limitLeft = textbox->_textbox_position.x;
+		limitRight = textbox->_textbox_position.x;
+		limitUp = textbox->_textbox_position.y;
+		limitDown = textbox->_textbox_position.y;
+	}
+	else {
+		limitLeft = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.x : -textbox->_textbox_size.x;
+		limitRight = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.x : window.x;
+		limitUp = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.y : -textbox->_textbox_size.y;
+		limitDown = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.y : window.y;
+	}
 
 	switch (uint16_t movement = (textbox->_textbox_flags & movement_flags)) {
 		case TextBoxComponent::TRANSITION_LEFT:
 			hor = -4.0;
 			if (transform->position.x + hor < limitLeft) {
 				hor = 0.0;
+				textbox->_textbox_flags &= ~TextBoxComponent::TRANSITION_LEFT;
 			}
 			break;
 		case TextBoxComponent::TRANSITION_RIGHT:
 			hor = 4.0;
 			if (transform->position.x + hor > limitRight) {
 				hor = 0.0;
+				textbox->_textbox_flags &= ~TextBoxComponent::TRANSITION_RIGHT;
 			}
 			break;
 		case TextBoxComponent::TRANSITION_UP:
 			vert = -4.0;
 			if (transform->position.y + vert < limitUp) {
 				vert = 0.0;
+				textbox->_textbox_flags &= ~TextBoxComponent::TRANSITION_UP;
 			}
 			break;
 		case TextBoxComponent::TRANSITION_DOWN:
 			vert = 4.0;
-			if (transform->position.y + vert > limitDown) {
+		if (transform->position.y + vert > limitDown) {
 				vert = 0.0;
+				textbox->_textbox_flags &= ~TextBoxComponent::TRANSITION_DOWN;
 			}
 			break;
 		default:
@@ -372,8 +417,12 @@ Engine::Vector2f TR::TextboxSystem::textboxTransition(TextBoxComponent* textbox,
 			vert = 0.0f;
 			break;
 	}
+
 	if ((hor == 0.0) && (vert == 0.0)) {
-		textbox->_textbox_flags ^= TextBoxComponent::ENTER;
+		textbox->_textbox_flags &= ~TextBoxComponent::ENTER;
+		textbox->_textbox_flags &= ~TextBoxComponent::EXIT;
+		textbox->_textbox_flags &= ~TextBoxComponent::REFACTOR;
+		textbox->_textbox_flags &= ~TextBoxComponent::RESIZE;
 	}
 
 	return Engine::Vector2f(hor, vert);

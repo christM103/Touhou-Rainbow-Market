@@ -13,22 +13,23 @@ namespace TR {
             // Textbox Transitions
             ENTER = 1 << 1,
             EXIT = 1 << 2,
+            REFACTOR = 1 << 3,
 
             // Transition Directions
-            TRANSITION_LEFT = 1 << 3,
-            TRANSITION_RIGHT = 1 << 4,
-            TRANSITION_UP = 1 << 5,
-            TRANSITION_DOWN = 1 << 6,
+            TRANSITION_LEFT = 1 << 4,
+            TRANSITION_RIGHT = 1 << 5,
+            TRANSITION_UP = 1 << 6,
+            TRANSITION_DOWN = 1 << 7,
 
             // Text Flags
-            TXT_ACTIVE = 1 << 7,
-            TXT_COMPLETE = 1 << 8,
-            TXT_CONTINUE = 1 << 9,
+            TXT_ACTIVE = 1 << 8,
+            TXT_COMPLETE = 1 << 9,
+            TXT_CONTINUE = 1 << 10,
 
-            INPUT_PRESSED = 1 << 10,
-            RESIZE = 1 << 11,
+            INPUT_PRESSED = 1 << 11,
+            RESIZE = 1 << 12,
 
-            END = 1 << 15,
+            END = 1 << 13,
         };
 
         enum TextBoxStyles : uint8_t {
@@ -52,6 +53,9 @@ namespace TR {
         uint8_t _textbox_style;
         TextBoxFlags _textbox_flags;
 
+        TextBoxFlags _textbox_entry{ TRANSITION_UP };
+        TextBoxFlags _textbox_exit{ TRANSITION_DOWN };
+
         // Text Properties
         uint8_t _textSize;
         uint8_t _textLine{ 1 };
@@ -65,6 +69,8 @@ namespace TR {
 
         TextBoxComponent(const char* text, Engine::Vector2i pos, int txtSp = 1, uint16_t flags = TXTBOX_NULL | TXT_COMPLETE, uint8_t txtSt = WIDTH_MEDIUM | HEIGHT_MEDIUM, uint8_t txtSz = 40)
             : TextBoxComponent(text, pos.x, pos.y, txtSp, flags, txtSt, txtSz) {}
+
+        auto textbox_flags() const { return _textbox_flags; }
 
     };
 

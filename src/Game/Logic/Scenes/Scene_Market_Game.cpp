@@ -87,23 +87,26 @@ namespace TR {
 
 	void Market_Game::update() {
 
+		auto switchState = [&](Main_Game_States state_var, Main_Game_States new_state) {
+			_market_scene_state ^= state_var;
+			_market_scene_state ^= new_state;
+			};
+
 		switch (uint16_t state = (_market_scene_state & Main_Game_Timeline_States)) {
 			TextBoxComponent* textbox;
+
 
 			case MG_Intro_Sceen:
 				// Initialize Text Box Entity
 				if (gState.gECS->getEntities().find("TEXTBOX_TEST") == gState.gECS->getEntities().end()) {
 					Engine::Entity TEXTBOX_TEST = gState.gECS->createEntity("TEXTBOX_TEST");
-					gState.gECS->addComponent<TextBoxComponent>(TEXTBOX_TEST,
-						"Welcome to the Touhou Rainbow Market Game Beta!",
-						240, 240, 5, TextBoxComponent::TXTBOX_NULL | TextBoxComponent::ENTER | TextBoxComponent::TRANSITION_UP,
-						TextBoxComponent::WIDTH_MEDIUM | TextBoxComponent::HEIGHT_MEDIUM, 30);
+					gState.gECS->addComponent<TextBoxComponent>(TEXTBOX_TEST, "Welcome to the Touhou Rainbow Market Game Beta!", 240, 240, 5,
+						TextBoxComponent::ENTER, TextBoxComponent::WIDTH_MEDIUM | TextBoxComponent::HEIGHT_MEDIUM, 30);
 				}
 				textbox = gState.gECS->getComponent<TextBoxComponent>(gState.gECS->getEntities().at("TEXTBOX_TEST"));
 
 				if ((textbox->_textbox_flags & textbox->TXT_COMPLETE) != textbox->TXTBOX_NULL) {
-					_market_scene_state ^= MG_Intro_Sceen;
-					_market_scene_state ^= MG_Market_Prompt;
+					switchState(MG_Intro_Sceen, MG_Market_Prompt);
 				}
 				break;
 			case MG_Market_Prompt:
@@ -115,8 +118,11 @@ namespace TR {
 				}
 				if ((textbox->_textbox_flags & textbox->INPUT_PRESSED) != textbox->TXTBOX_NULL && 
 					(textbox->_textbox_style & textbox->WIDTH_MEDIUM) != textbox->NULL_BOX) {
-					textbox->_textbox_style ^= TextBoxComponent::WIDTH_SMALL;
+					textbox->_textbox_position = Engine::Vector2i{ 120, 240 };
+					textbox->_textbox_style ^= TextBoxComponent::WIDTH_LARGE;
 					textbox->_textbox_style ^= TextBoxComponent::WIDTH_MEDIUM;
+					textbox->_textbox_style ^= TextBoxComponent::HEIGHT_MEDIUM;
+					textbox->_textbox_style ^= TextBoxComponent::HEIGHT_SMALL;
 				}
 				
 				break;
