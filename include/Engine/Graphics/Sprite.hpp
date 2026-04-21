@@ -215,7 +215,7 @@ namespace Engine {
         void setAngle(float a) { _angle = a; }
 
     protected:
-        std::string _textureID{ ""};
+        std::string _textureID{ "" };
         Recti _dest_rect{ 0,0,0,0 }, _src_rect{ 0,0,0,0 };
         Vector2f _scale{ 1.0,1.0 };
         float _angle{ 0.0 };

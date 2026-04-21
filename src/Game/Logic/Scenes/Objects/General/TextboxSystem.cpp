@@ -38,8 +38,7 @@ void TR::TextboxSystem::initTextbox(Engine::ComponentManager* componentManager, 
 				auto& _velocity_comp = componentManager->addComponent<Engine::VelocityComponent>(entity, Engine::Vector2f(0,0));
 				auto& _sprite_comp = componentManager->addComponent<Engine::MultiSpriteComponent>(entity);
 				auto& _text_comp = componentManager->addComponent<Engine::MultiTextComponent>(entity);
-				auto& _render_comp = componentManager->addComponent<Engine::RenderLayerComponent>(entity, Engine::RenderLayerComponent::FG);
-				auto& _input_comp = componentManager->addComponent<Engine::InputComponent>(entity);
+				auto& _render_comp = componentManager->addComponent<Engine::RenderLayerComponent>(entity, Engine::RenderLayerComponent::TEXTBOX);
 
 				// Position Calculations
 				calculateSize(textbox);
@@ -72,10 +71,6 @@ void TR::TextboxSystem::initTextbox(Engine::ComponentManager* componentManager, 
 				((textbox->_textbox_flags & TextBoxComponent::TXT_COMPLETE) != TextBoxComponent::TXTBOX_NULL) ? text = textbox->_textbox_text.c_str() : text = "";
 				_textboxes.at(entity)->_textbox_text = textFormatting("assets/fonts/ArialMdm.ttf", textbox->_textSize, width - 70, textbox->_textbox_text);
 				_text_comp.text.emplace(9, std::make_shared<Engine::TextComponent>(text, textbox->_textSize, Engine::Vector4i(255, 255, 255, 255), Engine::Vector2i(width - 70, height)));
-
-				// Other Components
-				_render_comp.layer = Engine::RenderLayerComponent::FG;
-				_input_comp.newKey(SDL_SCANCODE_SPACE);
 			}
 		}
 	}
@@ -98,12 +93,11 @@ void TR::TextboxSystem::updateEntity(const Engine::EntityManager* entityManager,
 	}
 }
 
-void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager) {
+void TR::TextboxSystem::updateRender(Engine::ComponentManager* componentManager, Engine::Window* windowManager) {
 	Engine::TextComponent* _text_comp;
 	Engine::TransformComponent* _top_left, *_bottom_right;
 	Engine::MultiTransformComponent* _positions;
 	Engine::MultiSpriteComponent* _sprites;
-	Engine::InputComponent* _input_comp;
 
 	Engine::Vector2f velocity;
 	uint16_t textbox_states = TextBoxComponent::TXT_CONTINUE | TextBoxComponent::TXT_COMPLETE;
@@ -114,8 +108,6 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 		_sprites = componentManager->getComponent<Engine::MultiSpriteComponent>(entity);
 		_top_left = _positions->transforms.at(1).get();
 		_bottom_right = _positions->transforms.at(4).get();
-		_input_comp = componentManager->getComponent<Engine::InputComponent>(entity);
-		// _input_comp->keyPressed(SDL_SCANCODE_SPACE)
 
 		this->calculateSize(textbox, true);
 		Engine::Vector2i current_size = _bottom_right->position - _top_left->position + Engine::Vector2i{32, 32};
@@ -156,10 +148,10 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_RIGHT;
 				}
 				if (_top_left->position.y < textbox->_textbox_position.y) {
-					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_UP;
+					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_DOWN;
 				}
 				else if (_top_left->position.y > textbox->_textbox_position.y) {
-					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_DOWN;
+					textbox->_textbox_flags |= TextBoxComponent::TRANSITION_UP;
 				}
 
 			}
@@ -174,10 +166,10 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 				textbox->_textbox_flags &= ~TextBoxComponent::RESIZE;
 			}
 
-			_input_comp->keyPressed(SDL_SCANCODE_SPACE) ? textbox->_textbox_flags |= TextBoxComponent::INPUT_PRESSED : textbox->_textbox_flags &= ~TextBoxComponent::INPUT_PRESSED;
 			switch (uint16_t state = (textbox->_textbox_flags & textbox_states)) {
 				case TextBoxComponent::TXT_CONTINUE:
-					if ((textbox->_textbox_flags & TextBoxComponent::INPUT_PRESSED) != TextBoxComponent::TXTBOX_NULL) {
+					if ((textbox->_textbox_flags & TextBoxComponent::INPUT_PRESSED) != TextBoxComponent::TXTBOX_NULL &&
+						(textbox->_textbox_flags & TextBoxComponent::ACTIVATE) != TextBoxComponent::TXTBOX_NULL) {
 						_text_comp->setText("");
 						textbox->_textLine = 0;
 						auto pos = textbox->_textbox_text.find(currentText);
@@ -188,7 +180,8 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 					}
 					break;
 				case TextBoxComponent::TXT_COMPLETE:
-					if ((textbox->_textbox_flags & TextBoxComponent::INPUT_PRESSED) != TextBoxComponent::TXTBOX_NULL) {
+					if ((textbox->_textbox_flags & TextBoxComponent::INPUT_PRESSED) != TextBoxComponent::TXTBOX_NULL && 
+						(textbox->_textbox_flags & TextBoxComponent::ACTIVATE) != TextBoxComponent::TXTBOX_NULL) {
 
 						if (!textbox->_textbox_next.empty()) {
 							textbox->_textbox_text = textFormatting("assets/fonts/ArialMdm.ttf", textbox->_textSize, textbox->_textbox_size.x - 70, textbox->_textbox_next);
@@ -231,7 +224,8 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 							textbox->_textbox_flags |= TextBoxComponent::TXT_COMPLETE;
 						}
 					}
-					if ((textbox->_textbox_flags & TextBoxComponent::INPUT_PRESSED) != TextBoxComponent::TXTBOX_NULL) {
+					if ((textbox->_textbox_flags & TextBoxComponent::INPUT_PRESSED) != TextBoxComponent::TXTBOX_NULL &&
+						(textbox->_textbox_flags & TextBoxComponent::ACTIVATE) != TextBoxComponent::TXTBOX_NULL) {
 						for (auto ch : textbox->_textbox_text.substr(currentText.size())) {
 							currentText.append(1, ch);
 							if (ch == '\n') {
@@ -246,7 +240,6 @@ void TR::TextboxSystem::updateRender(const Engine::EntityManager* entityManager,
 						if (currentText.size() == textbox->_textbox_text.size()) {
 							textbox->_textbox_flags ^= TextBoxComponent::TXT_COMPLETE;
 						}
-						//textbox->_textbox_flags ^= TextBoxComponent::INPUT_PRESSED;
 					}
 					break;
 			}
@@ -367,7 +360,9 @@ void TR::TextboxSystem::setStructure(TextBoxComponent* textbox, Engine::MultiSpr
 }
 
 Engine::Vector2f TR::TextboxSystem::textboxTransition(TextBoxComponent* textbox, Engine::TransformComponent* transform, TextBoxComponent::TextBoxFlags direction, Engine::Vector2i window) {
-	uint16_t movement_flags = TextBoxComponent::TRANSITION_LEFT | TextBoxComponent::TRANSITION_RIGHT | TextBoxComponent::TRANSITION_UP | TextBoxComponent::TRANSITION_DOWN;
+	uint16_t movement_flags_hor = TextBoxComponent::TRANSITION_LEFT | TextBoxComponent::TRANSITION_RIGHT;
+	uint16_t movement_flags_vert = TextBoxComponent::TRANSITION_UP | TextBoxComponent::TRANSITION_DOWN;
+
 	float hor = 0.0, vert = 0.0;
 	int limitLeft, limitRight, limitUp, limitDown;
 	if ((textbox->_textbox_flags & TextBoxComponent::REFACTOR) != TextBoxComponent::TXTBOX_NULL) {
@@ -383,7 +378,7 @@ Engine::Vector2f TR::TextboxSystem::textboxTransition(TextBoxComponent* textbox,
 		limitDown = ((textbox->_textbox_flags & TextBoxComponent::ENTER) != TextBoxComponent::TXTBOX_NULL) ? textbox->_textbox_position.y : window.y;
 	}
 
-	switch (uint16_t movement = (textbox->_textbox_flags & movement_flags)) {
+	switch (uint16_t movement = (textbox->_textbox_flags & movement_flags_hor)) {
 		case TextBoxComponent::TRANSITION_LEFT:
 			hor = -4.0;
 			if (transform->position.x + hor < limitLeft) {
@@ -398,6 +393,12 @@ Engine::Vector2f TR::TextboxSystem::textboxTransition(TextBoxComponent* textbox,
 				textbox->_textbox_flags &= ~TextBoxComponent::TRANSITION_RIGHT;
 			}
 			break;
+		default:
+			hor = 0.0f;
+			break;
+	}
+	
+	switch (uint16_t movement = (textbox->_textbox_flags & movement_flags_vert)) {
 		case TextBoxComponent::TRANSITION_UP:
 			vert = -4.0;
 			if (transform->position.y + vert < limitUp) {
@@ -413,7 +414,6 @@ Engine::Vector2f TR::TextboxSystem::textboxTransition(TextBoxComponent* textbox,
 			}
 			break;
 		default:
-			hor = 0.0f;
 			vert = 0.0f;
 			break;
 	}
@@ -471,7 +471,7 @@ void TR::TextboxSystem::update(const Engine::SystemContext& ctx) {
 	}
 	else {
 		this->updateEntity(ctx.entityManager, ctx.componentManager, ctx.window, ctx.assetManager);
-		this->updateRender(ctx.entityManager, ctx.componentManager, ctx.window);
+		this->updateRender(ctx.componentManager, ctx.window);
 	}
 }
 

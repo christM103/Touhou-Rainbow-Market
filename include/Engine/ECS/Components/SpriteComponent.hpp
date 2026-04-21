@@ -26,7 +26,7 @@ namespace Engine {
         void setResourceID(const char* txt) { resourceID = txt; }
 
         bool operator==(const SpriteComponent& sc) const {
-            return size == sc.getSize() && sourceRect == sc.getSourceRect();
+            return size == sc.getSize() && sourceRect == sc.getSourceRect() && resourceID == sc.getResourceID();
         }
 
         private:

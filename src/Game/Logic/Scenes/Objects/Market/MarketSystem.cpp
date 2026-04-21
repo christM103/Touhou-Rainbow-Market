@@ -5,6 +5,7 @@
 
 void TR::MarketSystem::marketInit(Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager) {
 	assetManager->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketFree_S.png", "MKT_NULL", windowManager->getRenderer());
+	assetManager->loadTexture("assets/gfx/sprites/Market_Game/Placeholder_Game_MarketMystia_S.png", "MKT_MYST", windowManager->getRenderer());
 
 	const auto& entities = componentManager->allEntities<MarketComponent>();
 	std::vector<Engine::Entity> marketEntities;
@@ -71,13 +72,36 @@ void TR::MarketSystem::marketUpdate(Engine::EntityManager* entityManager, Engine
 	Engine::ColliderComponent* _collision_comp;
 	Engine::MouseComponent* _mouse_comp = componentManager->getComponent<Engine::MouseComponent>(entityManager->getEntities().at("MOUSE"));
 
-	if (_mouse_comp->leftPressed()) {
-		for (auto& [entity, market] : std::views::reverse(_markets)) {
+	for (auto& [entity, market] : std::views::reverse(_markets)) {
+		switch (market->market_ID) {
+			case Market_ID::MID_Mystia:
+				if (componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->getResourceID() != "MKT_MYST") {
+					componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->setResourceID("MKT_MYST");
+				}
+				break;
+			default:
+				if (componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->getResourceID() != "MKT_NULL") {
+					componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->setResourceID("MKT_NULL");
+				}
+				break;
+		}
+		
+
+		/*
+		switch (componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->getResourceID()) {
+
+		}
+		*/
+		if (_mouse_comp->leftPressed()) {
 			_collision_comp = componentManager->getComponent<Engine::ColliderComponent>(entity);
 			if (_collision_comp->objPressed()) {
 				std::cout << "At entity " << entity << ": ";
 				std::cout << "Active" << std::endl;
+				market->market_active = true;
 				break;
+			}
+			else {
+				market->market_active = false;
 			}
 		}
 	}

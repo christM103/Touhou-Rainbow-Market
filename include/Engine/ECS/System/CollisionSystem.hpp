@@ -7,6 +7,21 @@ namespace Engine {
 	class CollisionSystem {
 	public:
 
+		enum CollisionType : bool {
+			isSingle = true,
+			isMulti = false,
+		};
+
+		struct CollisionObj {
+			CollisionType type{ CollisionType::isSingle };
+
+			CollisionObj(CollisionType s = CollisionType::isSingle) : type(s) {};
+
+			bool operator==(const CollisionObj& other) const {
+				return this->type == other.type;
+			}
+		};
+
 		CollisionSystem() = default;
 		~CollisionSystem() = default;
 
@@ -37,6 +52,6 @@ namespace Engine {
 
 		void quit(const SystemContext& ctx);
 	private:
-		std::vector<std::pair<Entity, ColliderComponent*>> _collision_entities;
+		std::vector<std::pair<Entity, CollisionObj>> _collision_entities;
 	};
 }

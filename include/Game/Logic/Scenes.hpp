@@ -64,17 +64,28 @@ namespace TR {
             MG_Main_Game = 1 << 0,
             MG_Pause = 1 << 1,
 
-            MG_Intro_Sceen = 1 << 2,
-            MG_Help_Screen = 1 << 3,
-            MG_Market_Prompt = 1 << 4,
-            MG_Turn_Intro = 1 << 5,
-            MG_Text_Prompt = 1 << 6,
-            MG_Highlight_Market = 1 << 7,
-            MG_Highlight_Action = 1 << 8,
-            MG_Choosing_Player_Land = 1 << 9,
-            MG_Choosing_Enemy_Land = 1 << 10,
-            MG_End_Of_Turn = 1 << 11,
-            MG_Market_Action = 1 << 12
+            MG_Intro_Sceen = 1 << 16,
+            MG_Help_Screen = 1 << 17,
+
+            MG_Market_Prompt = 1 << 18,
+            MG_Market_Prompt_SCRIPT_0, 
+            MG_Market_Prompt_SCRIPT_0_FINISHED, 
+            MG_Market_Prompt_RESIZE_0, 
+            MG_Market_Prompt_SCRIPT_1, 
+            MG_Market_Prompt_SCRIPT_1_FINISHED, 
+            MG_Market_Prompt_RESIZE_1, 
+            MG_Market_Prompt_SCRIPT_2, 
+            MG_Market_Prompt_SCRIPT_2_FINISHED, 
+            MG_Market_Prompt_END,
+
+            MG_Turn_Intro = 1 << 19,
+            MG_Text_Prompt = 1 << 20,
+            MG_Highlight_Market = 1 << 21,
+            MG_Highlight_Action = 1 << 22,
+            MG_Choosing_Player_Land = 1 << 23,
+            MG_Choosing_Enemy_Land = 1 << 24,
+            MG_End_Of_Turn = 1 << 25,
+            MG_Market_Action = 1 << 26
         };
 
         static constexpr uint32_t Main_Game_Timeline_States
@@ -86,6 +97,8 @@ namespace TR {
 
         bool create() override;
         void update() override;
+
+        void Market_Prompt_States(TextBoxComponent* textbox, ButtonPromptComponent* prompt);
 
     private:
         uint32_t _market_scene_state{ MG_Null_State };

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <map>
+#include <memory>
+
 #include "Engine/Math/Rect.hpp"
 #include "Engine/Math/Vector2.hpp"
 
@@ -52,5 +55,9 @@ namespace Engine {
         }
 
 
+    };
+    
+    struct MultiColliderComponent {
+        std::map<uint8_t, std::shared_ptr<ColliderComponent>> colliders;
     };
 } // namespace Engine

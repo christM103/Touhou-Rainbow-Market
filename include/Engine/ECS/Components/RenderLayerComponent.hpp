@@ -10,8 +10,12 @@ namespace Engine {
 
 		enum Layers : uint16_t {
 			BG = 10,
+
 			SPRITE = 50,
+
 			FG = 100,
+			TEXTBOX = 400,
+
 			HUD = 1000,
 		};
 	};

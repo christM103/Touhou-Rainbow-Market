@@ -7,6 +7,8 @@ namespace TR {
 		Market* data{ nullptr };
 		Market_ID market_ID{ Market_ID::MID_Null };
 
+        bool market_active{ false };
+
         MarketComponent(Market* d = nullptr, Market_ID id = Market_ID::MID_Null) : data(d), market_ID(id){}
         /*
         std::string& operator<<(std::string& str, MarketComponent& market) {

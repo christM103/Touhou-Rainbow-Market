@@ -30,6 +30,8 @@ namespace TR {
             RESIZE = 1 << 12,
 
             END = 1 << 13,
+
+            ACTIVATE = 1 << 14,
         };
 
         enum TextBoxStyles : uint8_t {

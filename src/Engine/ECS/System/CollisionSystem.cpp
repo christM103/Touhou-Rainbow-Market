@@ -4,29 +4,39 @@
 
 
 void Engine::CollisionSystem::initCollision(ComponentManager* componentManager) {
-	auto* entities = componentManager->allEntities<ColliderComponent>();
-	ColliderComponent* colliderComp;
+	auto* entitiesS = componentManager->allEntities<ColliderComponent>();
+	auto* entitiesM = componentManager->allEntities<MultiColliderComponent>();
+	
 
-	if (!entities) {
-		return;
-	}
-
-	for (auto& entity : *entities) {
-		colliderComp = componentManager->getComponent<ColliderComponent>(entity);
-		if (std::find(_collision_entities.begin(), _collision_entities.end(), std::make_pair(entity, colliderComp)) == _collision_entities.end()) {
-			_collision_entities.push_back({ entity, colliderComp });
+	if (entitiesS) {
+		for (auto& entity : *entitiesS) {
+			if (std::find(_collision_entities.begin(), _collision_entities.end(), std::make_pair(entity, CollisionObj(CollisionType::isSingle))) == _collision_entities.end()) {
+				_collision_entities.push_back({ entity, CollisionObj(CollisionType::isSingle) });
+			}
 		}
 	}
+
+	if (entitiesM) {
+		for (auto& entity : *entitiesM) {
+			if (std::find(_collision_entities.begin(), _collision_entities.end(), std::make_pair(entity, CollisionObj(CollisionType::isMulti))) == _collision_entities.end()) {
+				_collision_entities.push_back({ entity, CollisionObj(CollisionType::isMulti) });
+			}
+			
+		}
+	}
+
+	
 }
 
 void Engine::CollisionSystem::updateEntities(EntityManager* entityManager, ComponentManager* componentManager) {
-	size_t entity_size;
+	size_t entity_size = 0;
 
-	if (auto set = componentManager->allEntities<ColliderComponent>()) {
-		entity_size = set->size();
+	if (auto setS = componentManager->allEntities<ColliderComponent>()) {
+		entity_size += setS->size();
 	}
-	else {
-		entity_size = 0;
+
+	if (auto setM = componentManager->allEntities<MultiColliderComponent>()) {
+		entity_size += setM->size();
 	}
 
 	std::erase_if(_collision_entities, [&](const auto& item) {
@@ -49,6 +59,15 @@ void Engine::CollisionSystem::updatePosition(ComponentManager* componentManager)
 	auto cameras = componentManager->allEntities<CameraComponent>();
 	CameraComponent* camera_component;
 
+	auto updatePostionData = [&](ColliderComponent* data) {
+		if (velocity_component != nullptr) {
+			data->bounds.position += velocity_component->linear;
+		}
+		if (newOffset != Vector2f()) {
+			data->offset = newOffset;
+		}
+	};
+
 
 	if (cameras) {
 		camera_component = componentManager->getComponent<CameraComponent>(*cameras->begin());
@@ -57,11 +76,13 @@ void Engine::CollisionSystem::updatePosition(ComponentManager* componentManager)
 
 	for (const auto& [entity, data] : _collision_entities) {
 		velocity_component = componentManager->getComponent<VelocityComponent>(entity);
-		if (velocity_component != nullptr) {
-			data->bounds.position += velocity_component->linear;
+		if (data.type == CollisionType::isSingle) {
+			updatePostionData(componentManager->getComponent<ColliderComponent>(entity));
 		}
-		if (newOffset != Vector2f()) {
-			data->offset = newOffset;
+		else {
+			for (const auto& [index, collider] : componentManager->getComponent<MultiColliderComponent>(entity)->colliders) {
+				updatePostionData(collider.get());
+			}
 		}
 
 	}
@@ -79,7 +100,7 @@ void Engine::CollisionSystem::updateCollision(ComponentManager* componentManager
 		mouse = nullptr;
 	}
 
-	for (auto& [entity, data] : _collision_entities) {
+	auto updateCollisionData = [&](ColliderComponent* data) {
 		currentRect = Rectf(data->bounds.position - data->offset, data->bounds.size);
 		if (((data->flags & ColliderComponent::trackMouse) != ColliderComponent::Null) && (mouse != nullptr)) {
 			if (currentRect.contains(Vector2f(static_cast<float>(mouse->position->x), static_cast<float>(mouse->position->y)))) {
@@ -100,6 +121,17 @@ void Engine::CollisionSystem::updateCollision(ComponentManager* componentManager
 				else {
 					data->flags |= ColliderComponent::mouseHovered;
 				}
+			}
+		}
+	};
+
+	for (auto& [entity, data] : _collision_entities) {
+		if (data.type == CollisionType::isSingle) {
+			updateCollisionData(componentManager->getComponent<ColliderComponent>(entity));
+		}
+		else {
+			for (const auto& [index, collider] : componentManager->getComponent<MultiColliderComponent>(entity)->colliders) {
+				updateCollisionData(collider.get());
 			}
 		}
 	}
