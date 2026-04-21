@@ -100,15 +100,15 @@ void Engine::CollisionSystem::updateCollision(ComponentManager* componentManager
 		mouse = nullptr;
 	}
 
-	auto updateCollisionData = [&](ColliderComponent* data) {
+    auto updateCollisionData = [&](ColliderComponent* data) {
 		currentRect = Rectf(data->bounds.position - data->offset, data->bounds.size);
 		if (((data->flags & ColliderComponent::trackMouse) != ColliderComponent::Null) && (mouse != nullptr)) {
-			if (currentRect.contains(Vector2f(static_cast<float>(mouse->position->x), static_cast<float>(mouse->position->y)))) {
-				data->flags &= ~ColliderComponent::mousePressed;
-				data->flags &= ~ColliderComponent::mouseHeld;
-				data->flags &= ~ColliderComponent::mouseReleased;
-				data->flags &= ~ColliderComponent::mouseHovered;
+			data->flags &= ~(ColliderComponent::mousePressed
+				| ColliderComponent::mouseHeld
+				| ColliderComponent::mouseReleased
+				| ColliderComponent::mouseHovered);
 
+			if (currentRect.contains(Vector2f(static_cast<float>(mouse->position->x), static_cast<float>(mouse->position->y)))) {
 				if (mouse->leftPressed()) {
 					data->flags |= ColliderComponent::mousePressed;
 				}

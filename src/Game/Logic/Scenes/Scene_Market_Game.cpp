@@ -181,14 +181,14 @@ namespace TR {
 			case MG_Market_Prompt_SCRIPT_1:
 				if (!gState.gECS->getEntities().contains("MYSTIA_GFX")) {
 					Engine::Entity MYSTIA_GFX = gState.gECS->createEntity("MYSTIA_GFX");
-					gState.gECS->addComponent<Engine::TransformComponent>(MYSTIA_GFX, Engine::Vector2i{ 240, 200 });
+					gState.gECS->addComponent<Engine::TransformComponent>(MYSTIA_GFX, Engine::Vector2i{ 240, 150 });
 					gState.gECS->addComponent<Engine::SpriteComponent>(MYSTIA_GFX, Engine::Recti{ 0,0,400,400 }, Engine::Vector2i(400, 400), "MARK_MYST");
 					gState.gECS->addComponent<Engine::RenderLayerComponent>(MYSTIA_GFX, Engine::RenderLayerComponent::TEXTBOX + 1);
 				}
 
 				if (!gState.gECS->getEntities().contains("BUTTON_PROMPT")) {
 					Engine::Entity BUTTON_PROMPT = gState.gECS->createEntity("BUTTON_PROMPT");
-					prompt = &gState.gECS->addComponent<ButtonPromptComponent>(BUTTON_PROMPT, Engine::Vector2i{ 300, 150 }, ButtonPromptComponent::HORIZONTAL);
+					prompt = &gState.gECS->addComponent<ButtonPromptComponent>(BUTTON_PROMPT, Engine::Vector2i{ 300, 550 }, ButtonPromptComponent::HORIZONTAL);
 				}
 
 				if ((textbox->_textbox_flags & textbox->ACTIVATE) != textbox->TXTBOX_NULL) {
@@ -209,9 +209,7 @@ namespace TR {
 						textbox->_textbox_next = "Where do you want to put it?\n";
 					}
 					textbox->_textbox_flags |= TextBoxComponent::INPUT_PRESSED | TextBoxComponent::ACTIVATE;
-					textbox->_textbox_position = Engine::Vector2i{ 240, 80 };
-					textbox->_textbox_style ^= TextBoxComponent::WIDTH_SMALL;
-					textbox->_textbox_style ^= TextBoxComponent::WIDTH_MEDIUM;
+					textbox->_textbox_position = Engine::Vector2i{ 300, 80 };
 					textbox->_textbox_style ^= TextBoxComponent::HEIGHT_TINY;
 					textbox->_textbox_style ^= TextBoxComponent::HEIGHT_LARGE;
 					_market_scene_state = MG_Market_Prompt_RESIZE_1;
@@ -225,7 +223,7 @@ namespace TR {
 				if (gState.gECS->getEntities().contains("BUTTON_PROMPT")) {
 					gState.gECS->destroyEntity("BUTTON_PROMPT");
 				}
-				if (textbox->_textbox_position == Engine::Vector2i{ 240, 80 } &&
+				if (textbox->_textbox_position == Engine::Vector2i{ 300, 80 } &&
 					(textbox->_textbox_flags & textbox->RESIZE) == textbox->TXTBOX_NULL &&
 					(textbox->_textbox_flags & textbox->REFACTOR) == textbox->TXTBOX_NULL) {
 					_market_scene_state = MG_Market_Prompt_SCRIPT_2;
@@ -245,8 +243,17 @@ namespace TR {
 				MarketComponent* market;
 				for (const auto& entity : *gState.gECS->allEntities<MarketComponent>()) {
 					market = gState.gECS->getComponent<MarketComponent>(entity);
+
+					if (market->market_hovered) {
+						market->market_hovered_zoom = true;
+					}
+					else {
+						market->market_hovered_zoom = false;
+					}
+
 					if (market->market_active) {
 						market->market_ID = Market_ID::MID_Mystia;
+						market->market_hovered_zoom = false;
 						textbox->_textbox_flags |= TextBoxComponent::INPUT_PRESSED | TextBoxComponent::ACTIVATE;
 						_market_scene_state = MG_Market_Prompt_END;
 					}

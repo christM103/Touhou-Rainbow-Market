@@ -70,38 +70,56 @@ void TR::MarketSystem::updateEntities(Engine::EntityManager* entityManager, Engi
 
 void TR::MarketSystem::marketUpdate(Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager) {
 	Engine::ColliderComponent* _collision_comp;
+	Engine::SpriteComponent* _market_sprite;
+	Engine::TransformComponent* _market_position;
 	Engine::MouseComponent* _mouse_comp = componentManager->getComponent<Engine::MouseComponent>(entityManager->getEntities().at("MOUSE"));
 
 	for (auto& [entity, market] : std::views::reverse(_markets)) {
+		_collision_comp = componentManager->getComponent<Engine::ColliderComponent>(entity);
+		_market_sprite = componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0).get();
+		_market_position = componentManager->getComponent<Engine::MultiTransformComponent>(entity)->transforms.at(0).get();
+
 		switch (market->market_ID) {
 			case Market_ID::MID_Mystia:
-				if (componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->getResourceID() != "MKT_MYST") {
-					componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->setResourceID("MKT_MYST");
+				if (_market_sprite->getResourceID() != "MKT_MYST") {
+					_market_sprite->setResourceID("MKT_MYST");
 				}
 				break;
 			default:
-				if (componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->getResourceID() != "MKT_NULL") {
-					componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->setResourceID("MKT_NULL");
+				if (_market_sprite->getResourceID() != "MKT_NULL") {
+					_market_sprite->setResourceID("MKT_NULL");
 				}
 				break;
 		}
-		
 
-		/*
-		switch (componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0)->getResourceID()) {
-
-		}
-		*/
 		if (_mouse_comp->leftPressed()) {
-			_collision_comp = componentManager->getComponent<Engine::ColliderComponent>(entity);
+			
 			if (_collision_comp->objPressed()) {
-				std::cout << "At entity " << entity << ": ";
-				std::cout << "Active" << std::endl;
 				market->market_active = true;
 				break;
 			}
 			else {
 				market->market_active = false;
+			}
+		}
+
+		if (_collision_comp->objHovered()) {	
+			market->market_hovered = true;
+		}
+		else {
+			market->market_hovered = false;
+		}
+
+		if (market->market_hovered_zoom) {
+			if (_market_sprite->getSize() != Engine::Vector2i(250, 250)) {
+				_market_position->position += Engine::Vector2i(-1, -1);
+				_market_sprite->setSize(_market_sprite->getSize() + Engine::Vector2i(2, 2));
+			}
+		}
+		else {
+			if (_market_sprite->getSize() != Engine::Vector2i(200, 200)) {
+				_market_position->position += Engine::Vector2i(1, 1);
+				_market_sprite->setSize(_market_sprite->getSize() + Engine::Vector2i(-2, -2));
 			}
 		}
 	}

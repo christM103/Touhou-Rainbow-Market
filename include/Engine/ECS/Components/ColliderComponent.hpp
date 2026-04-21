@@ -51,7 +51,7 @@ namespace Engine {
         }
 
         bool const objHovered() {
-            return (flags & CollisionFlags::hitsObj) != CollisionFlags::Null;
+            return (flags & CollisionFlags::mouseHovered) != CollisionFlags::Null;
         }
 
 
