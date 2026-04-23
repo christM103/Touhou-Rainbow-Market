@@ -221,6 +221,12 @@ void Engine::RenderSystem::updateRender(const ComponentManager* componentManager
 				prevSprite->swapTexture(sprite_data->getResourceID(),
 					prevSprite->getWidth(), prevSprite->getHeight());
 			}
+			if (prevSprite->getColor() != sprite_data->getColor()->rgb) {
+				prevSprite->setColor(sprite_data->getColor()->rgb);
+			}
+			if (prevSprite->getAlpha() != sprite_data->getColor()->alpha) {
+				prevSprite->setAlpha(sprite_data->getColor()->alpha);
+			}
 		}
 
 		};

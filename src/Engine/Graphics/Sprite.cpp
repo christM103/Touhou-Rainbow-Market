@@ -26,6 +26,10 @@ void Engine::Sprite::draw(SDL_Renderer* renderer, const AssetManager* manager, i
             flip = static_cast<SDL_RendererFlip>(static_cast<Uint32>(flip) ^ static_cast<Uint32>(SDL_FLIP_VERTICAL));
         }
 
+        // Set color values
+
+        SDL_SetTextureColorMod(texture, _color.x, _color.y, _color.z);
+
         // Set alpha values
         SDL_SetTextureAlphaMod(texture, _alpha);
 
@@ -58,11 +62,4 @@ void Engine::Sprite::swapTexture(std::string tex, int x, int y) {
     _textureID = tex;
     _dest_rect.size.x = x;
     _dest_rect.size.y = y;
-}
-
-void Engine::Sprite::setAlpha(float a) {
-    if (a <= 255 && a >= 0) {
-        _alpha = static_cast<uint8_t>(a);
-    }
-    
 }

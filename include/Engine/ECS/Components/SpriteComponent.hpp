@@ -5,6 +5,7 @@
 
 #include "Engine/Math/Rect.hpp"
 #include "Engine/Math/Vector2.hpp"
+#include "Engine/ECS/Components/ColorComponent.hpp"
 
 
 namespace Engine {
@@ -20,10 +21,12 @@ namespace Engine {
         const Rect<int> getSourceRect() const { return sourceRect; }
         const Vector2<int> getSize() const { return size; }
         const char* getResourceID() const { return resourceID.c_str(); }
+        const ColorComponent* getColor() const { return &color; }
 
         void setSourceRect(Rect<int> srcR) { sourceRect = srcR; }
         void setSize(Vector2<int> s) { size = s; }
         void setResourceID(const char* txt) { resourceID = txt; }
+        void setColor(ColorComponent col) { color = col; }
 
         bool operator==(const SpriteComponent& sc) const {
             return size == sc.getSize() && sourceRect == sc.getSourceRect() && resourceID == sc.getResourceID();
@@ -33,6 +36,7 @@ namespace Engine {
         Rect<int> sourceRect;
         Vector2<int> size;
         std::string resourceID;
+        ColorComponent color{};
     };
 
     struct MultiSpriteComponent {

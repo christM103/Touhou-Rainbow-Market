@@ -323,6 +323,7 @@ void TR::TextboxSystem::setStructure(TextBoxComponent* textbox, Engine::MultiSpr
 	transform->transforms.insert_or_assign(0, std::make_shared<Engine::TransformComponent>(position + Engine::Vector2i(8, 10)));
 	sprites->sprites.insert_or_assign(0, std::make_shared<Engine::SpriteComponent>(
 		Engine::Recti((1000 - width + 20) / 2, (600 - height + 20) / 2, 1000, 600), Engine::Vector2i(width - 20, height - 20), "TXT_BOX_BG"));
+	sprites->sprites.at(0).get()->setColor(Engine::ColorComponent(Engine::Vector3<uint8_t>(255, 255, 255), 60));
 
 	Engine::SpriteComponent spriteCornerTL{ Engine::Recti(0, 0, 16, 16), Engine::Vector2i(32, 32), "TXTBOX_TILESET" };
 	Engine::SpriteComponent spriteCornerTR{ Engine::Recti(32, 0, 16, 16), Engine::Vector2i(32, 32), "TXTBOX_TILESET" };

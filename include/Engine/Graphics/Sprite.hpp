@@ -1,10 +1,13 @@
 #pragma once
 
+#include <cassert>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
 #include "Engine/Math/Rect.hpp"
 #include "Engine/Math/Vector2.hpp"
+#include "Engine/Math/Vector3.hpp"
 #include "Engine/Graphics/AssetManager.hpp"
 
 namespace Engine {
@@ -131,9 +134,13 @@ namespace Engine {
         FlipState getFlip() const { return _flip; }
 
 
+        /// @brief Gets the color value of the sprite.
+        /// @return Color value of the sprite
+        Vector3<uint8_t> getColor() const { return _color; }
+
         /// @brief Gets the alpha value of the sprite.
         /// @return Alpha value of the sprite
-        int getAlpha() const { return _alpha; }
+        uint8_t getAlpha() const { return _alpha; }
 
         /// @brief Gets the active texture of the sprite.
         /// @return Texture value of the sprite
@@ -206,9 +213,17 @@ namespace Engine {
         /// @param scale A float for the scale of the sprite
         void setScale(Vector2f scale) { _scale = scale; }
 
+        /// @brief Sets the color value of the sprite
+        /// @param Updated color value (Between 0 and 1)
+        void setColor(Vector3<uint8_t> c) {
+            _color = c; 
+        }
+
         /// @brief Sets the alpha value of the sprite
-        /// @param Updated alpha value (Between 0 and 1)
-        void setAlpha(float a);
+        /// @param Updated alpha value
+        void setAlpha(uint8_t a) {
+            _alpha = static_cast<uint8_t>(a);
+        }
 
         /// @brief Sets the angle of the sprite
         /// @param Updated angle value
@@ -219,6 +234,7 @@ namespace Engine {
         Recti _dest_rect{ 0,0,0,0 }, _src_rect{ 0,0,0,0 };
         Vector2f _scale{ 1.0,1.0 };
         float _angle{ 0.0 };
+        Vector3<uint8_t> _color{ 255,255,255 };
         uint8_t _alpha { 255 };
         FlipState _flip{ Flip_Null };
     };

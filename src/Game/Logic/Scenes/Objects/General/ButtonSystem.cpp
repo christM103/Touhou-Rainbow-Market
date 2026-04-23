@@ -55,8 +55,8 @@ void TR::ButtonSystem::initButtonPrompt(Engine::ComponentManager* componentManag
 				_transform_comp.transforms.emplace(0, std::make_shared<Engine::TransformComponent>(yesButton));
 				_transform_comp.transforms.emplace(1, std::make_shared<Engine::TransformComponent>(noButton));
 
-				_collision_comp.colliders.emplace(0, std::make_shared<Engine::ColliderComponent>(Engine::Rectf(yesButton.position.x, yesButton.position.y, 120.0f, 80.0f), Engine::Vector2f(), false, true));
-				_collision_comp.colliders.emplace(1, std::make_shared<Engine::ColliderComponent>(Engine::Rectf(noButton.position.x, noButton.position.y, 120.0f, 80.0f), Engine::Vector2f(), false, true));
+				_collision_comp.colliders.emplace(0, std::make_shared<Engine::ColliderComponent>(Engine::Rectf(static_cast<float>(yesButton.position.x), static_cast<float>(yesButton.position.y), 120.0f, 80.0f), Engine::Vector2f(), false, true));
+				_collision_comp.colliders.emplace(1, std::make_shared<Engine::ColliderComponent>(Engine::Rectf(static_cast<float>(noButton.position.x), static_cast<float>(noButton.position.y), 120.0f, 80.0f), Engine::Vector2f(), false, true));
 
 				_sprite_comp.sprites.emplace(0, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 120, 80), Engine::Vector2i(120, 80), "BUTTON_YES"));
 				_sprite_comp.sprites.emplace(1, std::make_shared<Engine::SpriteComponent>(Engine::Recti(0, 0, 120, 80), Engine::Vector2i(120, 80), "BUTTON_NO"));
