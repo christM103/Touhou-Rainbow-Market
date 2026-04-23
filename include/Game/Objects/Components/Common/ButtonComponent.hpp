@@ -4,5 +4,6 @@
 namespace TR {
 	struct ButtonComponent {
 		bool activated;
+		bool hovered{ false };
 	};
 }

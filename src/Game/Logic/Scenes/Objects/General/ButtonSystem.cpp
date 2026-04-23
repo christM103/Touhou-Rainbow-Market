@@ -85,22 +85,50 @@ void TR::ButtonSystem::updateEntity(const Engine::EntityManager* entityManager, 
 
 void TR::ButtonSystem::updateButtons(Engine::ComponentManager* componentManager, Engine::Window* windowManager) {
 	Engine::ColliderComponent* colliderYes, *colliderNo;
+	Engine::SpriteComponent* spriteYes, *spriteNo;
+
 	for (const auto& [entity, data] : _buttonPrompts) {
 		colliderYes = componentManager->getComponent<Engine::MultiColliderComponent>(entity)->colliders.at(0).get();
 		colliderNo = componentManager->getComponent<Engine::MultiColliderComponent>(entity)->colliders.at(1).get();
 
-		if (colliderYes->objPressed()) {
-			data->_buttonTrue.activated = true;
+		spriteYes = componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(0).get();
+		spriteNo = componentManager->getComponent<Engine::MultiSpriteComponent>(entity)->sprites.at(1).get();
+
+		colliderYes->objPressed() ? data->_buttonTrue.activated = true : data->_buttonTrue.activated = false;
+		colliderNo->objPressed() ? data->_buttonFalse.activated = true : data->_buttonFalse.activated = false;
+
+
+		colliderYes->objHovered() ? data->_buttonTrue.hovered = true : data->_buttonTrue.hovered = false;
+		colliderNo->objHovered() ? data->_buttonFalse.hovered = true : data->_buttonFalse.hovered = false;
+
+		if (data->_buttonTrue.hovered) {
+			if (spriteYes->getColor()->rgb.x != 55) {
+				spriteYes->setColor(Engine::ColorComponent(
+					Engine::Vector3<uint8_t>(55, spriteYes->getColor()->rgb.y, spriteYes->getColor()->rgb.z),
+					spriteYes->getColor()->alpha));
+			}
 		}
 		else {
-			data->_buttonTrue.activated = false;
+			if (spriteYes->getColor()->rgb.x != 255) {
+				spriteYes->setColor(Engine::ColorComponent(
+					Engine::Vector3<uint8_t>(255, spriteYes->getColor()->rgb.y, spriteYes->getColor()->rgb.z),
+					spriteYes->getColor()->alpha));
+			}
 		}
 
-		if (colliderNo->objPressed()) {
-			data->_buttonFalse.activated = true;
+		if (data->_buttonFalse.hovered) {
+			if (spriteNo->getColor()->rgb.x != 55) {
+				spriteNo->setColor(Engine::ColorComponent(
+					Engine::Vector3<uint8_t>(55, spriteNo->getColor()->rgb.y, spriteNo->getColor()->rgb.z),
+					spriteNo->getColor()->alpha));
+			}
 		}
 		else {
-			data->_buttonFalse.activated = false;
+			if (spriteNo->getColor()->rgb.x != 255) {
+				spriteNo->setColor(Engine::ColorComponent(
+					Engine::Vector3<uint8_t>(255, spriteNo->getColor()->rgb.y, spriteNo->getColor()->rgb.z),
+					spriteNo->getColor()->alpha));
+			}
 		}
 	}
 }

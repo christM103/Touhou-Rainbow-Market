@@ -29,7 +29,7 @@ namespace Engine {
         void setColor(ColorComponent col) { color = col; }
 
         bool operator==(const SpriteComponent& sc) const {
-            return size == sc.getSize() && sourceRect == sc.getSourceRect() && resourceID == sc.getResourceID();
+            return size == sc.getSize() && sourceRect == sc.getSourceRect() && resourceID == sc.getResourceID() && color == *sc.getColor();
         }
 
         private:
