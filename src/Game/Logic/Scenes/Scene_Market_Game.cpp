@@ -90,6 +90,7 @@ namespace TR {
 		gState.gECS->addSystem<MarketSystem>();
 		gState.gECS->addSystem<TextboxSystem>();
 		gState.gECS->addSystem<ButtonSystem>();
+		gState.gECS->addSystem<TurnSystem>();
 
 		gState.gInput->newKey(SDL_SCANCODE_SPACE);
 
@@ -106,6 +107,7 @@ namespace TR {
 		switch (uint32_t state = (_market_scene_state & Main_Game_Timeline_States)) {
 			TextBoxComponent* textbox;
 			ButtonPromptComponent* prompt;
+			TurnsComponent* turns;
 
 
 			case MG_Intro_Sceen:
@@ -137,12 +139,24 @@ namespace TR {
 				break;
 
 			case MG_Turn_Intro:
+				if (gState.gECS->getEntities().find("TURNS_TEST") == gState.gECS->getEntities().end()) {
+					Engine::Entity TURNS = gState.gECS->createEntity("TURNS_TEST");
+					gState.gECS->addComponent<TurnsComponent>(TURNS, 5);
+				}
+				turns = gState.gECS->getComponent<TurnsComponent>(gState.gECS->getEntities().at("TURNS_TEST"));
 				if (gState.gECS->getEntities().contains("TEXTBOX_TEST")) {
 					textbox = gState.gECS->getComponent<TextBoxComponent>(gState.gECS->getEntities().at("TEXTBOX_TEST"));
 					if ((textbox->_textbox_flags & textbox->EXIT) == textbox->TXTBOX_NULL) {
 						gState.gECS->destroyEntity("TEXTBOX_TEST");
+						turns->turns.at(turns->current_turn).turn_started = true;
 					}
 				}
+				if (gState.gInput->keyPressed(SDL_SCANCODE_RIGHT) && turns->current_turn < 5) {
+					turns->current_turn++;
+				} else if (gState.gInput->keyPressed(SDL_SCANCODE_LEFT) && turns->current_turn > 1) {
+					turns->current_turn--;
+				}
+				
 				break;
 
 			default:
@@ -244,12 +258,7 @@ namespace TR {
 				for (const auto& entity : *gState.gECS->allEntities<MarketComponent>()) {
 					market = gState.gECS->getComponent<MarketComponent>(entity);
 
-					if (market->market_hovered) {
-						market->market_hovered_zoom = true;
-					}
-					else {
-						market->market_hovered_zoom = false;
-					}
+					market->market_hovered ? market->market_hovered_zoom = true : market->market_hovered_zoom = false;
 
 					if (market->market_active) {
 						market->market_ID = Market_ID::MID_Mystia;

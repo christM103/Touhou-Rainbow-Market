@@ -20,7 +20,7 @@ namespace Engine {
 
     bool Engine::init(const char* title, int width, int height) {
         // Initialize SDL
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
             std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
             return false;
         }
