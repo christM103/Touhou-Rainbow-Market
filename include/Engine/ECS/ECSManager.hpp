@@ -40,6 +40,9 @@ namespace Engine {
         /// @brief Destroys an existing entity
         /// @param entity The entity to destroy
         void destroyEntity(std::string entity) {
+            if (!entityExists(entity)) {
+                return;
+            }
             componentManager->clearComponents(entityManager->getEntities().at(entity));
             entityManager->destroy(entity);
             return;
@@ -52,9 +55,22 @@ namespace Engine {
             return;
         }
 
+        /// @brief Checks if entity exists
+        bool entityExists(std::string entity) {
+            return entityManager->entityExists(entity);
+        }
+
+        Entity getEntity(std::string entity_key) {
+            if (entityExists(entity_key)) {
+                return entityManager->getEntity(entity_key);
+            }
+            return 0;
+        }
+
         const std::unordered_map<std::string, Entity>& getEntities() const {
             return entityManager->getEntities();
         }
+
 
         /// @brief Adds a component to an entity
         /// @tparam ComponentType The type of component to add

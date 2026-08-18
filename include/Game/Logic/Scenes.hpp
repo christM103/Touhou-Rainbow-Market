@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <yaml-cpp/yaml.h>
 #include "Game/Logic/Globals.hpp"
 
 namespace TR {
@@ -59,38 +60,35 @@ namespace TR {
     public:
 
         /// @brief List of possible game states
-        enum Main_Game_States : uint32_t {
-            MG_Null_State = 0,
-            MG_Main_Game = 1 << 0,
-            MG_Pause = 1 << 1,
+        enum Main_Game_States : uint16_t {
+            MG_Null_State,
 
-            MG_Intro_Sceen = 1 << 16,
-            MG_Help_Screen = 1 << 17,
+            MG_Welcome_Screen,
+            MG_First_Turn_Question,
+            MG_Guide_Screen,
+            MG_Intro_Market,
+            MG_Market_Prompt,
+            MG_Turn_Start,
 
-            MG_Market_Prompt = 1 << 18,
-            MG_Market_Prompt_SCRIPT_0, 
-            MG_Market_Prompt_SCRIPT_0_FINISHED, 
-            MG_Market_Prompt_RESIZE_0, 
-            MG_Market_Prompt_SCRIPT_1, 
-            MG_Market_Prompt_SCRIPT_1_FINISHED, 
-            MG_Market_Prompt_RESIZE_1, 
-            MG_Market_Prompt_SCRIPT_2, 
-            MG_Market_Prompt_SCRIPT_2_FINISHED, 
-            MG_Market_Prompt_END,
+            MG_Main_Game,
+            MG_Highlight_Market,
+            MG_Highlight_Portrait,
 
-            MG_Turn_Intro = 1 << 19,
-            MG_Text_Prompt = 1 << 20,
-            MG_Highlight_Market = 1 << 21,
-            MG_Highlight_Action = 1 << 22,
-            MG_Choosing_Player_Land = 1 << 23,
-            MG_Choosing_Enemy_Land = 1 << 24,
-            MG_End_Of_Turn = 1 << 25,
-            MG_Market_Action = 1 << 26
+            MG_Market_Action_Prompt,
+            MG_Player_Action_Prompt,
+            MG_Player_Action,
+            MG_Market_Action,
+            MG_Market_Choice,
+            MG_Player_Choice,
+
+            MG_Turn_End,
+            MG_Turn_Debrief,
+            
+            MG_Game_End,
+
+            MG_Paused = 1 << 16,
+
         };
-
-        static constexpr uint32_t Main_Game_Timeline_States
-        { MG_Intro_Sceen | MG_Help_Screen | MG_Market_Prompt | MG_Turn_Intro | MG_Text_Prompt | MG_Highlight_Market | MG_Highlight_Action | MG_Choosing_Player_Land | MG_Choosing_Enemy_Land |
-            MG_End_Of_Turn };
 
         Market_Game();
         explicit Market_Game(std::vector<std::shared_ptr<TR::Player_Data>> players);
@@ -98,7 +96,39 @@ namespace TR {
         bool create() override;
         void update() override;
 
-        void Market_Prompt_States(TextBoxComponent* textbox, ButtonPromptComponent* prompt);
+        /* Start of turn Actions */
+        void introScreen();
+        void firstTurnQuestion();
+        void guideScreen();
+        void marketPrompt();
+        void addingMarket();
+        void removingMarket();
+        void turnStart();
+        /* Global Actions */
+        void showHUD();
+        void hideHUD();
+        void landEffect();
+        bool countdownTimer();
+        /* Market Actions */
+        void highlightMarket();
+        void marketActionPrompt(); // Checks for 2 actions from the market
+        /* Player Actions */
+        void highlightPlayer();
+        void playerActionPrompt(); // Checks for 1 action from the player
+        /* Actions */
+        void actionSelf();
+        void actionSelfAll();
+        void actionOther();
+        void actionOtherAll();
+        void actionFailed();
+        void actionSuccess();
+        /* End of turn Actions */
+        void turnEnd();
+        void debriefScreen();
+        void gameComplete();
+
+
+
 
     private:
         uint32_t _market_scene_state{ MG_Null_State };

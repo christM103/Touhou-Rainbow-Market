@@ -10,9 +10,11 @@ namespace TR {
 		TurnSystem() = default;
 		~TurnSystem();
 
-		void initTurns(Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager);
+		void initTurns(Engine::ComponentManager* componentManager);
+		void initRender(Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager);
 		void updateEntites(Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager);
-		void updateTurns(Engine::ComponentManager* componentManager, Engine::Window* windowManager);
+		void updateTurns(Engine::ComponentManager* componentManager);
+		void updateRender(Engine::ComponentManager* componentManager, Engine::Window* windowManager);
 
 		// Overloaded functions
 

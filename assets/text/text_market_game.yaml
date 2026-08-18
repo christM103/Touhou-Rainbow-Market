@@ -1,0 +1,75 @@
+# Comment: Market Game Dialogue
+# Text for the 'Market Game' scene
+
+---
+Game_Intro:
+  text: |
+    GAME START!
+    Welcome to the Touhou Rainbow Market Game Beta!
+
+First_Turn:
+  text: Would you like to know how to play the game? (left for yes, right for no)
+  prompt: true
+  prompt_type: y/n
+
+Game_Explanation:
+- text: >
+    Here's how to play the game.
+  prompt: false
+- text: >
+    Your goal is to make as much profit as possible within the span of 10 turns.
+  prompt: false
+- text: >
+    At the beginining, you are given two minutes for your turn to do what you are able to do. 
+    But as the game progresses, the time speeds up, giving you less time for actions.
+  prompt: false
+- text: >
+    There are going to be a set number of markets to buy at the start of the round.
+  prompt: false
+- text: >
+    Each market has their own special ability, 
+    whether it is the ability to attack markets from other players or protect your own. 
+    You can use a total of two market abilities per turn.
+  prompt: false
+- text: >
+    Your player also have their own dedicated action. 
+    You can use only one player action per turn.
+  prompt: false
+- text: >
+    Events also happen between every turn, but they are not currently implemented lol.
+  prompt: false
+- text: >
+    By the end of the game, whoever has the largest profit is the winner. 
+    But beware, you also instantly lose if you go bankrupt."
+  prompt: false
+- text: >
+    Would you like to hear that again? (left for yes, right for no)
+  prompt: true
+  prompt_type: y/n
+
+Market_Preview:
+  text: Here are the current markets that are offered for this turn.
+  markets:
+  - Mystia
+  - Wriggle
+  - Kisume
+  - Kogasa
+  - Nazrin
+
+Market_Choice_Prompt:
+  text: Would you like this market?
+  prompt: true
+  prompt_type: y/n
+
+Market Deletion Prompt:
+  text: "Do you want to delete a market that you currently have?"
+  prompt: true
+  prompt_type: y/n
+
+Market_Choice: 
+  text: For which piece of land?
+  prompt: true
+  prompt_type: market_choice
+
+Turn_Start:
+  text: Start of Turn 

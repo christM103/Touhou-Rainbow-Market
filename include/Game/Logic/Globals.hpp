@@ -1,9 +1,11 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <yaml-cpp/yaml.h>
 #include "Engine/Core/Engine.hpp"
 #include "Game/Logic/Player.hpp"
 #include "Game/Objects/Components/CommonComponents.hpp"
+#include "Game/Objects/Components/MarketGameComponents.hpp"
 
 struct GlobalGameState
 {
@@ -18,12 +20,16 @@ struct GlobalGameState
     Engine::InputComponent* gInput;
     Engine::MouseComponent* gMouse;
     TR::PlayerComponent* gPlayer;
+    TR::TurnsComponent* gTurns;
 
 	// Global game data
 	int gSize = 1;
+    bool gCMD = true;
 
     // Scene specific data
     const std::string GFX_FOLDER = "assets/gfx/sprites/";
+    const std::string TEXT_FOLDER = "assets/text/";
+    YAML::Node gYAML;
 	
 };
 

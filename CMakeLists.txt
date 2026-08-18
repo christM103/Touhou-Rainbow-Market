@@ -125,6 +125,10 @@ else()
     target_link_libraries(EngineLib PUBLIC ${SDL2_LIBRARIES})
 endif()
 
+# Yaml-cpp linking
+add_subdirectory(${CMAKE_SOURCE_DIR}/yaml-cpp)
+target_link_libraries(EngineLib PUBLIC yaml-cpp)
+
 # Copy assets automatically
 add_custom_command(TARGET TRM POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

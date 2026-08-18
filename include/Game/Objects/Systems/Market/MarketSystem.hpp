@@ -10,11 +10,15 @@ namespace TR {
 		MarketSystem() = default;
 		~MarketSystem() = default;
 
-		void marketInit(Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager);
+		void marketInit(Engine::ComponentManager* componentManager);
+		void renderInit(Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager);
 
 		void updateEntities(Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager);
 
 		void marketUpdate(Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager);
+		void renderUpdate(Engine::EntityManager* entityManager, Engine::ComponentManager* componentManager, Engine::Window* windowManager);
+
+		
 
 		// Overloaded functions
 

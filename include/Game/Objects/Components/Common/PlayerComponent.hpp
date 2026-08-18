@@ -13,6 +13,6 @@ namespace TR {
 		std::deque<Player_Data::Char_State> _player_pathway{  };					// Player's Character Progression Pathway
 
 		PlayerComponent(Player_Data::Char_State ch = Player_Data::S_Null_Char, Player_Data::Player_ID id = Player_Data::PI_Player_Null )
-			: player_number{ch}, current_char{id} { }
+			: player_number{id}, current_char{ch} { }
 	};
 }

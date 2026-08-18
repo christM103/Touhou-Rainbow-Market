@@ -64,8 +64,7 @@ class Player_Data{
 	 Action_State _player_action_state{ Action_State::A_Start };                          // Player's Current Action State
 
 
-     std::map<Char_State, std::string> Char_State_Str{ {S_Null_Char, "Null"}, {S_Reimu, "Reimu"}, {S_Marisa, "Marisa"}, {S_Sanae, "Sanae"},
-         {S_Flandre, "Flandre"}, { S_Youmu, "Youmu"}, {S_Tewi, "Tewi"}, {S_Koishi, "Koishi"} };
+     
 };
 
 class Player_Null : public Player_Data {

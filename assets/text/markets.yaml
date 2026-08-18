@@ -1,0 +1,75 @@
+# Market Bio & Info
+---
+# Null
+- ID: MID_Null
+  name:
+  bio: |
+    ""
+  tier: 1
+  profit: 0
+  sell: 0
+  special: Null
+
+# Mystia
+- ID: MID_Myst
+  name: Mystia's Izakaya
+  bio: |
+    "Mystia's Izakaya
+    A lamprey stand
+    Special: Gain $500. If you have another market in play, you'll gain $250 instead"
+  tier: 1
+  profit: 100
+  sell: 50
+  special: Mystia_Gain
+
+# Kogasa
+- ID: MID_Koga
+  name: Kogasa's Hiding Place
+  bio: |
+    ""
+  tier: 1
+  profit:
+  sell:
+  special: 
+
+# Wriggle
+- ID: MID_Wrig
+  name: Wriggle's Construction Agency
+  bio: |
+    ""
+  tier: 1
+  profit:
+  sell:
+  special:
+  text:
+
+# Keine
+- ID: MID_Kein
+  name: Keine's Schoolhouse
+  bio: |
+    ""
+  tier: 2
+  profit:
+  sell:
+  special: 
+  text:
+
+# Suwako
+- ID: MID_Suwa
+  name: Suwako's Shrine
+  bio: |
+    ""
+  tier: 2
+  profit: 0
+  sell: 0
+  special: Null
+
+# Renko & Maribel
+- ID: MID_Rema
+  name: Renko & Maribel's Secret Sealing Club
+  bio: |
+    ""
+  tier: 2
+  profit:
+  sell:
+  special:
