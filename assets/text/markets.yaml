@@ -2,9 +2,11 @@
 ---
 # Null
 - ID: MID_Null
-  name:
+  name: Null Market
   bio: |
-    ""
+    "Market Name:
+    Market Description
+    Special: Special Description"
   tier: 1
   profit: 0
   sell: 0
@@ -18,30 +20,31 @@
     A lamprey stand
     Special: Gain $500. If you have another market in play, you'll gain $250 instead"
   tier: 1
-  profit: 100
-  sell: 50
+  profit: 10000
+  sell: 5000
   special: Mystia_Gain
 
 # Kogasa
 - ID: MID_Koga
   name: Kogasa's Hiding Place
   bio: |
-    ""
+    "Kogasa's Hiding Place"
   tier: 1
-  profit:
-  sell:
-  special: 
+  profit: 10000
+  sell: 5000
+  special: Kogasa_Trickery
 
 # Wriggle
 - ID: MID_Wrig
   name: Wriggle's Construction Agency
   bio: |
-    ""
+    "Wriggle's Construction Place
+    WIP Description
+    Special: WIP"
   tier: 1
-  profit:
-  sell:
-  special:
-  text:
+  profit: 10000
+  sell: 5000
+  special: Wriggle_Destruct
 
 # Keine
 - ID: MID_Kein
@@ -49,10 +52,9 @@
   bio: |
     ""
   tier: 2
-  profit:
-  sell:
-  special: 
-  text:
+  profit: 20000
+  sell: 10000
+  special: Keine_Detention
 
 # Suwako
 - ID: MID_Suwa
@@ -60,9 +62,9 @@
   bio: |
     ""
   tier: 2
-  profit: 0
-  sell: 0
-  special: Null
+  profit: 20000
+  sell: 10000
+  special: Moriya_Wrath
 
 # Renko & Maribel
 - ID: MID_Rema
@@ -70,6 +72,6 @@
   bio: |
     ""
   tier: 2
-  profit:
-  sell:
-  special:
+  profit: 20000
+  sell: 10000
+  special: Hifuu_Special

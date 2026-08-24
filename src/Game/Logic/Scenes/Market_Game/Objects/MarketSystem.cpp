@@ -89,7 +89,7 @@ void TR::MarketSystem::renderUpdate(Engine::EntityManager* entityManager, Engine
 		_market_position = componentManager->getComponent<Engine::MultiTransformComponent>(entity)->transforms.at(0).get();
 
 		switch (market->market_ID) {
-			case Market_ID::MID_Mystia:
+			case MID_Myst:
 				if (_market_sprite->getResourceID() != "MKT_MYST") {
 					_market_sprite->setResourceID("MKT_MYST");
 				}

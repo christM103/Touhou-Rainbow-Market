@@ -51,9 +51,9 @@ class Land{
     /// @brief Sets one portion of land with a market
     /// @param ind      The index of the piece of land
     /// @param mar    The market that is going to be used
-    template <class T> inline void setLand(int ind, T&& mar) {
+    inline void setLand(int ind, Market&& mar) {
         if (_landMarkets[ind].first & LS_Free) {
-            _landMarkets[ind].second = std::make_shared<T>(std::forward<T>(mar));
+            _landMarkets[ind].second = std::make_unique<Market>(std::forward<Market>(mar));
             _landMarkets[ind].first ^= LS_Free;
         }
     };
@@ -65,6 +65,10 @@ class Land{
     /// @brief Swaps the current group of land with another group of land
     /// @param lot    The market that is going to be used
     void swapLand(Land& lot);
+    
+    /// @brief Gets a list of all the currently free pieces of land
+    /// @return Vector containing the list of free land indices
+    const std::vector<uint8_t> availableLand();
 
 
  private:

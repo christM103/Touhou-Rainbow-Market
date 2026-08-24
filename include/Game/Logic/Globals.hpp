@@ -30,6 +30,7 @@ struct GlobalGameState
     const std::string GFX_FOLDER = "assets/gfx/sprites/";
     const std::string TEXT_FOLDER = "assets/text/";
     YAML::Node gYAML;
+    YAML::Node gMarket;
 	
 };
 

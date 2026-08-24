@@ -34,13 +34,18 @@ Open markets can inflict a whole heap of buffs, debuffs, aliments and the like. 
 
 namespace TR {
 
-enum Market_ID{MID_Null, MID_Mystia, MID_Wriggle, MID_Kisume, MID_Kogasa, MID_Nazrin};
+enum Market_ID{MID_Null, MID_Myst, MID_Koga, MID_Wrig, MID_Kein, MID_Suwa, MID_Rema};
+
+static std::unordered_map<std::string, Market_ID> marketStrToID{
+    { "MID_Null", MID_Null }, { "MID_Myst", MID_Myst }, { "MID_Koga", MID_Koga },
+    { "MID_Wrig", MID_Wrig }, { "MID_Kein", MID_Kein }, { "MID_Suwa", MID_Suwa },
+    { "MID_Rema", MID_Rema } };
 
 class Market{
  public:
     // Constructor and Destuctor
     Market();
-    Market(int tier, float sell);
+    Market(Market_ID id);
     ~Market();
 
     // Accessors and Mutators
@@ -58,19 +63,12 @@ class Market{
     void marketLvlUp();
     virtual float marketProfit();
 
- protected:
+ private:
+     Market_ID _market_ID{ MID_Null };
+     std::string _market_name{ "" }, _market_bio{ "" };
     int _market_lvl{1}, _market_tier{1};
     float _market_sell{0.0}, _market_profit{0};
-    //std::unordered_map<Market_ID, const char*> marketIDStr{ { MID_Null, "MID_Null" }, { MID_Mystia, "MID_Mystia" }, { MID_Wriggle, "MID_Wriggle" }, { MID_Kisume, "MID_Kisume" }, { MID_Kogasa, "MID_Kogasa" }, { MID_Nazrin, "MID_Nazrin" } };
-};
-
-class Wriggle : public Market {
- public:
-    Wriggle();
-    void wriggleSell(Market other);
-    float marketProfit();
- private:
-    float _wrig_sell{0};
+    
 };
 
 }  // namespace TR

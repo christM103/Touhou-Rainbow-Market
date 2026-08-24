@@ -43,5 +43,17 @@ void Land::swapLand(Land& land) {
     _landMarkets.swap(land._landMarkets);
 }
 
+const std::vector<uint8_t> Land::availableLand() {
+    std::vector<uint8_t> available_land{};
+
+    for (auto& ind : _landMarkets) {
+        if (ind.second.first & LS_Free) {
+            available_land.push_back(ind.first + 1);
+        }
+    }
+
+    return available_land;
+}
+
 
 }  // namespace TR

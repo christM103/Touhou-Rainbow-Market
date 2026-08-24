@@ -21,6 +21,7 @@ namespace TR {
 			};
 
 		gState.gYAML = YAML::LoadFile(gState.TEXT_FOLDER + "text_market_game.yaml");
+		gState.gMarket = YAML::LoadFile(gState.TEXT_FOLDER + "markets.yaml");
 		
 		if (gState.gCMD) {
 			
@@ -119,7 +120,12 @@ namespace TR {
 			case MG_Market_Prompt:
 				this->marketPrompt();
 				break;
-			
+			case MG_Turn_Start:
+				this->turnStart();
+				break;
+			case MG_Main_Game:
+				this->showHUD();
+				break;
 			
 		}
 		/*
