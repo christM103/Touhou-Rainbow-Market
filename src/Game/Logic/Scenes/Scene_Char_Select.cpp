@@ -1,4 +1,5 @@
 #include "Game/Logic/Scenes.hpp"
+#include "Game/Logic/Enums.hpp"
 #include "Game/Objects/Components/CharSelectComponents.hpp"
 #include "Game/Objects/Systems/CharSelectSystems.hpp"
 #include "Engine/Graphics/AssetManager.hpp"
@@ -8,7 +9,6 @@ namespace TR {
         _currState = Scene_ID::CharS;
         _nextState = _currState;
         setYAMLPath(PATH_YAML_CHARSELECT);
-        gState.gText = YAML::LoadFile(getYAMLPath());
     }
 
     bool Char_Select::create() {
@@ -18,9 +18,9 @@ namespace TR {
 
         if (!getDebugManager().isEnabled()) {
             // Load the background and portrait textures
-            gState.gAssets->loadTexture(gState.GFX_FOLDER + "Char_Select/Placeholder_CharS_BG.png", "BGO", gState.gRenderer);
-            gState.gAssets->loadTexture(gState.GFX_FOLDER + "Common/Placeholder_Portrait_R.png", "Portait_R", gState.gRenderer);
-            gState.gAssets->loadTexture(gState.GFX_FOLDER + "Common/Placeholder_Portrait_M.png", "Portait_M", gState.gRenderer);
+            gState.gAssets->loadTexture(GFX_FOLDER + "Char_Select/Placeholder_CharS_BG.png", "BGO", gState.gRenderer);
+            gState.gAssets->loadTexture(GFX_FOLDER + "Common/Placeholder_Portrait_R.png", "Portait_R", gState.gRenderer);
+            gState.gAssets->loadTexture(GFX_FOLDER + "Common/Placeholder_Portrait_M.png", "Portait_M", gState.gRenderer);
 
             // Creates the Backgrounds
             Engine::Entity BGO = gState.gECS->createEntity("BGO");
@@ -66,7 +66,7 @@ namespace TR {
                 }
             }
             else if (gState.gInput->keyPressed(SDL_SCANCODE_RIGHT)) {
-                if (static_cast<int>(new_selected + 1) < select_component->_char_dict.size()) {
+                if (static_cast<int>(new_selected + 1) < CHAR_STATE_TO_STR.size()) {
                     select_component->_current_selected = Char_State(new_selected + 1);
                 }
             }

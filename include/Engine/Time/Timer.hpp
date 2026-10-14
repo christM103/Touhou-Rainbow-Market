@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <functional>
 
-#include <SDL2/SDL_Timer.h>
+#include <SDL2/SDL.h>
 
 namespace Engine {
 	class Timer {

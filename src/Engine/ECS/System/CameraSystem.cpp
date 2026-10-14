@@ -1,4 +1,3 @@
-#pragma once
 #include "Engine/ECS/System/CameraSystem.hpp"
 
 void Engine::CameraSystem::initCamera(ComponentManager* componentManager) {

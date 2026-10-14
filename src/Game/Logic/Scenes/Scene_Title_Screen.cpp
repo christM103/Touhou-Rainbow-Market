@@ -7,7 +7,6 @@ namespace TR {
         _currState = Scene_ID::Title;
         _nextState = _currState;
         setYAMLPath(PATH_YAML_TITLE);
-        gState.gText = YAML::LoadFile(getYAMLPath());
     }
 
     bool Title_Screen::create() {
@@ -17,7 +16,7 @@ namespace TR {
 
         if (!getDebugManager().isEnabled()) {
             // Load the background texture
-            gState.gAssets->loadTexture(gState.GFX_FOLDER + "Title_Screen/Placeholder_Title.png", "TITLE", gState.gRenderer);
+            gState.gAssets->loadTexture(GFX_FOLDER + "Title_Screen/Placeholder_Title.png", "TITLE", gState.gRenderer);
 
             // Creates the BGO
             Engine::Entity BGO = gState.gECS->createEntity("BGO");

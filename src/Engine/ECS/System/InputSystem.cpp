@@ -1,7 +1,5 @@
-#pragma once
-
 #include "Engine/ECS/System/InputSystem.hpp"
-
+#include <algorithm>
 
 
 void Engine::InputSystem::initInput(const EntityManager* entityManager, ComponentManager* componentManager) {

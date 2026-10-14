@@ -1,7 +1,5 @@
-#pragma once
-
 #include "Engine/ECS/System/MotionSystem.hpp"
-
+#include <algorithm>
 
 
 void Engine::MotionSystem::initMotion(const EntityManager* entityManager, ComponentManager* componentManager) {
@@ -72,14 +70,15 @@ void Engine::MotionSystem::initMotion(const EntityManager* entityManager, Compon
 }
 
 void Engine::MotionSystem::updateEntities(EntityManager* entityManager, ComponentManager* componentManager) {
+
 	std::erase_if(_entities, [&](const auto& item) {
 		const auto& [entity, data] = item;
 		const auto& entMap = entityManager->getEntities();
 		const auto it = std::find_if(entMap.begin(), entMap.end(), [&](const auto& pair) {
 			return pair.second == entity;
-			});
-		return (it == entMap.end());
 		});
+		return (it == entMap.end());
+	});
 
 	auto* velEntities = componentManager->allEntities<VelocityComponent>();
 	auto* multiVelEntities = componentManager->allEntities<MultiVelocityComponent>();

@@ -1,7 +1,5 @@
-#pragma once
-
+#include <algorithm>
 #include "Game/Objects/Systems/Common/PlayerSystem.hpp"
-
 
 
 TR::PlayerSystem::~PlayerSystem() {
@@ -15,7 +13,8 @@ void TR::PlayerSystem::init(const Engine::EntityManager* entityManager, Engine::
 	for (auto& entity : *entities) {
 		playerComp = componentManager->getComponent<PlayerComponent>(entity);
 		auto playerIt = std::find_if(_players.begin(), _players.end(),
-			[entity](const auto& p) { return p.first == entity; });
+			[entity](const auto& p) { return p.first == entity; }
+		);
 
 		if (playerIt == _players.end()) {
 			switch (playerComp->current_char) {

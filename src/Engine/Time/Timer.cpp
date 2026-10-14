@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Engine/Time/Timer.hpp"
 
 

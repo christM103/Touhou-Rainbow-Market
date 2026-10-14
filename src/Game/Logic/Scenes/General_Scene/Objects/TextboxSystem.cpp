@@ -1,6 +1,5 @@
-#pragma once
-
 #include <array>
+#include <algorithm>
 #include <SDL2/SDL_ttf.h>
 #include "Game/Objects/Systems/Common/TextboxSystem.hpp"
 
@@ -84,7 +83,7 @@ void TR::TextboxSystem::updateEntity(const Engine::EntityManager* entityManager,
 			return pair.second == entity;
 			});
 		return (it == entMap.end());
-		});
+	});
 
 	if (auto* entities = componentManager->allEntities<TextBoxComponent>()) {
 		if (entities->size() > _textboxes.size()) {

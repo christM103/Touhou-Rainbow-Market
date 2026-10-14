@@ -11,7 +11,6 @@ namespace TR {
 		_currState = Scene_ID::Main;
 		_nextState = _currState;
 		setYAMLPath(PATH_YAML_MARKETGAME);
-		gState.gText = YAML::LoadFile(getYAMLPath());
 		_market_scene_state = Game_States::MG_Welcome_Screen;
 	}
 
@@ -28,21 +27,21 @@ namespace TR {
 		else {
 			// Variable definitions
 
-			const std::string CHAR_NUL = gState.GFX_FOLDER + "Market_Game/Placeholder_Portrait_Null.png";
-			const std::string CHAR_REI = gState.GFX_FOLDER + "Market_Game/Placeholder_Portrait_R_S.png";
-			const std::string CHAR_MAR = gState.GFX_FOLDER + "Market_Game/Placeholder_Portrait_M_S.png";
+			const std::string CHAR_NUL = GFX_FOLDER + "Market_Game/Placeholder_Portrait_Null.png";
+			const std::string CHAR_REI = GFX_FOLDER + "Market_Game/Placeholder_Portrait_R_S.png";
+			const std::string CHAR_MAR = GFX_FOLDER + "Market_Game/Placeholder_Portrait_M_S.png";
 
-			const std::string MARK_MYST = gState.GFX_FOLDER + "Market_Game/Placeholder_Game_MarketMystia.png";
-			const std::string MARK_MYST_S = gState.GFX_FOLDER + "Market_Game/Placeholder_Game_MarketMystia_S.png";
+			const std::string MARK_MYST = GFX_FOLDER + "Market_Game/Placeholder_Game_MarketMystia.png";
+			const std::string MARK_MYST_S = GFX_FOLDER + "Market_Game/Placeholder_Game_MarketMystia_S.png";
 
-			const std::string TXT_BOX_BG = gState.GFX_FOLDER + "Common/Placeholder_Box_BGO.png";
-			const std::string TXT_BOX_F = gState.GFX_FOLDER + "Common/Placeholder_Box_Frame.png";
+			const std::string TXT_BOX_BG = GFX_FOLDER + "Common/Placeholder_Box_BGO.png";
+			const std::string TXT_BOX_F = GFX_FOLDER + "Common/Placeholder_Box_Frame.png";
 
 
 			/* Texture Initialization */
 
 			// Loading Background
-			const std::string BGO_GFX = gState.GFX_FOLDER + "Market_Game/Placeholder_Game_BGO.png";
+			const std::string BGO_GFX = GFX_FOLDER + "Market_Game/Placeholder_Game_BGO.png";
 			gState.gAssets->loadTexture(BGO_GFX, "BGO_GFX", gState.gRenderer);
 
 			// Loading Character Portraits
@@ -94,6 +93,8 @@ namespace TR {
 
 		Engine::Entity TURNS = gState.gECS->createEntity("TURNS_TEST");
 		gState.gECS->addComponent<TurnsComponent>(TURNS, 5);
+
+		gState.gTurns = gState.gECS->getComponent<TurnsComponent>(TURNS);
 
 		gState.gECS->addSystem<MarketSystem>();
 		gState.gECS->addSystem<TextboxSystem>();

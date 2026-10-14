@@ -104,8 +104,9 @@ namespace TR {
 
 	void Market_Game::turnStart() {
 		if (isGameTextStringEmpty()) {
-			// TEXT_TEMP_VALUE.at("turn_number") for replacing turn numbers;
+			TEXT_TEMP_VALUE.at("turn_number") = std::to_string(gState.gTurns->current_turn);
 			appendYAMLString("turn_start");
+			substitutePlaceholder();
 		}
 
 		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
@@ -220,7 +221,7 @@ namespace TR {
 		if (getDebugManager().isEnabled()) {
 			if (isGameTextStringEmpty()) {
 				TEXT_TEMP_VALUE.at("player_char") = CHAR_STATE_TO_STR.at(gState.gPlayer->current_char);
-				TEXT_TEMP_VALUE.at("player_act_pla") = TEXT_TEMP_VALUE.at("player_act_mar");
+				TEXT_TEMP_VALUE.at("player_act_pla") = std::to_string(gState.gPlayer->player_actions);
 
 				appendYAMLString("plyr_debug_txt");
 				substitutePlaceholder();

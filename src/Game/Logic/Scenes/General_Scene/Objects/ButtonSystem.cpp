@@ -1,5 +1,4 @@
-#pragma once
-
+#include <algorithm>
 #include "Game/Objects/Systems/Common/ButtonSystem.hpp"
 
 void TR::ButtonSystem::initButtonPrompt(Engine::ComponentManager* componentManager, Engine::Window* windowManager, Engine::AssetManager* assetManager) {
@@ -74,7 +73,7 @@ void TR::ButtonSystem::updateEntity(const Engine::EntityManager* entityManager, 
 			return pair.second == entity;
 			});
 		return (it == entMap.end());
-		});
+	});
 
 	if (auto* entities = componentManager->allEntities<ButtonPromptComponent>()) {
 		if (entities->size() > _buttonPrompts.size()) {

@@ -1,7 +1,7 @@
-#pragma once
+#include <ranges>
+#include <algorithm>
 
 #include "Game/Objects/Systems/Market/MarketSystem.hpp"
-#include <ranges>
 
 void TR::MarketSystem::marketInit(Engine::ComponentManager* componentManager) {
 	const auto& entities = componentManager->allEntities<MarketComponent>();

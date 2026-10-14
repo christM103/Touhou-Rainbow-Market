@@ -95,7 +95,6 @@ void Game::update(float deltaTime) {
 
     if (_currScene->getSceneCurr() != _currScene->getSceneNext()) {
         TR::Scene_ID state = _currScene->getSceneNext();
-        gState.gText.reset();
         switch (state) {
             case TR::Scene_ID::Title:
                 move_state(std::make_unique<TR::Title_Screen>());

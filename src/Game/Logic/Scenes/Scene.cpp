@@ -2,7 +2,8 @@
 
 namespace TR {
     void Scene::appendYAMLString(std::string str) {
-        const auto& Node = gState.gText[str];
+        YAML::Node scene_YAML = YAML::LoadFile(getYAMLPath());
+        const auto& Node = scene_YAML[str];
 
         if (Node["text"].IsDefined()) {
             appendGameTextString(Node["text"].as<std::string>());
@@ -59,24 +60,23 @@ namespace TR {
         bool isPlaceholder = false;
         std::string new_string, placeholder;
 		for (const auto& character : _state_data.current_text_string) {
-            if (character == '{' && !isPlaceholder) {
-                isPlaceholder = true;
-            }
-
-            if (character == '}' && isPlaceholder) {
-                new_string += TEXT_TEMP_VALUE.at(placeholder.substr(1));
-                placeholder.clear();
-                isPlaceholder = false;
-            }
-
             if (isPlaceholder) {
+                if (character == '}') {
+                    new_string += TEXT_TEMP_VALUE.at(placeholder);
+                    placeholder.clear();
+                    isPlaceholder = false;
+                    continue;
+                }
                 placeholder += character;
             }
             else {
+                if (character == '{') {
+                    isPlaceholder = true;
+                    continue;
+                }
                 new_string += character;
             }
 		}
-
         _state_data.current_text_string = new_string;
 	}
 }

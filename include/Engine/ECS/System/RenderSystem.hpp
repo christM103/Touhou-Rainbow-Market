@@ -1,5 +1,3 @@
-#pragma once
-
 #include <deque>
 #include <tuple>
 #include <vector>

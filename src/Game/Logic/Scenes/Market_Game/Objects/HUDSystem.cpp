@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Game/Objects/Systems/Market/HUDSystem.hpp"
 
 

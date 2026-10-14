@@ -41,7 +41,7 @@ Follow these steps to compile the project on your local machine.
 You'll need a C++ compiler, CMake, and the SDL2 development libraries. On Debian/Ubuntu-based systems, you can install them with:
 ```bash
 sudo apt update
-sudo apt install build-essential cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
+sudo apt install build-essential cmake pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
 ```
 
 ---

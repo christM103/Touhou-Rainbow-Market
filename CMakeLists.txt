@@ -121,8 +121,16 @@ if(WIN32)
 else()
     # On Linux rely on system-installed SDL2
     find_package(SDL2 REQUIRED)
-    include_directories(${SDL2_INCLUDE_DIRS})
-    target_link_libraries(EngineLib PUBLIC ${SDL2_LIBRARIES})
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(SDL2_TTF REQUIRED IMPORTED_TARGET SDL2_ttf)
+    pkg_check_modules(SDL2_IMAGE REQUIRED IMPORTED_TARGET SDL2_image)
+
+    target_include_directories(EngineLib PUBLIC ${SDL2_INCLUDE_DIRS})
+    target_link_libraries(EngineLib PUBLIC
+        ${SDL2_LIBRARIES}
+        PkgConfig::SDL2_TTF
+        PkgConfig::SDL2_IMAGE
+    )
 endif()
 
 # Yaml-cpp linking
