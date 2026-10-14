@@ -13,8 +13,12 @@ namespace Engine {
 		TextComponent() : text(""), textSize(0), textColor( 0, 0, 0, 0 ) {}
 		~TextComponent() = default;
 
-		TextComponent(const char* tx, int txsz, const Vector4<int> tcol, Vector2i bounds = Vector2i(0, 0)) 
+		TextComponent(const char* tx, int txsz, const Vector4<int> tcol = Vector4i(0, 0, 0, 0), Vector2i bounds = Vector2i(0, 0))
 			: text(tx), textSize(txsz), textColor(tcol), textBounds(bounds) {}
+
+		TextComponent(int txsz, const Vector4<int> tcol = Vector4i(0, 0, 0, 0), Vector2i bounds = Vector2i(0, 0))
+			: TextComponent("", txsz, tcol, bounds) {
+		}
 
 		// Mutators and Accessors
 

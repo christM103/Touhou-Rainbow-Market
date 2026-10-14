@@ -34,8 +34,8 @@ Once per turn you can choose to…
 namespace TR {
 
 Player_Marisa::Player_Marisa(int type) {
-    _style_type = type;
-    _char_desc = "Marisa \nType Num " + std::to_string(_style_type);
+    _player_type = type;
+    _player_desc = "Marisa \nType Num " + std::to_string(_player_type);
 }
 
 Player_Marisa::~Player_Marisa() {}

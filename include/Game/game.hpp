@@ -1,6 +1,7 @@
 // Copyright 2025 Chrisfantasy
 #pragma once
 #include "Engine/Core/Application.hpp"
+#include "Engine/Core/Debugger.hpp"
 #include "Engine/Graphics/Sprite.hpp"
 #include "Game/Logic/Scenes.hpp"
 
@@ -16,9 +17,15 @@ public:
 
     void move_state(std::unique_ptr<TR::Scene> newState);
 
+    
+
 private:
     // Game-specific data and methods
 
     std::unique_ptr<TR::Scene> _currScene;
+
+    inline auto& getDebugManager() {
+        return _currScene->getDebugManager();
+    }
 };
 

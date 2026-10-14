@@ -7,6 +7,11 @@
 #include "Game/Logic/Market.hpp"
 
 namespace TR {
+
+enum class Land_ID : uint8_t {
+    Land_1, Land_2, Land_3, Land_4, Land_5, Land_6, Land_Null = 255
+};
+
     // --- Land Class --- //
 
 class Land{
@@ -36,7 +41,7 @@ class Land{
 
     /// @brief Gets a list of all the currently active markets
     /// @return String featuring every market loaded into all lands
-    const char* getMarketList();
+    std::string getMarketList();
 
     /// @brief Sets the size of the sprite.
     /// @param ind      The index of the piece of land

@@ -5,10 +5,10 @@
 
 namespace TR {
 	struct SelectComponent {
-		std::map<Player_Data::Char_State, std::string> _char_dict{
-			{Player_Data::S_Null_Char, "Null"}, {Player_Data::S_Reimu, "Reimu"}, {Player_Data::S_Marisa, "Marisa"}, {Player_Data::S_Sanae, "Sanae"},
-			{Player_Data::S_Flandre, "Flandre"}, { Player_Data::S_Youmu, "Youmu"}, {Player_Data::S_Tewi, "Tewi"}, {Player_Data::S_Koishi, "Koishi"} };
+		std::map<Char_State, std::string> _char_dict{
+			{Char_State::Null, "Null"}, {Char_State::Reimu, "Reimu"}, {Char_State::Marisa, "Marisa"}, {Char_State::Sanae, "Sanae"},
+			{Char_State::Flandre, "Flandre"}, { Char_State::Youmu, "Youmu"}, {Char_State::Tewi, "Tewi"}, {Char_State::Koishi, "Koishi"} };
 
-		Player_Data::Char_State _current_selected{ Player_Data::S_Reimu };
+		Char_State _current_selected{ Char_State::Reimu };
 	};
 }

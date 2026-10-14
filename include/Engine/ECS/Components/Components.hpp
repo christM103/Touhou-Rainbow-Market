@@ -12,6 +12,8 @@
 #include "Engine/ECS/Components/CameraComponent.hpp"
 #include "Engine/ECS/Components/RenderComponent.hpp"
 
+#include "Engine/ECS/Components/DebugComponent.hpp"
+
 #include <typeindex>
 #include <typeinfo>
 

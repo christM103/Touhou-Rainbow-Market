@@ -1,0 +1,8 @@
+# Comment: Market Game Dialogue
+# Text for the 'Market Game' scene
+
+---
+select_debug:
+  text: >
+    Please Select Your Character (Choose w left and right arrow keys, select with enter)
+  action: prompt_char

@@ -19,10 +19,10 @@ void TR::PlayerSystem::init(const Engine::EntityManager* entityManager, Engine::
 
 		if (playerIt == _players.end()) {
 			switch (playerComp->current_char) {
-				case Player_Data::S_Reimu:
+				case Char_State::Reimu:
 					_players.emplace_back( entity, std::make_unique<Player_Reimu>(playerComp->char_type) );
 					break;
-				case Player_Data::S_Marisa:
+				case Char_State::Marisa:
 					_players.emplace_back( entity, std::make_unique<Player_Marisa>(playerComp->char_type) );
 					break;
 				default:

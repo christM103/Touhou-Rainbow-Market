@@ -1,0 +1,8 @@
+# Comment: Title Screen Dialogue
+# Text for the 'Title Screen' scene
+
+---
+title_debug:
+  text: >
+    "Welcome to the Touhou Rainbow Market Demo!
+    *- Press Space to play -*"

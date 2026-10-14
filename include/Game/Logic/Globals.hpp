@@ -23,14 +23,15 @@ struct GlobalGameState
     TR::TurnsComponent* gTurns;
 
 	// Global game data
-	int gSize = 1;
-    bool gCMD = true;
+	//int gSize = 1;
 
     // Scene specific data
     const std::string GFX_FOLDER = "assets/gfx/sprites/";
     const std::string TEXT_FOLDER = "assets/text/";
-    YAML::Node gYAML;
+    const std::string DATA_FOLDER = "assets/data/";
+    YAML::Node gText;
     YAML::Node gMarket;
+    YAML::Node gAction;
 	
 };
 

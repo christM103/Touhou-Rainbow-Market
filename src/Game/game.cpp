@@ -40,16 +40,47 @@ bool Game::create() {
     Engine::Entity MOUSE = gState.gECS->createEntity("MOUSE");
     gState.gMouse = &gState.gECS->addComponent<Engine::MouseComponent>(MOUSE);
 
-	// Creates the scene
-    _currScene->create();
-
     // Initilizing the Systems
     gState.gECS->addSystem<Engine::RenderSystem>();
     gState.gECS->addSystem<Engine::MotionSystem>();
     gState.gECS->addSystem<Engine::InputSystem>();
     gState.gECS->addSystem<Engine::CollisionSystem>();
     gState.gECS->addSystem<Engine::CameraSystem>();
+    if (getDebugManager().isEnabled()) {
+        Engine::DebugComponent::_debug_active = true;
+        gState.gECS->addSystem<Engine::DebugSystem>();
+    }
+    
+    // Initialize the input for the game
+    gState.gInput->newKey(SDL_SCANCODE_UP);
+    gState.gInput->newKey(SDL_SCANCODE_DOWN);
+    gState.gInput->newKey(SDL_SCANCODE_LEFT);
+    gState.gInput->newKey(SDL_SCANCODE_RIGHT);
+
+    gState.gInput->newKey(SDL_SCANCODE_SPACE);
+    gState.gInput->newKey(SDL_SCANCODE_RETURN);
+
+    gState.gInput->newKey(SDL_SCANCODE_1);
+    gState.gInput->newKey(SDL_SCANCODE_2);
+    gState.gInput->newKey(SDL_SCANCODE_3);
+    gState.gInput->newKey(SDL_SCANCODE_4);
+    gState.gInput->newKey(SDL_SCANCODE_5);
+    gState.gInput->newKey(SDL_SCANCODE_6);
+
+    gState.gInput->newKey(SDL_SCANCODE_Z);
+    gState.gInput->newKey(SDL_SCANCODE_X);
+    gState.gInput->newKey(SDL_SCANCODE_C);
+    gState.gInput->newKey(SDL_SCANCODE_V);
+
+    // Initialize the YAML Files
+    gState.gMarket = YAML::LoadFile(TR::PATH_JSON_MARKET);
+    gState.gAction = YAML::LoadFile(TR::PATH_JSON_ACTION);
+
+    // Creates the scene
+    _currScene->create();
+
     gState.gECS->create();
+
 
     return true;
 }
@@ -57,22 +88,28 @@ bool Game::create() {
 void Game::update(float deltaTime) {
 
     _currScene->update();
+    if (getDebugManager().isEnabled()) {
+        getDebugManager().displayText(_currScene->getGameTextString());
+    }
+    _currScene->parsePromptAction();
 
     if (_currScene->getSceneCurr() != _currScene->getSceneNext()) {
-        TR::Scene::Scene_ID state = _currScene->getSceneNext();
+        TR::Scene_ID state = _currScene->getSceneNext();
+        gState.gText.reset();
         switch (state) {
-            case TR::Scene::SC_Title:
+            case TR::Scene_ID::Title:
                 move_state(std::make_unique<TR::Title_Screen>());
                 break;
-            case TR::Scene::SC_CharS:
+            case TR::Scene_ID::CharS:
                 move_state(std::make_unique<TR::Char_Select>());
                 break;
-            case TR::Scene::SC_Main:
+            case TR::Scene_ID::Main:
                 move_state(std::make_unique<TR::Market_Game>());
                 break;
             default:
                 break;
         }
+        
     }
     
     gState.gECS->update();

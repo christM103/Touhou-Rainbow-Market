@@ -16,15 +16,15 @@ Market* Land::getMarket(int ind) {
     return _landMarkets.at(ind).second.get();
 }
 
-const char* Land::getMarketList() {
+std::string Land::getMarketList() {
     std::string temp;
 
     for (auto const& i : _landMarkets) {
-        //temp += i.second.second.get()->getIDStr();
-        temp += " ";
+        temp += i.second.second->getName();
+        temp += "| ";
     }
 
-    return temp.c_str();
+    return temp;
 }
 
 

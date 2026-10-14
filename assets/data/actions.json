@@ -1,0 +1,101 @@
+[
+  {
+    "id": 0,
+    "id_name": "A_NULL",
+    "name": "Null Action",
+    "description": "None",
+    "aoe": "Player_Any",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 1,
+    "id_name": "A_REIA",
+    "name": "Reimu's Treasure",
+    "description": "None",
+    "aoe": "Player_Any",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 2,
+    "id_name": "A_REIB",
+    "name": "Reimu's Seal",
+    "description": "None",
+    "aoe": "None",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 3,
+    "id_name": "A_MARA",
+    "name": "Marisa's Magic",
+    "description": "None",
+    "aoe": "All_Any",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 4,
+    "id_name": "A_MARB",
+    "name": "Marisa's Mushrooms",
+    "description": "None",
+    "aoe": "All_Any",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 33,
+    "id_name": "A_MYST",
+    "name": "Mystia's Gain",
+    "description": "None",
+    "aoe": "Player_All",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 34,
+    "id_name": "A_KOGA",
+    "name": "Kogasa's Trickery",
+    "description": "None",
+    "aoe": "Player_Any",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 35,
+    "id_name": "A_WRIG",
+    "name": "Wriggle's Destruct",
+    "description": "None",
+    "aoe": "Enemy_Any",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 36,
+    "id_name": "A_KEIN",
+    "name": "Keine's Detention",
+    "description": "None",
+    "aoe": "Player_Any",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 37,
+    "id_name": "A_MORI",
+    "name": "Moriya's Wrath",
+    "description": "None",
+    "aoe": "Enemy_All",
+    "effect": "None",
+    "extra": "None"
+  },
+  {
+    "id": 38,
+    "id_name": "A_HIFU",
+    "name": "The Hifuu Club Special",
+    "description": "None",
+    "aoe": "Player_All",
+    "effect": "None",
+    "extra": "None"
+  }
+]

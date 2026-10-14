@@ -1,0 +1,72 @@
+[
+  {
+    "id": 0,
+    "id_name": "MID_Null",
+    "name": "Null Market",
+    "bio": "Market Name:\nMarket Description\nSpecial: Special Description",
+    "tier": 0,
+    "profit": 0,
+    "sell": 0,
+    "special": "A_NULL"
+  },
+  {
+    "id": 1,
+    "id_name": "MID_Myst",
+    "name": "Mystia's Izakaya",
+    "bio": "Mystia's Izakaya\nA lamprey stand\nSpecial: Gain $500. If you have another market in play, you'll gain $250 instead",
+    "tier": 1,
+    "profit": 10000,
+    "sell": 5000,
+    "special": "A_MYST"
+  },
+  {
+    "id": 2,
+    "id_name": "MID_Koga",
+    "name": "Kogasa's Hiding Place",
+    "bio": "Kogasa's Hiding Place",
+    "tier": 1,
+    "profit": 10000,
+    "sell": 5000,
+    "special": "A_KOGA"
+  },
+  {
+    "id": 3,
+    "id_name": "MID_Wrig",
+    "name": "Wriggle's Construction Agency",
+    "bio": "Wriggle's Construction Place\nWIP Description\nSpecial: WIP",
+    "tier": 1,
+    "profit": 10000,
+    "sell": 5000,
+    "special": "A_WRIG"
+  },
+  {
+    "id": 4,
+    "id_name": "MID_Kein",
+    "name": "Keine's Schoolhouse",
+    "bio": "",
+    "tier": 2,
+    "profit": 20000,
+    "sell": 10000,
+    "special": "A_KEIN"
+  },
+  {
+    "id": 5,
+    "id_name": "MID_Suwa",
+    "name": "Suwako's Shrine",
+    "bio": "",
+    "tier": 2,
+    "profit": 20000,
+    "sell": 10000,
+    "special": "A_SUWA"
+  },
+  {
+    "id": 6,
+    "id_name": "MID_Rema",
+    "name": "Renko & Maribel's Secret Sealing Club",
+    "bio": "",
+    "tier": 2,
+    "profit": 20000,
+    "sell": 10000,
+    "special": "A_HIFU"
+  }
+]

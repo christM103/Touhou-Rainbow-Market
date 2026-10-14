@@ -2,68 +2,78 @@
 # Text for the 'Market Game' scene
 
 ---
-Game_Intro:
+game_intro:
+  text: "GAME START!"
+first_turn:
+  text: "Would you like to know how to play the game?"
+  action: "prompt_yn"
+game_explain:
+  lines:
+    - text: >
+        Here's how to play the game.
+    - text: >
+        Your goal is to make as much profit as possible within the span of 10 turns.
+    - text: >
+        At the beginning, you are given two minutes for your turn to do what you are able to do. 
+        But as the game progresses, the time speeds up, giving you less time for actions.
+    - text: >
+        There are going to be a set number of markets to buy at the start of the round.
+    - text: >
+        Each market has their own special ability, 
+        whether it is the ability to attack markets from other players or protect your own. 
+        You can use a total of two market abilities per turn.
+    - text: >
+        Your player also has their own dedicated action. 
+        You can use only one player action per turn.
+    - text: >
+        Events also happen between every turn, but they are not currently implemented lol.
+    - text: >
+        By the end of the game, whoever has the largest profit is the winner. 
+        But beware, you also instantly lose if you go bankrupt.
+    - text: "Would you like to hear that again?"
+      action: "prompt_yn"
+market_intro:
+  lines:
+    - text: "Here are the current markets that are offered for this turn."
+      action: "display_mkt1"
+    - text: "Which market do you want to get?"
+      action: "prompt_market"
+    - text: "Where would you like to place the market?"
+      action: "prompt_land"
+market_add:
+  text: "Would you like this market?"
+  action: "prompt_yn"
+market_delete:
+  lines:
+    - text: "You currently don't have enough space to add another market"
+    - text: "Do you want to delete a market that you currently have?"
+      action: "prompt_yn"
+turn_start:
+  text: "Start of Turn {turn_number}!"
+hud_debug_text:
   text: |
-    GAME START!
-    Welcome to the Touhou Rainbow Market Game Beta!
+    Current Player:/ {player_char}
+    Current Type:/ Type {player_type}
+    Total Current Profit:/ {player_profit}
+    Current Markets:/ {player_lot}
+    Current Time:/ {game_timer}
 
-First_Turn:
-  text: Would you like to know how to play the game? (left for yes, right for no)
-  prompt: true
-  prompt_type: y/n
-
-Game_Explanation:
-- text: >
-    Here's how to play the game.
-- text: >
-    Your goal is to make as much profit as possible within the span of 10 turns.
-- text: >
-    At the beginining, you are given two minutes for your turn to do what you are able to do. 
-    But as the game progresses, the time speeds up, giving you less time for actions.
-- text: >
-    There are going to be a set number of markets to buy at the start of the round.
-- text: >
-    Each market has their own special ability, 
-    whether it is the ability to attack markets from other players or protect your own. 
-    You can use a total of two market abilities per turn.
-- text: >
-    Your player also have their own dedicated action. 
-    You can use only one player action per turn.
-- text: >
-    Events also happen between every turn, but they are not currently implemented lol.
-- text: >
-    By the end of the game, whoever has the largest profit is the winner. 
-    But beware, you also instantly lose if you go bankrupt."
-- text: >
-    Would you like to hear that again? (left for yes, right for no)
-  prompt_type: y/n
-
-Market_Preview:
-- text: Here are the current markets that are offered for this turn.
-  prompt_type: market_display
-- text: Which market do you want to get?
-  prompt_type: market_prompt
-- text: Where would you like to place the market?
-  prompt_type: land_prompt
-
-Market_Choice_Prompt:
-  text: Would you like this market?
-  prompt_type: y/n
-
-Market Deletion Prompt:
-- text: You currently don't have enough space to add another market
-- text: "Do you want to delete a market that you currently have?"
-  prompt: true
-  prompt_type: y/n
-
-Market_Choice: 
-  text: For which piece of land?
-  prompt: true
-  prompt_type: market_choice
-
-Turn_Start:
-  text: Start of Turn
-
-Prompt_YN:
-  text_y: ->yes    no
-  text_n:   yes  ->no
+    Use keys 1-6 to access land windows, Z to access player window
+land_debug_txt:
+  text: |
+    Press X to exit, Press Z to activate power
+    Actions Left:/ {player_act_mar}
+    Active Market:/ {market_active}
+    Market ID:/ {market_id}
+plyr_debug_txt:
+  text: |
+    Press X to exit, Press Z to activate power
+    Current Player:/ {player_char}
+    Actions Left:/ {player_act_pla}
+action_prompt:
+  text: "Would you want to use your action?"
+  action: "prompt_yn"
+action_debug_success:
+  text: "Action Succeeded!"
+action_debug_failure:
+  text: "Action Failed!"

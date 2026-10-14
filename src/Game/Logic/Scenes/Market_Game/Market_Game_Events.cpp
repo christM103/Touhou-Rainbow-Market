@@ -1,22 +1,24 @@
+#include <format>
+
 #include "Engine/Graphics/AssetManager.hpp"
 
 #include "Game/Logic/Scenes.hpp"
 #include "Game/Objects/Components/MarketGameComponents.hpp"
 #include "Game/Objects/Systems/MarketGameSystems.hpp"
 
+using Engine::DebugComponent;
+
 namespace TR {
+	
 
 	void Market_Game::introScreen() {
-		if (gState.gCMD) {
-			if (TextManager::textIsActive()) {
-				std::cout << "\n" << gState.gYAML["Game_Intro"]["text"].as<std::string>();
-				TextManager::textDeactivate();
-			}
-			else {
-				if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
-					_market_scene_state = MG_First_Turn_Question;
-					TextManager::textActivate();
-				}
+		if (isGameTextStringEmpty()) {
+			appendYAMLString("game_intro");
+		}
+
+		if (getDebugManager().isEnabled()) {
+			if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+				swapState(Game_States::MG_First_Turn_Question);
 			}
 		}
 		else {
@@ -25,210 +27,272 @@ namespace TR {
 	}
 
 	void Market_Game::firstTurnQuestion() {
-		if (gState.gCMD) {
-			if (TextManager::textIsActive()) {
-				std::cout << "\n" << gState.gYAML["First_Turn"]["text"] << "\n";
-				TextManager::activatePrompt(TextManager::PROMPT_YN);
-			}
+		if (isGameTextStringEmpty()) {
+			appendYAMLString("first_turn");
 		}
-		else {
+
+		if (!getDebugManager().isEnabled()) {
 			/* Display dialogue for first time playing game */
 		}
 
-		TextManager::promptYN(
-			[=]() {_market_scene_state = MG_Guide_Screen; },
-			[=]() {_market_scene_state = MG_Market_Prompt;}
-		);
-
+		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+			(_state_data.prompt_flags == Prompt_Flags::PRM_YN_YES)
+				? swapState(Game_States::MG_Guide_Screen) 
+				: swapState(Game_States::MG_Market_Prompt);
+			resetPromptAction();
+		}
 	}
 
 	void Market_Game::guideScreen() {
-		if (gState.gCMD) {
-			if (TextManager::textIsActive()) {
-				std::cout << "\n";
-				std::cout << gState.gYAML["Game_Explanation"][TextManager::_text_index]["text"].as<std::string>();
-				if (gState.gYAML["Game_Explanation"][TextManager::_text_index]["prompt_type"].IsDefined()) {
-					TextManager::activatePrompt(TextManager::PROMPT_YN);
-				}
-				else {
-					TextManager::_text_index++;
-				}
-				TextManager::textDeactivate();
-			}
-			else {
-				if (TextManager::promptIsActive()) {
-					TextManager::promptYN(
-						[=]() {TextManager::resetText();},
-						[=]() {TextManager::resetText(); _market_scene_state = MG_Market_Prompt;}
-					);
-				}
-				else {
-					if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
-						TextManager::textActivate();
-					}
-				}
-			}
+		if (isGameTextStringEmpty()) {
+			appendYAMLString("game_explain");
 		}
-		else {
+
+		if (!getDebugManager().isEnabled()) {
 			/* Display all guide directions with the textboxes */
+		}
+
+		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+			if (getDebugManager().isPromptShown()) {
+				(_state_data.prompt_flags == Prompt_Flags::PRM_YN_NO) 
+					? swapState(Game_States::MG_Market_Prompt) 
+					: swapState(Game_States::MG_Guide_Screen);
+				resetPromptAction();
+				return;
+			}
+			clearGameTextString();
+			textIndexNext();
 		}
 	}
 
-	void Market_Game::marketPrompt(uint8_t tier) {
-		static Market_ID* new_market = new Market_ID(MID_Null);
-		auto isTier = [&](YAML::detail::iterator_value item) 
-			{return item["tier"].as<int>() > tier;};
-		auto currentScript = gState.gYAML["Market_Preview"][TextManager::_text_index];
-
-		if (gState.gCMD) {
-			if (TextManager::textIsActive()) {
-				std::cout << "\n\n";
-				std::cout << currentScript["text"].as<std::string>() << "\n";
-				TextManager::_text_index++;
-				TextManager::textDeactivate();
-
-				if (currentScript["prompt_type"].as<std::string>() == "market_display") {
-					if (auto market = std::find_if(gState.gMarket.begin(), gState.gMarket.end(), isTier); 
-						market != gState.gMarket.end()) {
-						std::cout << (*market)["name"].as<std::string>();
-					}
-				}
-				else if (currentScript["prompt_type"].as<std::string>() == "market_prompt") {
-					TextManager::activatePrompt(TextManager::PROMPT_MARKET);
-				}
-				else if (currentScript["prompt_type"].as<std::string>() == "land_prompt") {
-					TextManager::activatePrompt(TextManager::PROMPT_LAND);
-				}
-			}
-			else {
-				if (TextManager::promptIsActive()) {
-					if (TextManager::_prompt_type == TextManager::PROMPT_MARKET) {
-						if (auto market_index = TextManager::promptMarket(1, 2, 3); market_index >= 0) {
-							*new_market = marketStrToID.at(gState.gMarket[market_index]["ID"].as<std::string>());
-						}
-					}
-					else if (TextManager::_prompt_type == TextManager::PROMPT_LAND) {
-						auto& current_player = gState.gPlayer->player_data->getLand();
-						if (auto land_index = TextManager::promptLand(current_player->availableLand());
-							land_index != -1) {
-							this->addingMarket(*new_market, land_index);
-							delete new_market;
-							new_market = nullptr;
-							_market_scene_state = MG_Turn_Start;
-							TextManager::textActivate();
-						}
-					}
-				}
-				else {
-					if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
-						TextManager::textActivate();
-					}
-				}
-			}
+	void Market_Game::marketPrompt(uint8_t tier) {		
+		if (isGameTextStringEmpty()) {
+			appendYAMLString("market_intro");
 		}
-		else {
-			/* Display market prompt dialogue */
+
+		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+			if (_state_data.current_prompt == "prompt_market") {
+				uint8_t market_ind = static_cast<int>(_state_data.prompt_flags);
+				std::string market_name = _state_data.market_queue[market_ind];
+				_state_data.selected_market = Market::marketStrToID(market_name);
+			}
+			else if (_state_data.current_prompt == "prompt_land") {
+				uint8_t land_num = static_cast<uint8_t>(_state_data.prompt_flags);
+				this->addingMarket(_state_data.selected_market, land_num);
+				swapState(Game_States::MG_Turn_Start);
+				resetPromptAction();
+				return;
+			}
+			resetPromptAction();
+			clearGameTextString();
+			textIndexNext();
 		}
 
 	}
 
 	void Market_Game::addingMarket(Market_ID newMarket, int index) {
 		auto market_name = "MARKET" + std::to_string(index);
-		MarketComponent* market = gState.gECS->getComponent<MarketComponent>(gState.gECS->getEntity(market_name));
+		auto market_entity = gState.gECS->getEntity(market_name);
+		MarketComponent* market = gState.gECS->getComponent<MarketComponent>(market_entity);
 		market->market_ID = newMarket;
 		*(market->data) = Market(newMarket);
 	}
 
 	void Market_Game::removingMarket() {
-
+		/* Removing the Market*/
 	}
 
 	void Market_Game::turnStart() {
-		if (gState.gCMD) {
-			if (TextManager::textIsActive()) {
-				std::cout << "\n" << gState.gYAML["Turn_Start"]["text"].as<std::string>() << "\n";
-				TextManager::textDeactivate();
-			}
-			else {
-				if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
-					_market_scene_state = MG_Main_Game;
-					TextManager::textActivate();
-				}
-			}
+		if (isGameTextStringEmpty()) {
+			// TEXT_TEMP_VALUE.at("turn_number") for replacing turn numbers;
+			appendYAMLString("turn_start");
 		}
-		else {
 
+		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+			swapState(Game_States::MG_Main_Game);
 		}
 	}
 
 	void Market_Game::showHUD() {
-		if (gState.gCMD) {
-			if (TextManager::textIsActive()) {
-				auto& player_data = gState.gPlayer->player_data;
+		if (getDebugManager().isEnabled()) {
+			auto& player_data = gState.gPlayer->player_data;
+			if (isGameTextStringEmpty()) {
+				TEXT_TEMP_VALUE.at("player_char") = CHAR_STATE_TO_STR.at(gState.gPlayer->current_char);
+				TEXT_TEMP_VALUE.at("player_type") = std::to_string(player_data->getType());
+				TEXT_TEMP_VALUE.at("player_profit") = std::format("{:.2f}", player_data->getProfit());
+				TEXT_TEMP_VALUE.at("player_lot") = player_data->getLand()->getMarketList();
+				TEXT_TEMP_VALUE.at("game_timer") = std::to_string(0);
 
-				std::cout << "\nCurrent Player: " <<  gState.gPlayer->_char_dict.at(gState.gPlayer->current_char) << " " << player_data->getType();
-				std::cout << "\nTotal Current Profit: " << std::to_string(player_data->getProfit());
-				std::cout << "\nCurrent Markets: " << player_data->getLand()->getMarketList();
-				TextManager::textDeactivate();
+				appendYAMLString("hud_debug_text");
+				substitutePlaceholder();
 			}
-			else {
-				if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
-					TextManager::textActivate();
-				}
-			}
+		}
+		else {
+			/* Display HUD graphics */
+		}
+
+		if (gState.gInput->keyPressed(SDL_SCANCODE_Z)) {
+			swapState(Game_States::MG_Highlight_Portrait);
+		}
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_1)) {
+			_state_data.current_land = Land_ID::Land_1;
+		}
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_2)) {
+			_state_data.current_land = Land_ID::Land_2;
+		}
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_3)) {
+			_state_data.current_land = Land_ID::Land_3;
+		}
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_4)) {
+			_state_data.current_land = Land_ID::Land_4;
+		}
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_5)) {
+			_state_data.current_land = Land_ID::Land_5;
+		}
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_6)) {
+			_state_data.current_land = Land_ID::Land_6;
+		}
+
+		if (_state_data.current_land != Land_ID::Land_Null) {
+			swapState(Game_States::MG_Highlight_Lot);
+		}
+	}
+
+	void Market_Game::hideHUD() {
+		if (getDebugManager().isEnabled()) {
+
 		}
 		else {
 
 		}
 	}
-
-	void Market_Game::hideHUD() {
-
-	}
 	void Market_Game::landEffect() {
+		if (getDebugManager().isEnabled()) {
 
+		}
+		else {
+
+		}
 	}
 	bool Market_Game::countdownTimer() {
 		return false;
 	}
 
-	void Market_Game::highlightMarket() {
+	void Market_Game::highlightLand() {
+		auto market_name = "MARKET" + std::to_string(static_cast<int>(_state_data.current_land));
+		auto market_entity = gState.gECS->getEntity(market_name);
+		MarketComponent* market = gState.gECS->getComponent<MarketComponent>(market_entity);
+
+		if (getDebugManager().isEnabled()) {
+			if (isGameTextStringEmpty()) {
+				TEXT_TEMP_VALUE.at("player_act_mar") = std::to_string(gState.gPlayer->market_actions);
+				TEXT_TEMP_VALUE.at("market_active") = std::to_string(market->market_active);
+				TEXT_TEMP_VALUE.at("market_id") = std::to_string(static_cast<int>(market->market_ID));
+
+				appendYAMLString("land_debug_txt");
+				substitutePlaceholder();
+			}
+		}
+		else {
+			/* Display highlighted land */
+		}
+
+		if (gState.gInput->keyPressed(SDL_SCANCODE_Z)) {
+			if (gState.gPlayer->market_actions && market->market_ID != Market_ID::MID_Null) {
+				swapState(Game_States::MG_Land_Action_Prompt);
+			}
+			else {
+				// "Nope, can't use anymore actions for this turn..."
+			}
+		}
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_X)) {
+			_state_data.current_land = Land_ID::Land_Null;
+			swapState(Game_States::MG_Main_Game);
+		}
 
 	}
-	void Market_Game::marketActionPrompt() {
 
+	void Market_Game::landActionPrompt() {
+		actionPrompt(Game_States::MG_Highlight_Lot);
 	}
+
 	void Market_Game::highlightPlayer() {
+		if (getDebugManager().isEnabled()) {
+			if (isGameTextStringEmpty()) {
+				TEXT_TEMP_VALUE.at("player_char") = CHAR_STATE_TO_STR.at(gState.gPlayer->current_char);
+				TEXT_TEMP_VALUE.at("player_act_pla") = TEXT_TEMP_VALUE.at("player_act_mar");
 
+				appendYAMLString("plyr_debug_txt");
+				substitutePlaceholder();
+			}
+		}
+		else {
+			/* Display portrait highlight */
+		}
+
+		if (gState.gInput->keyPressed(SDL_SCANCODE_Z)) {
+			if (gState.gPlayer->player_actions) {
+				swapState(Game_States::MG_Player_Action_Prompt);
+			}
+			else {
+				// "Nope, can't use anymore actions for this turn..."
+			}
+		}
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_X)) {
+			swapState(Game_States::MG_Main_Game);
+		}
 	}
+
 	void Market_Game::playerActionPrompt() {
-
+		actionPrompt(Game_States::MG_Highlight_Portrait);
 	}
-	void Market_Game::actionSelf() {
 
+	void Market_Game::actionPrompt(Game_States prev_state) {
+		if (getDebugManager().isEnabled()) {
+			getDebugManager().showPrompt(PROMPT_YN);
+		}
+		else {
+			/* Display action prompt (probably textbox) */
+		}
+
+		if (isGameTextStringEmpty()) {
+			appendYAMLString("action_prompt");
+		}
+
+		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+			if (_state_data.prompt_flags == Prompt_Flags::PRM_YN_YES) {
+				if (prev_state == Game_States::MG_Highlight_Lot) {
+					gState.gPlayer->market_actions--;
+					_state_data.current_land = Land_ID::Land_Null;
+				}
+				else if (prev_state == Game_States::MG_Highlight_Portrait) {
+					gState.gPlayer->player_actions--;
+				}
+				swapState(Game_States::MG_Main_Game);
+			}
+			else {
+				swapState(prev_state);
+			}
+			resetPromptAction();
+		}
 	}
-	void Market_Game::actionSelfAll() {
 
-	}
-	void Market_Game::actionOther() {
-
-	}
-	void Market_Game::actionOtherAll() {
-
+	void Market_Game::actionManager() {
+		/* Actions happen here */
 	}
 	void Market_Game::actionFailed() {
-
+		/* In the case the action fails */
 	}
 	void Market_Game::actionSuccess() {
-
+		/* In the case the action succeeds */
 	}
 	void Market_Game::turnEnd() {
-
+		/* For the end of the turn */
 	}
 	void Market_Game::debriefScreen() {
-
+		/* For the debrief screen */
 	}
 	void Market_Game::gameComplete() {
-
+		/* When all turns have been completed*/
 	}
 }

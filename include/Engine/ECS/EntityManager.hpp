@@ -27,7 +27,21 @@ public:
     }
 
     Entity const getEntity(std::string entity_key) {
-        return entities.at(entity_key);
+        return (entityExists(entity_key) ? entities.at(entity_key) : 0);
+    }
+
+    template<typename ComponentType>
+    ComponentType* getComponent(std::string entity_key, ComponentManager* cM) {
+        if (!entityExists(entity_key)) {
+            return nullptr;
+        }
+
+        if (Entity entity = entities.at(entity_key)) {
+            return cM->getComponent<ComponentType>(entity);
+        }
+        else {
+            return nullptr;
+        }
     }
 
     const std::unordered_map<std::string, Entity>& getEntities() const {

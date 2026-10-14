@@ -5,6 +5,7 @@
 #include "Engine/ECS/System/MotionSystem.hpp"
 #include "Engine/ECS/System/InputSystem.hpp"
 #include "Engine/ECS/System/CameraSystem.hpp"
+#include "Engine/ECS/System/DebugSystem.hpp"
 
 namespace Engine {
 	

@@ -12,6 +12,7 @@ A cross-platform C++ fan game inspired by the Touhou Project, built with **SDL2*
   * [Building the Project](#building-the-project)
 * [How to Run](#️how-to-run)
 * [Authors](#authors)
+* [Dependencies](#dependencies)
 * [license](#license)
 
 ---
@@ -103,6 +104,13 @@ Touhou Rainbow Team
 * [Mango182](https://github.com/Mango182)
 * [christM103](https://github.com/christM103)
 * Keymaster
+
+---
+
+## Dependencies
+This project uses the following open-source libraries:
+* **SDL2** - For graphics and windowing
+* **yaml-cpp** - For YAML configuration file parsing ([GitHub](https://github.com/jbeder/yaml-cpp))
 
 ---
 

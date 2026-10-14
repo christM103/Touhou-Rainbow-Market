@@ -4,16 +4,18 @@
 namespace TR {
 
     Title_Screen::Title_Screen() {
-        _currState = SC_Title;
+        _currState = Scene_ID::Title;
         _nextState = _currState;
+        setYAMLPath(PATH_YAML_TITLE);
+        gState.gText = YAML::LoadFile(getYAMLPath());
     }
 
     bool Title_Screen::create() {
-
-        if (gState.gCMD) {
-            std::cout << "Welcome to the Touhou Rainbow Market Demo!\n\t*- Press Space to play -*\n";
+        if (isGameTextStringEmpty()) {
+            appendYAMLString("title_debug");
         }
-        else {
+
+        if (!getDebugManager().isEnabled()) {
             // Load the background texture
             gState.gAssets->loadTexture(gState.GFX_FOLDER + "Title_Screen/Placeholder_Title.png", "TITLE", gState.gRenderer);
 
@@ -27,20 +29,15 @@ namespace TR {
             gState.gECS->addComponent<Engine::TransformComponent>(TEXT, Engine::Vector2i{ (gState.gWindow->getWidth() / 2), 600 }).centered = true;
             gState.gECS->addComponent<Engine::TextComponent>(TEXT, "Press Space to play!", 60, Engine::Vector4i(0, 0, 0, 255));
         }
-		
-
-		// Initialize the input for the scene
-        gState.gInput->newKey(SDL_SCANCODE_SPACE);
 
         return true;
     }
 
     void Title_Screen::update() {
         if (gState.gInput->keyPressed(SDL_SCANCODE_SPACE)) {
-            this->setSceneNext(SC_CharS);
+            this->setSceneNext(Scene_ID::CharS);
             gState.gECS->destroyEntity("BGO");
             gState.gECS->destroyEntity("TEXT");
-			gState.gInput->removeKey(SDL_SCANCODE_SPACE);
         }
     }
 

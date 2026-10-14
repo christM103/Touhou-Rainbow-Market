@@ -34,12 +34,7 @@ Open markets can inflict a whole heap of buffs, debuffs, aliments and the like. 
 
 namespace TR {
 
-enum Market_ID{MID_Null, MID_Myst, MID_Koga, MID_Wrig, MID_Kein, MID_Suwa, MID_Rema};
-
-static std::unordered_map<std::string, Market_ID> marketStrToID{
-    { "MID_Null", MID_Null }, { "MID_Myst", MID_Myst }, { "MID_Koga", MID_Koga },
-    { "MID_Wrig", MID_Wrig }, { "MID_Kein", MID_Kein }, { "MID_Suwa", MID_Suwa },
-    { "MID_Rema", MID_Rema } };
+enum class Market_ID : uint8_t {MID_Null, MID_Myst, MID_Koga, MID_Wrig, MID_Kein, MID_Suwa, MID_Rema};
 
 class Market{
  public:
@@ -50,11 +45,24 @@ class Market{
 
     // Accessors and Mutators
     inline const int getLevel() { return _market_lvl; };
+    inline std::string getName() { return _market_name; }
     inline const int getTier() { return _market_tier; };
     inline const float getSellPrice() { return _market_sell; };
     inline void setLevel(int lvl) { _market_lvl = lvl; };
     inline void setTier(int tier) { _market_tier = tier; };
     inline void setSellPrice(float sell) { _market_sell = sell; };
+
+    inline static constexpr Market_ID marketStrToID(std::string str) {
+        if (str == "MID_Null") {return Market_ID::MID_Null;}
+        else if (str == "MID_Myst") { return Market_ID::MID_Myst; }
+        else if (str == "MID_Koga") { return Market_ID::MID_Koga; }
+        else if (str == "MID_Wrig") { return Market_ID::MID_Wrig; }
+        else if (str == "MID_Kein") { return Market_ID::MID_Kein; }
+        else if (str == "MID_Suwa") { return Market_ID::MID_Suwa; }
+        else if (str == "MID_Rema") { return Market_ID::MID_Rema; }
+
+        return Market_ID::MID_Null;
+    }
     
 
     // Other Functions
@@ -64,8 +72,8 @@ class Market{
     virtual float marketProfit();
 
  private:
-     Market_ID _market_ID{ MID_Null };
-     std::string _market_name{ "" }, _market_bio{ "" };
+     Market_ID _market_ID{ Market_ID::MID_Null };
+     std::string _market_name{ "Null Market" }, _market_bio{ "" };
     int _market_lvl{1}, _market_tier{1};
     float _market_sell{0.0}, _market_profit{0};
     

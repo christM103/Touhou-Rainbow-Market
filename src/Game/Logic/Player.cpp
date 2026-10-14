@@ -16,7 +16,7 @@ void Player_Data::balanceChange(float change) {
 
 // Other char functions
 void Player_Data::showDesc() {
-    std::cout << _char_desc << "\n";
+    std::cout << _player_desc << "\n";
 }
 
 }  // namespace TR

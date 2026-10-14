@@ -10,16 +10,20 @@ namespace TR {
 Market::Market() {}
 
 Market::Market(Market_ID id) {
-    auto isMarket = [&](YAML::detail::iterator_value item) {return marketStrToID.at(item["ID"].as<std::string>()) == id;};
+    auto isMarket = [&](YAML::detail::iterator_value item) {return marketStrToID(item["ID"].as<std::string>()) == id;};
     _market_ID = id;
 
-    YAML::Node market_data = YAML::LoadFile("assets/text/markets.yaml");                                                            // Replace literal with global variable for the location of the folder
-    if (auto result = std::find_if(market_data.begin(), market_data.end(), isMarket); result != market_data.end()) {
-        _market_name = (*result)["name"].as<std::string>();
-        _market_bio = (*result)["bio"].as<std::string>();
-        _market_tier = (*result)["tier"].as<int>();
-        _market_profit = (*result)["profit"].as<float>();
-        _market_sell = (*result)["sell"].as<float>();
+    YAML::Node market_data = YAML::LoadFile("assets/data/markets.json");                                                            // Replace literal with global variable for the location of the folder
+    for (const auto& market : market_data) {
+        if (static_cast<Market_ID>(market["id"].as<int>()) == id) {
+            _market_name = market["name"].as<std::string>();
+            _market_bio = market["bio"].as<std::string>();
+            _market_tier = market["tier"].as<int>();
+            _market_profit = market["profit"].as<float>();
+            _market_sell = market["sell"].as<float>();
+            return;
+        }
+        
     }
 
 }

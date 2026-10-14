@@ -5,20 +5,18 @@
 
 namespace TR {
     Char_Select::Char_Select() {
-        _currState = SC_CharS;
+        _currState = Scene_ID::CharS;
         _nextState = _currState;
+        setYAMLPath(PATH_YAML_CHARSELECT);
+        gState.gText = YAML::LoadFile(getYAMLPath());
     }
 
     bool Char_Select::create() {
-
-
-        if (gState.gCMD) {
-            std::cout << "-------------------------\nPlease Select Your Character (Choose w left and right arrow keys, select with enter) \n\n";
-
-            Engine::Entity CHAR_SELECT = gState.gECS->createEntity("CHAR_SELECT");
-            gState.gECS->addComponent<SelectComponent>(CHAR_SELECT);
+        if (isGameTextStringEmpty()) {
+            appendYAMLString("select_debug");
         }
-        else {
+
+        if (!getDebugManager().isEnabled()) {
             // Load the background and portrait textures
             gState.gAssets->loadTexture(gState.GFX_FOLDER + "Char_Select/Placeholder_CharS_BG.png", "BGO", gState.gRenderer);
             gState.gAssets->loadTexture(gState.GFX_FOLDER + "Common/Placeholder_Portrait_R.png", "Portait_R", gState.gRenderer);
@@ -48,48 +46,45 @@ namespace TR {
             gState.gECS->addComponent<Engine::RenderLayerComponent>(TEXT, Engine::RenderLayerComponent::FG);
         }
 
-
-		// Initialize the input for the scene
-        gState.gInput->newKey(SDL_SCANCODE_LEFT);
-        gState.gInput->newKey(SDL_SCANCODE_RIGHT);
-        gState.gInput->newKey(SDL_SCANCODE_RETURN);
+        Engine::Entity CHAR_SELECT = gState.gECS->createEntity("CHAR_SELECT");
+        gState.gECS->addComponent<SelectComponent>(CHAR_SELECT);
 
         return true;
     }
 
     void Char_Select::update() {
-
         SelectComponent* select_component = gState.gECS->getComponent<SelectComponent>(gState.gECS->getEntity("CHAR_SELECT"));
-        if (gState.gCMD) {
-            std::cout << "\r";
-            for (auto [player_ID, player_character] : select_component->_char_dict) {
-                if (player_ID != Player_Data::S_Null_Char) {
-                    if (player_ID == select_component->_current_selected) {
-                        std::cout << "->" << player_character + "<-";
-                    }
-                    else {
-                        std::cout << "  " << player_character << "  ";
-                    }
+        if (getDebugManager().isEnabled()) {
+            _state_data.prompt_flags = static_cast<Prompt_Flags>(getDebugManager().getSelectedPromptIndex());
+        }
+        else {
+            uint8_t new_selected = static_cast<uint8_t>(select_component->_current_selected);
 
+            if (gState.gInput->keyPressed(SDL_SCANCODE_LEFT)) {
+                if (new_selected - 1 > 0) {
+                    select_component->_current_selected = Char_State(new_selected - 1);
+                }
+            }
+            else if (gState.gInput->keyPressed(SDL_SCANCODE_RIGHT)) {
+                if (static_cast<int>(new_selected + 1) < select_component->_char_dict.size()) {
+                    select_component->_current_selected = Char_State(new_selected + 1);
                 }
             }
         }
         
-        uint8_t new_selected = static_cast<uint8_t>(select_component->_current_selected);
-        if (gState.gInput->keyPressed(SDL_SCANCODE_LEFT)) {
-            if (new_selected - 1 > 0) {
-                select_component->_current_selected = Player_Data::Char_State(new_selected - 1);
+        select_component->_current_selected = static_cast<Char_State>(_state_data.prompt_flags);
+
+        if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+            this->setSceneNext(Scene_ID::Main);
+            if (getDebugManager().isEnabled()) {
+                resetPromptAction();
             }
-        } 
-        else if (gState.gInput->keyPressed(SDL_SCANCODE_RIGHT)) {
-            if (static_cast<Player_Data::Char_State>(new_selected + 1) < select_component->_char_dict.size()) {
-                select_component->_current_selected = Player_Data::Char_State(new_selected + 1);
+            else {
+
             }
-        }
-        else if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
-            this->setSceneNext(SC_Main);
+
             Engine::Entity PLAYER = gState.gECS->createEntity("PLAYER");
-            gState.gPlayer = &gState.gECS->addComponent<PlayerComponent>(PLAYER, select_component->_current_selected, Player_Data::PI_Player_1);
+            gState.gPlayer = &gState.gECS->addComponent<PlayerComponent>(PLAYER, select_component->_current_selected, Player_ID::Player_1);
             gState.gECS->addSystem<PlayerSystem>();
 
             gState.gECS->destroyEntity("CHAR_SELECT");

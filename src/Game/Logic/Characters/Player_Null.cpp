@@ -4,8 +4,8 @@
 
 namespace TR {
     Player_Null::Player_Null(int type) : Player_Data() {
-        _style_type = type;
-        _char_desc = "Null \nType Num " + std::to_string(_style_type);
+        _player_type = type;
+        _player_desc = "Null \nType Num " + std::to_string(_player_type);
     }
 
     Player_Null::~Player_Null() {}

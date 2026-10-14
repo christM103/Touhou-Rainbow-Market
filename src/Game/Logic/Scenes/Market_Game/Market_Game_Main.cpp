@@ -8,22 +8,21 @@
 
 namespace TR {
 	Market_Game::Market_Game() {
-		_currState = SC_Main;
+		_currState = Scene_ID::Main;
 		_nextState = _currState;
-		_market_scene_state = MG_Welcome_Screen;
+		setYAMLPath(PATH_YAML_MARKETGAME);
+		gState.gText = YAML::LoadFile(getYAMLPath());
+		_market_scene_state = Game_States::MG_Welcome_Screen;
 	}
 
 	bool Market_Game::create() {
 
 		// Lambda for checking current player
-		auto playerCheck = [](Player_Data::Char_State player_data) {
+		auto playerCheck = [](Char_State player_data) {
 			return gState.gPlayer->current_char == player_data;
 			};
-
-		gState.gYAML = YAML::LoadFile(gState.TEXT_FOLDER + "text_market_game.yaml");
-		gState.gMarket = YAML::LoadFile(gState.TEXT_FOLDER + "markets.yaml");
 		
-		if (gState.gCMD) {
+		if (getDebugManager().isEnabled()) {
 			
 		}
 		else {
@@ -72,10 +71,10 @@ namespace TR {
 			gState.gECS->addComponent<Engine::TransformComponent>(PLAYER_PORTRAIT, Engine::Vector2i{ 980,0 }, 0.0f, Engine::Vector2f{ 0.0f,0.0f });
 
 			// Initialize Portrait
-			if (playerCheck(Player_Data::S_Reimu)) {
+			if (playerCheck(Char_State::Reimu)) {
 				gState.gECS->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_REI");
 			}
-			else if (playerCheck(Player_Data::S_Marisa)) {
+			else if (playerCheck(Char_State::Marisa)) {
 				gState.gECS->addComponent<Engine::SpriteComponent>(PLAYER_PORTRAIT, Engine::Recti{ 0,0,300,300 }, Engine::Vector2i(300, 300), "CHAR_MAR");
 			}
 			else {
@@ -101,216 +100,51 @@ namespace TR {
 		gState.gECS->addSystem<ButtonSystem>();
 		gState.gECS->addSystem<TurnSystem>();
 
-		gState.gInput->newKey(SDL_SCANCODE_SPACE);
-
 		return true;
 	}
 
 	void Market_Game::update() {
+		if (getDebugManager().isEnabled()) {
+			_state_data.prompt_flags = static_cast<Prompt_Flags>(getDebugManager().getSelectedPromptIndex());	
+		}
+
+
 		switch (_market_scene_state) {
-			case MG_Welcome_Screen:
-				this->introScreen();
-				break;
-			case MG_First_Turn_Question:
-				this->firstTurnQuestion();
-				break;
-			case MG_Guide_Screen:
-				this->guideScreen();
-				break;
-			case MG_Market_Prompt:
-				this->marketPrompt();
-				break;
-			case MG_Turn_Start:
-				this->turnStart();
-				break;
-			case MG_Main_Game:
-				this->showHUD();
-				break;
-			
+		case Game_States::MG_Welcome_Screen:
+			this->introScreen();
+			break;
+		case Game_States::MG_First_Turn_Question:
+			this->firstTurnQuestion();
+			break;
+		case Game_States::MG_Guide_Screen:
+			this->guideScreen();
+			break;
+		case Game_States::MG_Market_Prompt:
+			this->marketPrompt();
+			break;
+		case Game_States::MG_Turn_Start:
+			this->turnStart();
+			break;
+		case Game_States::MG_Main_Game:
+			this->showHUD();
+			break;
+		case Game_States::MG_Highlight_Lot:
+			this->highlightLand();
+			break;
+		case Game_States::MG_Land_Action_Prompt:
+			this->landActionPrompt();
+			break;
+		case Game_States::MG_Land_Action_Event:
+			this->actionManager();
+			break;
+
+		case Game_States::MG_Highlight_Portrait:
+			this->highlightPlayer();
+			break;
+		case Game_States::MG_Player_Action_Prompt:
+			this->playerActionPrompt();
+			break;
 		}
-		/*
-		switch (uint32_t state = (_market_scene_state & Main_Game_Timeline_States)) {
-			TextBoxComponent* textbox;
-			ButtonPromptComponent* prompt;
-			TurnsComponent* turns;
 
-
-			case MG_Intro_Sceen:
-				// Initialize Text Box Entity
-				if (gState.gECS->getEntities().find("TEXTBOX_TEST") == gState.gECS->getEntities().end()) {
-					Engine::Entity TEXTBOX_TEST = gState.gECS->createEntity("TEXTBOX_TEST");
-					gState.gECS->addComponent<TextBoxComponent>(TEXTBOX_TEST, "Welcome to the Touhou Rainbow Market Game Beta!", 240, 240, 5,
-						TextBoxComponent::ENTER | TextBoxComponent::ACTIVATE, TextBoxComponent::WIDTH_MEDIUM | TextBoxComponent::HEIGHT_MEDIUM, 30);
-				}
-				textbox = gState.gECS->getComponent<TextBoxComponent>(gState.gECS->getEntities().at("TEXTBOX_TEST"));
-				_market_scene_state = MG_Market_Prompt_SCRIPT_0;
-				break;
-
-			case MG_Market_Prompt:
-				gState.gECS->getEntities().contains("TEXTBOX_TEST") ? 
-					textbox = gState.gECS->getComponent<TextBoxComponent>(gState.gECS->getEntities().at("TEXTBOX_TEST")) : textbox = nullptr;
-				gState.gECS->getEntities().contains("BUTTON_PROMPT") ? 
-					prompt = gState.gECS->getComponent<ButtonPromptComponent>(gState.gECS->getEntities().at("BUTTON_PROMPT")) : prompt = nullptr;
-
-				if (!textbox) {
-					break;
-				}
-
-				gState.gInput->keyPressed(SDL_SCANCODE_SPACE) ? 
-					textbox->_textbox_flags |= TextBoxComponent::INPUT_PRESSED : textbox->_textbox_flags &= ~TextBoxComponent::INPUT_PRESSED;
-
-				this->Market_Prompt_States(textbox, prompt);
-				
-				break;
-
-			case MG_Turn_Intro:
-				if (gState.gECS->getEntities().find("TURNS_TEST") == gState.gECS->getEntities().end()) {
-					Engine::Entity TURNS = gState.gECS->createEntity("TURNS_TEST");
-					gState.gECS->addComponent<TurnsComponent>(TURNS, 5);
-				}
-				turns = gState.gECS->getComponent<TurnsComponent>(gState.gECS->getEntities().at("TURNS_TEST"));
-				if (gState.gECS->getEntities().contains("TEXTBOX_TEST")) {
-					textbox = gState.gECS->getComponent<TextBoxComponent>(gState.gECS->getEntities().at("TEXTBOX_TEST"));
-					if ((textbox->_textbox_flags & textbox->EXIT) == textbox->TXTBOX_NULL) {
-						gState.gECS->destroyEntity("TEXTBOX_TEST");
-						turns->turns.at(turns->current_turn).turn_started = true;
-					}
-				}
-				if (gState.gInput->keyPressed(SDL_SCANCODE_RIGHT) && turns->current_turn < 5) {
-					turns->current_turn++;
-				} else if (gState.gInput->keyPressed(SDL_SCANCODE_LEFT) && turns->current_turn > 1) {
-					turns->current_turn--;
-				}
-				
-				break;
-
-			default:
-				break;
-		}
-		*/
 	}
-
-	/*
-	void Market_Game::Market_Prompt_States(TextBoxComponent* textbox, ButtonPromptComponent* prompt) {
-		switch (_market_scene_state) {
-			case MG_Market_Prompt_SCRIPT_0:
-				if ((textbox->_textbox_flags & textbox->TXT_COMPLETE) != textbox->TXTBOX_NULL) {
-					_market_scene_state = MG_Market_Prompt_SCRIPT_0_FINISHED;
-				}
-				break;
-			case MG_Market_Prompt_SCRIPT_0_FINISHED:
-				if (textbox->_textbox_text != "Would you like to have Mystia's market?\n") {
-					textbox->_textbox_next = "Would you like to have Mystia's market?\n";
-				}
-				if ((textbox->_textbox_flags & textbox->INPUT_PRESSED) != textbox->TXTBOX_NULL) {
-					textbox->_textbox_position = Engine::Vector2i{ 140, 80 };
-					textbox->_textbox_style ^= TextBoxComponent::WIDTH_SMALL;
-					textbox->_textbox_style ^= TextBoxComponent::WIDTH_MEDIUM;
-					textbox->_textbox_style ^= TextBoxComponent::HEIGHT_MEDIUM;
-					textbox->_textbox_style ^= TextBoxComponent::HEIGHT_LARGE;
-					_market_scene_state = MG_Market_Prompt_RESIZE_0;
-				}
-				break;
-			case MG_Market_Prompt_RESIZE_0:
-				if (textbox->_textbox_position == Engine::Vector2i{ 140, 80 } &&
-					(textbox->_textbox_flags & textbox->RESIZE) == textbox->TXTBOX_NULL &&
-					(textbox->_textbox_flags & textbox->REFACTOR) == textbox->TXTBOX_NULL) {
-					_market_scene_state = MG_Market_Prompt_SCRIPT_1;
-				}
-				break;
-			case MG_Market_Prompt_SCRIPT_1:
-				if (!gState.gECS->getEntities().contains("MYSTIA_GFX")) {
-					Engine::Entity MYSTIA_GFX = gState.gECS->createEntity("MYSTIA_GFX");
-					gState.gECS->addComponent<Engine::TransformComponent>(MYSTIA_GFX, Engine::Vector2i{ 240, 150 });
-					gState.gECS->addComponent<Engine::SpriteComponent>(MYSTIA_GFX, Engine::Recti{ 0,0,400,400 }, Engine::Vector2i(400, 400), "MARK_MYST");
-					gState.gECS->addComponent<Engine::RenderLayerComponent>(MYSTIA_GFX, Engine::RenderLayerComponent::TEXTBOX + 1);
-				}
-
-				if (!gState.gECS->getEntities().contains("BUTTON_PROMPT")) {
-					Engine::Entity BUTTON_PROMPT = gState.gECS->createEntity("BUTTON_PROMPT");
-					prompt = &gState.gECS->addComponent<ButtonPromptComponent>(BUTTON_PROMPT, Engine::Vector2i{ 300, 550 }, ButtonPromptComponent::HORIZONTAL);
-				}
-
-				if ((textbox->_textbox_flags & textbox->ACTIVATE) != textbox->TXTBOX_NULL) {
-					textbox->_textbox_flags &= ~TextBoxComponent::ACTIVATE;
-				}
-
-				if ((textbox->_textbox_flags & textbox->TXT_COMPLETE) != textbox->TXTBOX_NULL) {
-					_market_scene_state = MG_Market_Prompt_SCRIPT_1_FINISHED;
-				}
-				break;
-			case MG_Market_Prompt_SCRIPT_1_FINISHED:
-				if (prompt->_buttonFalse.activated) {
-					textbox->_textbox_flags |= TextBoxComponent::INPUT_PRESSED | TextBoxComponent::ACTIVATE;
-					_market_scene_state = MG_Market_Prompt_END;
-				}
-				if (prompt->_buttonTrue.activated) {
-					if (textbox->_textbox_text != "Where do you want to put it?\n") {
-						textbox->_textbox_next = "Where do you want to put it?\n";
-					}
-					textbox->_textbox_flags |= TextBoxComponent::INPUT_PRESSED | TextBoxComponent::ACTIVATE;
-					textbox->_textbox_position = Engine::Vector2i{ 300, 80 };
-					textbox->_textbox_style ^= TextBoxComponent::HEIGHT_TINY;
-					textbox->_textbox_style ^= TextBoxComponent::HEIGHT_LARGE;
-					_market_scene_state = MG_Market_Prompt_RESIZE_1;
-				}
-
-				break;
-			case MG_Market_Prompt_RESIZE_1:
-				if (gState.gECS->getEntities().contains("MYSTIA_GFX")) {
-					gState.gECS->destroyEntity("MYSTIA_GFX");
-				}
-				if (gState.gECS->getEntities().contains("BUTTON_PROMPT")) {
-					gState.gECS->destroyEntity("BUTTON_PROMPT");
-				}
-				if (textbox->_textbox_position == Engine::Vector2i{ 300, 80 } &&
-					(textbox->_textbox_flags & textbox->RESIZE) == textbox->TXTBOX_NULL &&
-					(textbox->_textbox_flags & textbox->REFACTOR) == textbox->TXTBOX_NULL) {
-					_market_scene_state = MG_Market_Prompt_SCRIPT_2;
-				}
-				break;
-			case MG_Market_Prompt_SCRIPT_2:
-				if ((textbox->_textbox_flags & textbox->TXT_COMPLETE) != textbox->TXTBOX_NULL) {
-					_market_scene_state = MG_Market_Prompt_SCRIPT_2_FINISHED;
-				}
-				break;
-			case MG_Market_Prompt_SCRIPT_2_FINISHED:
-
-				if ((textbox->_textbox_flags & textbox->ACTIVATE) != textbox->TXTBOX_NULL) {
-					textbox->_textbox_flags &= ~TextBoxComponent::ACTIVATE;
-				}
-
-				MarketComponent* market;
-				for (const auto& entity : *gState.gECS->allEntities<MarketComponent>()) {
-					market = gState.gECS->getComponent<MarketComponent>(entity);
-
-					market->market_hovered ? market->market_hovered_zoom = true : market->market_hovered_zoom = false;
-
-					if (market->market_active) {
-						market->market_ID = Market_ID::MID_Mystia;
-						market->market_hovered_zoom = false;
-						textbox->_textbox_flags |= TextBoxComponent::INPUT_PRESSED | TextBoxComponent::ACTIVATE;
-						_market_scene_state = MG_Market_Prompt_END;
-					}
-				}
-				
-				break;
-			case MG_Market_Prompt_END:
-				if ((textbox->_textbox_flags & textbox->EXIT) != textbox->TXTBOX_NULL) {
-					if (gState.gECS->getEntities().contains("MYSTIA_GFX")) {
-						gState.gECS->destroyEntity("MYSTIA_GFX");
-					}
-					if (gState.gECS->getEntities().contains("BUTTON_PROMPT")) {
-						gState.gECS->destroyEntity("BUTTON_PROMPT");
-					}
-					if ((textbox->_textbox_flags & textbox->TXT_COMPLETE) != textbox->TXTBOX_NULL) {
-						_market_scene_state = MG_Turn_Intro;
-					}
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		*/
 }
