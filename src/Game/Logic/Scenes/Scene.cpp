@@ -39,7 +39,7 @@ namespace TR {
             }
             else if (_state_data.current_prompt == "display_mkt1") {
                 if (_state_data.market_queue.empty()) {
-                    for (const auto& market : gState.gMarket) {
+                    for (const auto& market : YAML::LoadFile(TR::PATH_JSON_MARKET)) {
                         if (market["tier"].as<int>() == 1) {
                             std::string market_str = (market)["id_name"].as<std::string>();
                             _state_data.market_queue.push_back(market_str);

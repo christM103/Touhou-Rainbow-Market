@@ -16,7 +16,6 @@ Game::Game() {
 
 Game::~Game() {
     // Destructor implementation
-    
 }
 
 bool Game::create() {
@@ -71,10 +70,6 @@ bool Game::create() {
     gState.gInput->newKey(SDL_SCANCODE_X);
     gState.gInput->newKey(SDL_SCANCODE_C);
     gState.gInput->newKey(SDL_SCANCODE_V);
-
-    // Initialize the YAML Files
-    gState.gMarket = YAML::LoadFile(TR::PATH_JSON_MARKET);
-    gState.gAction = YAML::LoadFile(TR::PATH_JSON_ACTION);
 
     // Creates the scene
     _currScene->create();

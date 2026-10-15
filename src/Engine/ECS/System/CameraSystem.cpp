@@ -1,5 +1,7 @@
 #include "Engine/ECS/System/CameraSystem.hpp"
 
+#include "Engine/Core/Debugger.hpp"
+
 void Engine::CameraSystem::initCamera(ComponentManager* componentManager) {
 	auto* cameras = componentManager->allEntities<CameraComponent>();
 
@@ -41,18 +43,24 @@ void Engine::CameraSystem::updateCamera(ComponentManager* componentManager) {
 		return;
 	}
 
-	if (componentManager->getComponent<InputComponent>(_camera_entity)->keyHeld(SDL_SCANCODE_W)) {
-		_current_camera->position.position.y--;
+	auto& debugger = Engine::DebugManager().instance();
+
+	if (!debugger.isEnabled()) {
+		if (componentManager->getComponent<InputComponent>(_camera_entity)->keyHeld(SDL_SCANCODE_W)) {
+			_current_camera->position.position.y--;
+		}
+		else if (componentManager->getComponent<InputComponent>(_camera_entity)->keyHeld(SDL_SCANCODE_S)) {
+			_current_camera->position.position.y++;
+		}
+		if (componentManager->getComponent<InputComponent>(_camera_entity)->keyHeld(SDL_SCANCODE_A)) {
+			_current_camera->position.position.x--;
+		}
+		else if (componentManager->getComponent<InputComponent>(_camera_entity)->keyHeld(SDL_SCANCODE_D)) {
+			_current_camera->position.position.x++;
+		}
 	}
-	else if (componentManager->getComponent<InputComponent>(_camera_entity)->keyHeld(SDL_SCANCODE_S)) {
-		_current_camera->position.position.y++;
-	}
-	if (componentManager->getComponent<InputComponent>(_camera_entity)->keyHeld(SDL_SCANCODE_A)) {
-		_current_camera->position.position.x--;
-	}
-	else if (componentManager->getComponent<InputComponent>(_camera_entity)->keyHeld(SDL_SCANCODE_D)) {
-		_current_camera->position.position.x++;
-	}
+
+	
 }
 
 void Engine::CameraSystem::create(const SystemContext& ctx) {

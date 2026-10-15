@@ -24,10 +24,6 @@ struct GlobalGameState
 
 	// Global game data
 	//int gSize = 1;
-
-    // Scene specific data
-    YAML::Node gMarket;
-    YAML::Node gAction;
 	
 };
 
