@@ -13,26 +13,6 @@ namespace TR {
 
 // TODO: Replace enums w uint16s, try to combine Player_Data class w Character class
 
-    enum class Char_State : uint8_t {
-        Null, Reimu, Marisa, Sanae, Flandre, Youmu, Tewi, Koishi
-    };
-
-
-    enum class Player_ID : uint8_t {
-        Player_Null, Player_1, Player_2, Player_3, Player_4
-    };
-
-    enum class Player_Type : bool {
-        Type_1, Type_2
-    };
-
-    enum class Action_Flags : uint8_t {
-        Null = 0,
-        Market_Action_1 = 1 << 0,
-        Market_Action_2 = 1 << 1,
-        Player_Action = 1 << 2,
-    };
-
 class Player_Data{
  public:
      

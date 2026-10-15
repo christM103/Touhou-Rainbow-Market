@@ -8,28 +8,14 @@
 #include <vector>
 #include <memory>
 #include "Game/Logic/Market.hpp"
+#include "Game/Logic/Enums.hpp"
 
 namespace TR {
-
-enum class Land_ID : uint8_t {
-    Land_1, Land_2, Land_3, Land_4, Land_5, Land_6, Land_Null = 255
-};
 
     // --- Land Class --- //
 
 class Land{
  public:
-    // --- Land States --- //
-
-     enum Land_States : uint64_t {
-         LS_Null = 0,                             // (Null)
-         LS_Free = 1 << 0,                        // (Free or Occupied)
-         LS_Active = 1 << 1,                      // (Active or Shut Down)
-         LS_Immunity = 1 << 2,                    // (Land Immunity)
-         LS_Reimu_Orb = 1 << 3,                   // (Reimu Orb protection)
-         LS_Reimu_TalisA = 1 << 4,                // (Reimu Talisman A (Seal), Shut down a select open market for 2 turns
-         LS_Reimu_TalisB = 1 << 5,                // (Reimu Talisman B (Barrier), Grant immunity to a select open market for 2 turns
-     };
 
     // Constructor and Destuctor
      Land();

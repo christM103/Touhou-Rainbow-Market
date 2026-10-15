@@ -24,6 +24,18 @@ namespace TR {
     }
 
     void Scene::parsePromptAction() {
+        auto tier_filter = [=](uint8_t tier) {
+            for (const auto& market : YAML::LoadFile(TR::PATH_JSON_MARKET)) {
+                if (market["tier"].as<int>() == tier) {
+                    std::string market_str = (market)["id_name"].as<std::string>();
+                    _state_data.market_queue.push_back(market_str);
+
+                    appendGameTextString("\n");
+                    appendGameTextString(market["name"].as<std::string>());
+                }
+            }
+        };
+
         if (!getDebugManager().isPromptShown()) {
             if (_state_data.current_prompt == "prompt_yn") {
                 getDebugManager().showPrompt(PROMPT_YN);
@@ -38,17 +50,22 @@ namespace TR {
                 getDebugManager().showPrompt(PROMPT_LIST_LOT);
             }
             else if (_state_data.current_prompt == "display_mkt1") {
-                if (_state_data.market_queue.empty()) {
-                    for (const auto& market : YAML::LoadFile(TR::PATH_JSON_MARKET)) {
-                        if (market["tier"].as<int>() == 1) {
-                            std::string market_str = (market)["id_name"].as<std::string>();
-                            _state_data.market_queue.push_back(market_str);
-
-                            appendGameTextString("\n");
-                            appendGameTextString(market["name"].as<std::string>());
-                        }
-                    }
-                }
+                tier_filter(1);
+                resetPromptAction();
+            }
+            else if (_state_data.current_prompt == "display_mkt2") {
+                tier_filter(2);
+                resetPromptAction();
+            }
+            else if (_state_data.current_prompt == "display_mkt3") {
+                tier_filter(3);
+                resetPromptAction();
+            }
+            else if (_state_data.current_prompt == "display_mkta") {
+                tier_filter(1);
+                tier_filter(2);
+                tier_filter(3);
+                resetPromptAction();
             }
             else {
                 getDebugManager().hidePrompt();

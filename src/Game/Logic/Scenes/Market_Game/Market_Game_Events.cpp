@@ -67,27 +67,87 @@ namespace TR {
 
 	void Market_Game::marketPrompt(uint8_t tier) {		
 		if (isGameTextStringEmpty()) {
-			appendYAMLString("market_intro");
+			// If timer is on, show alternative string
+			bool timer = true;
+			(timer) ? appendYAMLString("mkt_add_start") : appendYAMLString("mkt_add");
 		}
 
 		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+			clearGameTextString();
+
+			if (_state_data.current_prompt == "prompt_yn") {
+				if (_state_data.prompt_flags == Prompt_Flags::PRM_YN_NO) {
+					swapState(Game_States::MG_Turn_Start);
+					resetPromptAction();
+					return;
+				}
+				resetPromptAction();
+
+				if (tier == 1) {
+					appendYAMLString("mkt_intro_1");
+				}
+				else if (tier == 2) {
+					appendYAMLString("mkt_intro_2");
+				}
+				else if (tier == 3) {
+					appendYAMLString("mkt_intro_3");
+				}
+				else {
+					appendYAMLString("mkt_intro_all");
+				}
+			}
+			else {
+				resetPromptAction();
+				swapState(Game_States::MG_Market_Select);
+			}
+		}
+	}
+	
+	void Market_Game::marketSelection() {
+		if (isGameTextStringEmpty()) {
+			appendYAMLString("mkt_add_sel");
+		}
+		
+		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+			clearGameTextString();
 			if (_state_data.current_prompt == "prompt_market") {
+				resetPromptAction();
 				uint8_t market_ind = static_cast<int>(_state_data.prompt_flags);
 				std::string market_name = _state_data.market_queue[market_ind];
 				_state_data.selected_market = Market::marketStrToID(market_name);
+				appendYAMLString("mkt_add_loc");
 			}
 			else if (_state_data.current_prompt == "prompt_land") {
-				uint8_t land_num = static_cast<uint8_t>(_state_data.prompt_flags);
-				this->addingMarket(_state_data.selected_market, land_num);
-				swapState(Game_States::MG_Turn_Start);
 				resetPromptAction();
-				return;
-			}
-			resetPromptAction();
-			clearGameTextString();
-			textIndexNext();
-		}
+				uint8_t land_num = static_cast<uint8_t>(_state_data.prompt_flags);
+				auto market_name = "MARKET" + std::to_string(land_num);
+				auto market_entity = gState.gECS->getEntity(market_name);
+				MarketComponent* market = gState.gECS->getComponent<MarketComponent>(market_entity);
 
+				if (market->market_active) {
+					appendYAMLString("mkt_err_occup");
+				}
+				else {
+					this->addingMarket(_state_data.selected_market, land_num);
+					swapState(Game_States::MG_Turn_Start);
+				}
+			}
+			else if (_state_data.current_prompt == "prompt_yn") {
+				if (_state_data.prompt_flags == Prompt_Flags::PRM_YN_YES) {
+					resetPromptAction();
+					uint8_t land_num = static_cast<uint8_t>(_state_data.prompt_flags);
+
+					this->removingMarket(land_num);
+					this->addingMarket(_state_data.selected_market, land_num);
+					swapState(Game_States::MG_Turn_Start);
+				}
+				else {
+					resetPromptAction();
+					appendYAMLString("mkt_add_loc");
+				}
+			}
+			
+		}
 	}
 
 	void Market_Game::addingMarket(Market_ID newMarket, int index) {
@@ -95,11 +155,17 @@ namespace TR {
 		auto market_entity = gState.gECS->getEntity(market_name);
 		MarketComponent* market = gState.gECS->getComponent<MarketComponent>(market_entity);
 		market->market_ID = newMarket;
+		market->market_active = true;
 		*(market->data) = Market(newMarket);
 	}
 
-	void Market_Game::removingMarket() {
-		/* Removing the Market*/
+	void Market_Game::removingMarket(int index) {
+		auto market_name = "MARKET" + std::to_string(index);
+		auto market_entity = gState.gECS->getEntity(market_name);
+		MarketComponent* market = gState.gECS->getComponent<MarketComponent>(market_entity);
+		market->market_ID = Market_ID::MID_Null;
+		market->market_active = false;
+		*(market->data) = Market(Market_ID::MID_Null);
 	}
 
 	void Market_Game::turnStart() {
@@ -134,6 +200,9 @@ namespace TR {
 
 		if (gState.gInput->keyPressed(SDL_SCANCODE_Z)) {
 			swapState(Game_States::MG_Highlight_Portrait);
+		} 
+		else if (gState.gInput->keyPressed(SDL_SCANCODE_X)) {
+			swapState(Game_States::MG_Market_Select);
 		}
 		else if (gState.gInput->keyPressed(SDL_SCANCODE_1)) {
 			_state_data.current_land = Land_ID::Land_1;

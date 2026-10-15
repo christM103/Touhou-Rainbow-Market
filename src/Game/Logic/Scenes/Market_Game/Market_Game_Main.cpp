@@ -121,7 +121,10 @@ namespace TR {
 			this->guideScreen();
 			break;
 		case Game_States::MG_Market_Prompt:
-			this->marketPrompt();
+			this->marketPrompt(4);
+			break;
+		case Game_States::MG_Market_Select:
+			this->marketSelection();
 			break;
 		case Game_States::MG_Turn_Start:
 			this->turnStart();

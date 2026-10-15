@@ -34,19 +34,19 @@ Player_Reimu::Player_Reimu(int type) {
 Player_Reimu::~Player_Reimu() {}
 
 void Player_Reimu::ReimuTreasure(Land& lot, int index) {
-    lot.setState(index, Land::LS_Reimu_Orb);
+    lot.setState(index, LS_Reimu_Orb);
 }
 
 void Player_Reimu::ReimuTalisA(Land& lot, int index) {
     if (_rSealT > 0) {
-        lot.setState(index, Land::LS_Reimu_TalisA);
+        lot.setState(index, LS_Reimu_TalisA);
         _rSealT--;
     }
 }
 
 void Player_Reimu::ReimuTalisB(Land& lot, int index) {
     if (_rBarrierT > 0) {
-        lot.setState(index, Land::LS_Reimu_TalisB);
+        lot.setState(index, LS_Reimu_TalisB);
         _rBarrierT--;
     }
 }

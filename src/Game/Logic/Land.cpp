@@ -24,7 +24,7 @@ std::string Land::getMarketList() {
 
     for (auto const& i : _landMarkets) {
         temp += i.second.second->getName();
-        temp += "| ";
+        temp += " | ";
     }
 
     return temp;

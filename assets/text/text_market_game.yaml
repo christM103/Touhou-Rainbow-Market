@@ -2,11 +2,21 @@
 # Text for the 'Market Game' scene
 
 ---
+# Action Keys
+prompt_yn: &yes_or_no_selection "prompt_yn"
+display_mkt1: &display_market_tier_1 "display_mkt1"
+display_mkt2: &display_market_tier_2 "display_mkt2"
+display_mkt3: &display_market_tier_3 "display_mkt3"
+display_mkta: &display_market_all_markets "display_mkta"
+prompt_market: &market_selection_prompt "prompt_market"
+prompt_land: &land_selection_prompt "prompt_land"
+
+# Turn Intro Text
 game_intro:
   text: "GAME START!"
 first_turn:
   text: "Would you like to know how to play the game?"
-  action: "prompt_yn"
+  action: *yes_or_no_selection
 game_explain:
   lines:
     - text: >
@@ -31,23 +41,44 @@ game_explain:
         By the end of the game, whoever has the largest profit is the winner. 
         But beware, you also instantly lose if you go bankrupt.
     - text: "Would you like to hear that again?"
-      action: "prompt_yn"
-market_intro:
-  lines:
-    - text: "Here are the current markets that are offered for this turn."
-      action: "display_mkt1"
-    - text: "Which market do you want to get?"
-      action: "prompt_market"
-    - text: "Where would you like to place the market?"
-      action: "prompt_land"
-market_add:
-  text: "Would you like this market?"
-  action: "prompt_yn"
-market_delete:
-  lines:
-    - text: "You currently don't have enough space to add another market"
-    - text: "Do you want to delete a market that you currently have?"
-      action: "prompt_yn"
+      action: *yes_or_no_selection
+
+# Market Operation Text
+mkt_add_start:
+  text: "Would you like a market this turn?"
+  action: *yes_or_no_selection
+mkt_add:
+  text: "Would you like a market?"
+  action: *yes_or_no_selection
+mkt_intro_1:
+  text: &current_market "Here are the current markets that are offered for this turn."
+  action: *display_market_tier_1
+mkt_intro_2:
+  text: *current_market
+  action: *display_market_tier_2
+mkt_intro_3:
+  text: *current_market
+  action: *display_market_tier_3
+mkt_intro_all:
+  text: *current_market
+  action: *display_market_all_markets
+mkt_add_sel:
+  text: "Which market do you want to get?"
+  action: *market_selection_prompt
+mkt_add_loc:
+  text: "Where would you like to place the market?"
+  action: *land_selection_prompt
+mkt_err_occup:
+  text: "There's already a space!\nDo you want to replace the current market with this new market?"
+  action: *yes_or_no_selection
+mkt_del:
+  text: "Do you want to delete a market?"
+  action: *yes_or_no_selection
+mkt_del_sel:
+  text: "Which market do you want delete?"
+  action: *land_selection_prompt
+
+# Main Game Text
 turn_start:
   text: "Start of Turn {turn_number}!"
 hud_debug_text:
@@ -58,7 +89,7 @@ hud_debug_text:
     Current Markets - {player_lot}
     Current Time - {game_timer}
 
-    Use keys 1-6 to access land windows, Z to access player window
+    Use keys 1-6 to access land windows, Z to access player window, X to add new market
 land_debug_txt:
   text: |
     Press X to exit, Press Z to activate power
@@ -72,7 +103,7 @@ plyr_debug_txt:
     Actions Left - {player_act_pla}
 action_prompt:
   text: "Would you want to use your action?"
-  action: "prompt_yn"
+  action: *yes_or_no_selection
 action_debug_success:
   text: "Action Succeeded!"
 action_debug_failure:

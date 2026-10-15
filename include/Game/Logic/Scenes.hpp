@@ -144,8 +144,9 @@ namespace TR {
         void firstTurnQuestion();
         void guideScreen();
         void marketPrompt(uint8_t tier = 1);
+        void marketSelection();
         void addingMarket(Market_ID newMarket, int index);
-        void removingMarket();
+        void removingMarket(int index);
         void turnStart();
         /* Global Actions */
         void showHUD();
