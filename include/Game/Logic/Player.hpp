@@ -2,11 +2,6 @@
 
 #pragma once
 
-
-#include <memory>
-#include <vector>
-#include <map>
-
 #include "Game/Logic/Land.hpp"
 
 namespace TR {
@@ -15,8 +10,6 @@ namespace TR {
 
 class Player_Data{
  public:
-     
-
     // Constructor and Destuctor
     Player_Data();
     explicit Player_Data(Player_ID ID);

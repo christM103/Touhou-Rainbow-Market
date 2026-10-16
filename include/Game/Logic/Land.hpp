@@ -2,13 +2,8 @@
 
 #pragma once
 
-#include <map>
-#include <utility>
-#include <cstdint>
-#include <vector>
-#include <memory>
 #include "Game/Logic/Market.hpp"
-#include "Game/Logic/Enums.hpp"
+#include "Game/Logic/Common.hpp"
 
 namespace TR {
 

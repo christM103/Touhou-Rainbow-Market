@@ -2,13 +2,9 @@
 
 #pragma once
 
-#include <yaml-cpp/yaml.h>
-
 #include "Game/Logic/Globals.hpp"
 #include "Game/Logic/Player.hpp"
-#include "Game/Logic/Enums.hpp"
-
-#include "Engine/Core/Debugger.hpp"
+#include "Game/Logic/Common.hpp"
 
 namespace TR {
 
