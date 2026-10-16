@@ -90,6 +90,7 @@ namespace TR {
             getDebugManager().hidePrompt();
         }
         void parsePromptAction();
+        void selectionPromptAction();
 
         void substitutePlaceholder();
 
@@ -145,8 +146,8 @@ namespace TR {
         void guideScreen();
         void marketPrompt(uint8_t tier = 1);
         void marketSelection();
-        void addingMarket(Market_ID newMarket, int index);
-        void removingMarket(int index);
+        void addingMarket(Market_ID newMarket, MarketComponent* current_land);
+        void removingMarket(MarketComponent* current_land);
         void turnStart();
         /* Global Actions */
         void showHUD();

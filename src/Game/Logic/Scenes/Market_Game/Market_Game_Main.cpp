@@ -88,7 +88,8 @@ namespace TR {
 		for (int index = 0; index < 6; index++) {
 			Engine::Entity entity = gState.gECS->createEntity("MARKET" + std::to_string(index));
 			auto* market = gState.gPlayer->player_data->getLand()->getMarket(index);
-			gState.gECS->addComponent<MarketComponent>(entity, market);
+			auto& market_comp = gState.gECS->addComponent<MarketComponent>(entity, market);
+			market_comp.land_ID = static_cast<Land_ID>(index);
 		}
 
 		Engine::Entity TURNS = gState.gECS->createEntity("TURNS_TEST");
