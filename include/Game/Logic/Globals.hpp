@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include <yaml-cpp/yaml.h>
 #include "Engine/Core/Engine.hpp"
 #include "Game/Logic/Player.hpp"
 #include "Game/Objects/Components/CommonComponents.hpp"

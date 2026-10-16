@@ -1,12 +1,8 @@
 // Copyright 2025 chrisfantasy
 
 #pragma once
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <unordered_map>
-#include <cstdint>
 
+#include "Game/Logic/Common.hpp"
 
 /*
 For context ~

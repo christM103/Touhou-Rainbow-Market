@@ -2,21 +2,11 @@
 
 #pragma once
 
-
-#include <memory>
-#include <vector>
-#include <map>
-
 #include "Game/Logic/Land.hpp"
 
 namespace TR {
 
 // TODO: Replace enums w uint16s, try to combine Player_Data class w Character class
-
-    enum class Char_State : uint8_t {
-        Null, Reimu, Marisa, Sanae, Flandre, Youmu, Tewi, Koishi
-    };
-
 
     enum class Player_ID : uint8_t {
         Player_Null, Player_1, Player_2, Player_3, Player_4
