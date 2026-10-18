@@ -10,7 +10,7 @@
 namespace TR {
 
     /// @brief Char_State to String dictionary
-    inline const std::map<Char_State, std::string> CHAR_STATE_TO_STR{
+    inline const std::unordered_map<Char_State, std::string> CHAR_STATE_TO_STR{
         { Char_State::Null, "Null" },
         { Char_State::Reimu, "Reimu" },
         { Char_State::Marisa, "Marisa" },
@@ -21,8 +21,18 @@ namespace TR {
         { Char_State::Koishi, "Koishi" }
     };
 
+    /// @brief Land_ID to Entity Name dictionary
+    inline const std::unordered_map<Land_ID, std::string_view> LAND_STATE_TO_STR = {
+        { Land_ID::Land_1, "MARKET0" },
+        { Land_ID::Land_2, "MARKET1" },
+        { Land_ID::Land_3, "MARKET2" },
+        { Land_ID::Land_4, "MARKET3" },
+        { Land_ID::Land_5, "MARKET4" },
+        { Land_ID::Land_6, "MARKET5" }
+    };
+
     /// @brief YAML Placeholder dictionary
-    inline std::unordered_map<std::string, std::string> TEXT_TEMP_VALUE = {
+    inline std::unordered_map<std::string_view, std::string> TEXT_TEMP_VALUE = {
         { "turn_number", "" },
         { "player_char", "" },
         { "player_type", "" },
@@ -34,6 +44,8 @@ namespace TR {
         { "market_id", "" },
         { "player_act_pla", "" },
     };
+
+    
 
     /* Prompt Enums */
     inline const std::vector<std::string> PROMPT_YN = { "Yes", "No" };

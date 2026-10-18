@@ -1,21 +1,12 @@
 #pragma once
 
 #include <cstdint>
+#include "Game/Logic/Common.hpp"
 
 namespace TR{
 	struct HUDComponent {
-		enum HUDFlags : uint16_t {
-			Null = 0,
-			Show_Portrait = 0 << 1,
-			Show_Profits = 1 << 1,
-			Show_Power = 2 << 1,
-			Show_Market_Info = 3 << 1,
-			Show_Timer = 4 << 1,
-
-			Show_All = 23,
-		};
-
-		bool interative{ false };
-		HUDFlags hudFlags{ HUDFlags::Show_All };
+		bool isHUDEnabled{ false };
+		HUD_Flags hudFlags{ HUD_Flags::Null };
+		Land_ID highlightedLand{ Land_ID::Land_Null };
 	};
 }

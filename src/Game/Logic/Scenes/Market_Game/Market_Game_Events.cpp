@@ -179,89 +179,42 @@ namespace TR {
 		}
 
 		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
+			showHUD();
 			swapState(Game_States::MG_Main_Game);
 		}
 	}
 
-	void Market_Game::showHUD() {
-		if (getDebugManager().isEnabled()) {
-			auto& player_data = gState.gPlayer->player_data;
-			if (isGameTextStringEmpty()) {
-				TEXT_TEMP_VALUE.at("player_char") = CHAR_STATE_TO_STR.at(gState.gPlayer->current_char);
-				TEXT_TEMP_VALUE.at("player_type") = std::to_string(player_data->getType());
-				TEXT_TEMP_VALUE.at("player_profit") = std::format("{:.2f}", player_data->getProfit());
-				TEXT_TEMP_VALUE.at("player_lot") = player_data->getLand()->getMarketList();
-				TEXT_TEMP_VALUE.at("game_timer") = std::to_string(0);
+	void Market_Game::mainGameScreen() {
+		auto entity_name = gState.gECS->getEntity("HUD_DISPLAY");
+		HUDComponent* hud_comp = gState.gECS->getComponent<HUDComponent>(entity_name);
 
-				appendYAMLString("hud_debug_text");
-				substitutePlaceholder();
+		if (isHUDRunning()) {
+			if (getDebugManager().isEnabled()) {
+				if (isGameTextStringEmpty()) {
+					appendYAMLString("hud_debug_text");
+					substitutePlaceholder();
+				}
+			}
+			
+			if (gState.gInput->keyPressed(SDL_SCANCODE_X)) {
+				swapState(Game_States::MG_Market_Prompt);
+				hideHUD();
 			}
 		}
-		else {
-			/* Display HUD graphics */
-		}
 
-		if (gState.gInput->keyPressed(SDL_SCANCODE_Z)) {
-			swapState(Game_States::MG_Highlight_Portrait);
-		} 
-		else if (gState.gInput->keyPressed(SDL_SCANCODE_X)) {
-			swapState(Game_States::MG_Market_Select);
-		}
-		else if (gState.gInput->keyPressed(SDL_SCANCODE_1)) {
-			_state_data.current_land = Land_ID::Land_1;
-		}
-		else if (gState.gInput->keyPressed(SDL_SCANCODE_2)) {
-			_state_data.current_land = Land_ID::Land_2;
-		}
-		else if (gState.gInput->keyPressed(SDL_SCANCODE_3)) {
-			_state_data.current_land = Land_ID::Land_3;
-		}
-		else if (gState.gInput->keyPressed(SDL_SCANCODE_4)) {
-			_state_data.current_land = Land_ID::Land_4;
-		}
-		else if (gState.gInput->keyPressed(SDL_SCANCODE_5)) {
-			_state_data.current_land = Land_ID::Land_5;
-		}
-		else if (gState.gInput->keyPressed(SDL_SCANCODE_6)) {
-			_state_data.current_land = Land_ID::Land_6;
-		}
-
-		if (_state_data.current_land != Land_ID::Land_Null) {
+		if (has_flag(hud_comp->hudFlags, HUD_Flags::Focus_Market)) {
 			swapState(Game_States::MG_Highlight_Lot);
+		} else if (has_flag(hud_comp->hudFlags, HUD_Flags::Focus_Player)) {
+			swapState(Game_States::MG_Highlight_Portrait);
 		}
-	}
-
-	void Market_Game::hideHUD() {
-		if (getDebugManager().isEnabled()) {
-
-		}
-		else {
-
-		}
-	}
-	void Market_Game::landEffect() {
-		if (getDebugManager().isEnabled()) {
-
-		}
-		else {
-
-		}
-	}
-	bool Market_Game::countdownTimer() {
-		return false;
 	}
 
 	void Market_Game::highlightLand() {
-		auto market_name = "MARKET" + std::to_string(static_cast<int>(_state_data.current_land));
-		auto market_entity = gState.gECS->getEntity(market_name);
-		MarketComponent* market = gState.gECS->getComponent<MarketComponent>(market_entity);
+		auto entity_name = gState.gECS->getEntity("HUD_DISPLAY");
+		HUDComponent* hud_comp = gState.gECS->getComponent<HUDComponent>(entity_name);
 
 		if (getDebugManager().isEnabled()) {
 			if (isGameTextStringEmpty()) {
-				TEXT_TEMP_VALUE.at("player_act_mar") = std::to_string(gState.gPlayer->market_actions);
-				TEXT_TEMP_VALUE.at("market_active") = std::to_string(market->market_active);
-				TEXT_TEMP_VALUE.at("market_id") = std::to_string(static_cast<int>(market->market_ID));
-
 				appendYAMLString("land_debug_txt");
 				substitutePlaceholder();
 			}
@@ -271,6 +224,10 @@ namespace TR {
 		}
 
 		if (gState.gInput->keyPressed(SDL_SCANCODE_Z)) {
+			auto market_name = LAND_STATE_TO_STR.at(hud_comp->highlightedLand).data();
+			auto market_entity = gState.gECS->getEntity(market_name);
+			MarketComponent* market = gState.gECS->getComponent<MarketComponent>(market_entity);
+
 			if (gState.gPlayer->market_actions && market->market_ID != Market_ID::MID_Null) {
 				swapState(Game_States::MG_Land_Action_Prompt);
 			}
@@ -279,7 +236,8 @@ namespace TR {
 			}
 		}
 		else if (gState.gInput->keyPressed(SDL_SCANCODE_X)) {
-			_state_data.current_land = Land_ID::Land_Null;
+			hud_comp->highlightedLand = Land_ID::Land_Null;
+			hud_comp->hudFlags &= ~HUD_Flags::Focus_Market;
 			swapState(Game_States::MG_Main_Game);
 		}
 
@@ -290,11 +248,11 @@ namespace TR {
 	}
 
 	void Market_Game::highlightPlayer() {
+		auto entity_name = gState.gECS->getEntity("HUD_DISPLAY");
+		HUDComponent* hud_comp = gState.gECS->getComponent<HUDComponent>(entity_name);
+
 		if (getDebugManager().isEnabled()) {
 			if (isGameTextStringEmpty()) {
-				TEXT_TEMP_VALUE.at("player_char") = CHAR_STATE_TO_STR.at(gState.gPlayer->current_char);
-				TEXT_TEMP_VALUE.at("player_act_pla") = std::to_string(gState.gPlayer->player_actions);
-
 				appendYAMLString("plyr_debug_txt");
 				substitutePlaceholder();
 			}
@@ -312,6 +270,7 @@ namespace TR {
 			}
 		}
 		else if (gState.gInput->keyPressed(SDL_SCANCODE_X)) {
+			hud_comp->hudFlags &= ~HUD_Flags::Focus_Player;
 			swapState(Game_States::MG_Main_Game);
 		}
 	}
@@ -334,11 +293,16 @@ namespace TR {
 
 		if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
 			if (_state_data.prompt_flags == Prompt_Flags::PRM_YN_YES) {
+				auto entity_name = gState.gECS->getEntity("HUD_DISPLAY");
+				HUDComponent* hud_comp = gState.gECS->getComponent<HUDComponent>(entity_name);
+
 				if (prev_state == Game_States::MG_Highlight_Lot) {
 					gState.gPlayer->market_actions--;
-					_state_data.current_land = Land_ID::Land_Null;
+					hud_comp->highlightedLand = Land_ID::Land_Null;
+					hud_comp->hudFlags &= ~HUD_Flags::Focus_Market;
 				}
 				else if (prev_state == Game_States::MG_Highlight_Portrait) {
+					hud_comp->hudFlags &= ~HUD_Flags::Focus_Player;
 					gState.gPlayer->player_actions--;
 				}
 				swapState(Game_States::MG_Main_Game);
@@ -367,5 +331,42 @@ namespace TR {
 	}
 	void Market_Game::gameComplete() {
 		/* When all turns have been completed*/
+	}
+
+	void Market_Game::showHUD() {
+		auto entity_name = gState.gECS->getEntity("HUD_DISPLAY");
+		HUDComponent* hud_comp = gState.gECS->getComponent<HUDComponent>(entity_name);
+
+		if (!hud_comp->isHUDEnabled) {
+			hud_comp->isHUDEnabled = true;
+		}
+	}
+
+	void Market_Game::hideHUD() {
+		auto entity_name = gState.gECS->getEntity("HUD_DISPLAY");
+		HUDComponent* hud_comp = gState.gECS->getComponent<HUDComponent>(entity_name);
+
+		if (hud_comp->isHUDEnabled) {
+			hud_comp->isHUDEnabled = false;
+		}
+	}
+
+	bool Market_Game::isHUDRunning() {
+		auto entity_name = gState.gECS->getEntity("HUD_DISPLAY");
+		HUDComponent* hud_comp = gState.gECS->getComponent<HUDComponent>(entity_name);
+
+		return hud_comp->isHUDEnabled;
+	}
+
+	void Market_Game::landEffect() {
+		if (getDebugManager().isEnabled()) {
+
+		}
+		else {
+
+		}
+	}
+	bool Market_Game::countdownTimer() {
+		return false;
 	}
 }

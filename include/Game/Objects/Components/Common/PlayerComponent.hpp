@@ -7,6 +7,7 @@
 namespace TR {
 	struct PlayerComponent {
 		Player_Data* player_data{};													// Player Data
+		std::unique_ptr<Land>* lot_data{};
 		Player_ID player_number;										// Player Index (i.e. Player 1, etc)
 		Char_State current_char;										// Character ID
 		uint8_t char_type{ 1 };														// Character Type (i.e. Type 1 / Type 2)

@@ -100,6 +100,7 @@ namespace TR {
 		gState.gECS->addSystem<MarketSystem>();
 		gState.gECS->addSystem<TextboxSystem>();
 		gState.gECS->addSystem<ButtonSystem>();
+		gState.gECS->addSystem<HUDSystem>();
 		gState.gECS->addSystem<TurnSystem>();
 
 		return true;
@@ -130,17 +131,16 @@ namespace TR {
 		case Game_States::MG_Turn_Start:
 			this->turnStart();
 			break;
+
 		case Game_States::MG_Main_Game:
-			this->showHUD();
+			this->mainGameScreen();
 			break;
+
 		case Game_States::MG_Highlight_Lot:
 			this->highlightLand();
 			break;
 		case Game_States::MG_Land_Action_Prompt:
 			this->landActionPrompt();
-			break;
-		case Game_States::MG_Land_Action_Event:
-			this->actionManager();
 			break;
 
 		case Game_States::MG_Highlight_Portrait:
@@ -148,6 +148,10 @@ namespace TR {
 			break;
 		case Game_States::MG_Player_Action_Prompt:
 			this->playerActionPrompt();
+			break;
+
+		case Game_States::MG_Land_Action_Event:
+			this->actionManager();
 			break;
 		}
 

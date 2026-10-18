@@ -145,11 +145,16 @@ namespace TR {
         void addingMarket(Market_ID newMarket, MarketComponent* current_land);
         void removingMarket(MarketComponent* current_land);
         void turnStart();
-        /* Global Actions */
+        void landEffect();
+        /* Helper HUD Actions */
         void showHUD();
         void hideHUD();
-        void landEffect();
+        bool isHUDRunning();
+
+       
         bool countdownTimer();
+        /* Main Game Screen */
+        void mainGameScreen();
         /* Market Actions */
         void highlightLand();
         void landActionPrompt(); // Checks for 2 actions from the market

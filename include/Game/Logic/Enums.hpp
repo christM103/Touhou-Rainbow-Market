@@ -89,15 +89,64 @@ namespace TR {
         Player_Action = 1 << 2,
     };
 
-    enum class HUD_Flags : uint16_t {
+    enum class HUD_Flags : uint32_t {
         Null = 0,
-        Show_Portrait = 0 << 1,
-        Show_Profits = 1 << 1,
-        Show_Power = 2 << 1,
-        Show_Market_Info = 3 << 1,
-        Show_Timer = 4 << 1,
+        Bitmask_Enabled = 0,
 
-        Show_All = 23,
+        Enable_HUD = 1 << 0,
+        Allow_Input = 1 << 1,
+
+        Show_Portrait = 1 << 8,
+        Show_Profits = 1 << 9,
+        Show_Power = 1 << 10,
+        Show_Markets = 1 << 11,
+        Show_Timer = 1 << 12,
+
+        Focus_Market = 1 << 16,
+        Focus_Player = 1 << 17,
     };
+
+    // Enum Bitmask Definitions
+
+    template <typename E>
+    struct enable_bitmask : std::false_type {};
+
+    template <typename E>
+    concept Bitmask = std::is_enum_v<E> && requires { E::Bitmask_Enabled; };
+
+    // Bitmask Operator Overloading
+
+    template <Bitmask E>
+    constexpr E operator|(E a, E b) {
+        using T = std::underlying_type_t<E>;
+        return static_cast<E>(static_cast<T>(a) | static_cast<T>(b));
+    }
+
+    template <Bitmask E>
+    constexpr E operator&(E a, E b) {
+        using T = std::underlying_type_t<E>;
+        return static_cast<E>(static_cast<T>(a) & static_cast<T>(b));
+    }
+
+    template <Bitmask E>
+    constexpr E operator^(E a, E b) {
+        using T = std::underlying_type_t<E>;
+        return static_cast<E>(static_cast<T>(a) ^ static_cast<T>(b));
+    }
+
+    template <Bitmask E>
+    constexpr E operator~(E a) {
+        using T = std::underlying_type_t<E>;
+        return static_cast<E>(~static_cast<T>(a));
+    }
+
+    template <Bitmask E> constexpr E& operator|=(E& a, E b) { return a = a | b; }
+    template <Bitmask E> constexpr E& operator&=(E& a, E b) { return a = a & b; }
+    template <Bitmask E> constexpr E& operator^=(E& a, E b) { return a = a ^ b; }
+
+    template <Bitmask E>
+    constexpr bool has_flag(E value, E flag) {
+        return (value & flag) == flag;
+    }
 
 }

@@ -15,6 +15,7 @@ void TR::PlayerSystem::init(const Engine::EntityManager* entityManager, Engine::
 		auto playerIt = std::find_if(_players.begin(), _players.end(),
 			[entity](const auto& p) { return p.first == entity; }
 		);
+		playerComp->lot_data = &(playerComp->player_data->getLand());
 
 		if (playerIt == _players.end()) {
 			switch (playerComp->current_char) {

@@ -4,7 +4,7 @@
 
 #include "Game/Objects/Systems/Market/MarketSystem.hpp"
 
-//#include "Game/Objects/Systems/Market/HUDSystem.hpp"
+#include "Game/Objects/Systems/Market/HUDSystem.hpp"
 
 #include "Game/Objects/Systems/Market/TurnSystem.hpp"
 
