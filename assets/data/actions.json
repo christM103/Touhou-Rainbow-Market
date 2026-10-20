@@ -5,97 +5,86 @@
     "name": "Null Action",
     "description": "None",
     "aoe": "Player_Any",
-    "effect": "None",
-    "extra": "None"
+    "type":  ["None"]
   },
   {
     "id": 1,
     "id_name": "A_REIA",
     "name": "Reimu's Treasure",
-    "description": "None",
+    "description": "Place a “Yin-Yang Orb” on a select open market boosting the profit rate of it by x100 and x50 to the open markets surrounding them.",
     "aoe": "Player_Any",
-    "effect": "None",
-    "extra": "None"
+    "type": ["Profit_Rate"]
   },
   {
     "id": 2,
     "id_name": "A_REIB",
     "name": "Reimu's Seal",
-    "description": "None",
-    "aoe": "None",
-    "effect": "None",
-    "extra": "None"
+    "description": "Shut down a select open market for 2 turns, leave a “Talisman” on that open market, cannot target an open market w/ “Talisman.",
+    "aoe": "Player_Any",
+    "type": ["Immunity"]
   },
   {
     "id": 3,
     "id_name": "A_MARA",
     "name": "Marisa's Magic",
-    "description": "None",
+    "description": "Every time you have one more hundred thousand in your possession, you gain a level in your “magician” meter” (Max 10). Every 2 levels give you different stacking mandatory effects...",
     "aoe": "All_Any",
-    "effect": "None",
-    "extra": "None"
+    "type": ["Other"]
   },
   {
     "id": 4,
     "id_name": "A_MARB",
     "name": "Marisa's Mushrooms",
-    "description": "None",
+    "description": "Sacrifice an open market and “eat a mushroom” with stacking effects correlating to the turn number.",
     "aoe": "All_Any",
-    "effect": "None",
-    "extra": "None"
+    "type": ["Other"]
   },
   {
     "id": 33,
     "id_name": "A_MYST",
     "name": "Mystia's Gain",
-    "description": "None",
-    "aoe": "Player_All",
-    "effect": "None",
-    "extra": "None"
+    "description": "Gain $500. If you have another market in play, gain $250 instead.",
+    "aoe": "None",
+    "type": ["Profit"]
   },
   {
     "id": 34,
     "id_name": "A_KOGA",
     "name": "Kogasa's Trickery",
-    "description": "None",
+    "description": "Target 1 of your opponent's markets, place a Kogasa on that market. Gain profits from that market instead at the end of your turn. You can't target markets with a Kogasa token",
     "aoe": "Player_Any",
-    "effect": "None",
-    "extra": "None"
+    "type": ["Steal", "Immunity"]
   },
   {
     "id": 35,
     "id_name": "A_WRIG",
     "name": "Wriggle's Destruct",
-    "description": "None",
+    "description": "Target 1 of your opponent's markets and remove it out of play",
     "aoe": "Enemy_Any",
-    "effect": "None",
-    "extra": "None"
+    "type": ["Destroy"]
   },
   {
     "id": 36,
     "id_name": "A_KEIN",
     "name": "Keine's Detention",
-    "description": "None",
+    "description": "Any market on this tile is removed from play at the end of your turn. Return that market at the begining of your next turn. You can't target the same tile previously selected.'",
     "aoe": "Player_Any",
-    "effect": "None",
-    "extra": "None"
+    "type": ["Shutdown"]
   },
   {
     "id": 37,
     "id_name": "A_MORI",
     "name": "Moriya's Wrath",
-    "description": "None",
+    "description": "Target all of a player's market and steal everybody's profits, then take out the market with the highest amount of profit",
     "aoe": "Enemy_All",
-    "effect": "None",
-    "extra": "None"
+    "type": ["Steal", "Destroy"]
   },
   {
     "id": 38,
     "id_name": "A_HIFU",
     "name": "The Hifuu Club Special",
-    "description": "None",
+    "description": "If all types of markets are in play at the end of the turn, target an open market you control and the opponent controls. Targeted markets become a random market of that type at a higher type.",
     "aoe": "Player_All",
-    "effect": "None",
-    "extra": "None"
+    "type": ["Other"]
   }
 ]

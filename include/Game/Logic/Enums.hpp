@@ -23,15 +23,64 @@ namespace TR {
         Land_1, Land_2, Land_3, Land_4, Land_5, Land_6, Land_Null = 255
     };
 
+    enum class Market_ID : uint8_t { 
+        MID_Null, 
+        MID_Myst, 
+        MID_Koga, 
+        MID_Wrig, 
+        MID_Kein, 
+        MID_Suwa, 
+        MID_Rema, 
+    };
+
     /// @brief Land States
-    enum Land_States : uint64_t {
-        LS_Null = 0,                             // (Null)
-        LS_Free = 1 << 0,                        // (Free or Occupied)
-        LS_Active = 1 << 1,                      // (Active or Shut Down)
-        LS_Immunity = 1 << 2,                    // (Land Immunity)
-        LS_Reimu_Orb = 1 << 3,                   // (Reimu Orb protection)
-        LS_Reimu_TalisA = 1 << 4,                // (Reimu Talisman A (Seal), Shut down a select open market for 2 turns
-        LS_Reimu_TalisB = 1 << 5,                // (Reimu Talisman B (Barrier), Grant immunity to a select open market for 2 turns
+    enum class Land_States : uint64_t {
+        Bitmask_Enabled = 0,
+
+        Null = 0ULL,                             // (Null)
+        Free = 1ULL << 0,                        // (Free or Occupied)
+        Active = 1ULL << 1,                      // (Active or Shut Down)
+        Immunity = 1ULL << 2,                    // (Land Immunity)
+
+        Reimu_Orb = 1ULL << 16,                   // (Reimu Orb protection)
+        Reimu_TalisA = 1ULL << 17,                // (Reimu Talisman A (Seal), Shut down a select open market for 2 turns
+        Reimu_TalisB = 1ULL << 18,                // (Reimu Talisman B (Barrier), Grant immunity to a select open market for 2 turns
+
+        Kogasa_Token = 1ULL << 32,
+        Keine_Shutdown = 1ULL << 33,
+    };
+
+    enum class Action_ID : uint8_t {
+        A_NULL = 0,
+
+        // Player Character Actions
+        A_REIA = 1,
+        A_REIB = 2,
+        A_MARA = 3,
+        A_MARB = 4,
+
+
+        // Market Actions
+        A_MYST = 33,
+        A_KOGA = 34,
+        A_WRIG = 35,
+        A_KEIN = 36,
+        A_MORI = 37,
+        A_HIFU = 38,
+    };
+
+    enum class Action_Type : uint8_t {
+        Null, Profit, Shutdown, Immunity, Profit_Rates, Sell, Destroy, Other,
+    };
+
+    enum class Action_States : uint8_t {
+        Null = 0,
+        Bitmask_Enabled = 0,
+
+        Active = 1 << 0,
+        Successful = 1 << 1,
+        Animated = 1 << 2,
+        Complete = 1 << 7,
     };
 
     /// @brief List of possible game states

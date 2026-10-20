@@ -9,6 +9,18 @@
 
 namespace TR {
 
+    // Const Game Values
+    inline const int NUMBER_OF_LOTS = 6;
+
+    /// @brief Player_ID to String dictionary
+    inline const std::unordered_map<Player_ID, std::string_view> PLAYER_STATE_TO_STR{
+        { Player_ID::Player_Null, "PLAYER0" },
+        { Player_ID::Player_1, "PLAYER1" },
+        { Player_ID::Player_2, "PLAYER2" },
+        { Player_ID::Player_3, "PLAYER3" },
+        { Player_ID::Player_4, "PLAYER4" }
+    };
+
     /// @brief Char_State to String dictionary
     inline const std::unordered_map<Char_State, std::string> CHAR_STATE_TO_STR{
         { Char_State::Null, "Null" },
