@@ -198,4 +198,13 @@ namespace TR {
         return (value & flag) == flag;
     }
 
+    template <Bitmask E>
+    constexpr void enable_flag(E value, E flag) {
+        value |= flag;
+    }
+
+    template <Bitmask E>
+    constexpr void disable_flag(E value, E flag) {
+        value &= ~flag;
+    }
 }

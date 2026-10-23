@@ -66,7 +66,7 @@ namespace TR {
                 }
             }
             else if (gState.gInput->keyPressed(SDL_SCANCODE_RIGHT)) {
-                if (static_cast<int>(new_selected + 1) < CHAR_STATE_TO_STR.size()) {
+                if (static_cast<int>(new_selected + 1) < NUMBER_OF_CHARACTERS) {
                     select_component->_current_selected = Char_State(new_selected + 1);
                 }
             }
@@ -76,6 +76,7 @@ namespace TR {
 
         if (gState.gInput->keyPressed(SDL_SCANCODE_RETURN)) {
             this->setSceneNext(Scene_ID::Main);
+            this->clearGameTextString();
             if (getDebugManager().isEnabled()) {
                 resetPromptAction();
             }
@@ -85,6 +86,7 @@ namespace TR {
 
             Engine::Entity PLAYER = gState.gECS->createEntity("PLAYER");
             gState.gPlayer = &gState.gECS->addComponent<PlayerComponent>(PLAYER, select_component->_current_selected, Player_ID::Player_1);
+            _state_data.current_player = gState.gPlayer->player_number;
             gState.gECS->addSystem<PlayerSystem>();
 
             gState.gECS->destroyEntity("CHAR_SELECT");

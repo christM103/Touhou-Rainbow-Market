@@ -9,6 +9,7 @@
 namespace TR {
 
     struct LocalGameState {
+        Player_ID current_player{ Player_ID::Player_Null };
         Land_ID current_land{ Land_ID::Land_Null };
 
         Player_ID selected_player{ Player_ID::Player_Null };
@@ -94,7 +95,7 @@ namespace TR {
 
         Scene_ID _currState{ Scene_ID::Null }, _nextState{ Scene_ID::Null };
         std::string _yaml_path{ "" };
-        LocalGameState _state_data {};
+        inline static LocalGameState _state_data;
     };
 
     /// @brief Title Screen Scene
@@ -150,8 +151,6 @@ namespace TR {
         void showHUD();
         void hideHUD();
         bool isHUDRunning();
-
-       
         bool countdownTimer();
         /* Main Game Screen */
         void mainGameScreen();

@@ -21,35 +21,25 @@ class Land{
     /// @brief Returns the current market stored in the land.
     /// @param ind  The index of the specific piece of land
     /// @return The current market occupied
-    Market* getMarket(int ind);
+    Market* getMarket(Land_ID ind);
 
     /// @brief Gets a list of all the currently active markets
     /// @return String featuring every market loaded into all lands
     std::string getMarketList();
 
-    /// @brief Sets the size of the sprite.
-    /// @param ind      The index of the piece of land
-    /// @param state    The state to set
-    inline void setState(int ind, uint64_t state) { _landMarkets[ind].first |= state; };
-
-    /// @brief Removes the size of the sprite.
-    /// @param ind      The index of the piece of land
-    /// @param state    The state to remove
-    inline void remState(int ind, uint64_t state) { _landMarkets[ind].first &= ~state; };
-
     /// @brief Sets one portion of land with a market
     /// @param ind      The index of the piece of land
     /// @param mar    The market that is going to be used
-    inline void setLand(int ind, Market&& mar) {
-        if (_landMarkets[ind].first & LS_Free) {
+    inline void setLand(Land_ID ind, Market&& mar) {
+        if (has_flag(_landMarkets[ind].first, Land_States::Free)) {
             _landMarkets[ind].second = std::make_unique<Market>(std::forward<Market>(mar));
-            _landMarkets[ind].first ^= LS_Free;
+            disable_flag(_landMarkets[ind].first, Land_States::Free);
         }
     };
 
     /// @brief Clears the land that currently has a market occupied
     /// @param ind    The index of the piece of land
-    void remLand(int ind);
+    void remLand(Land_ID ind);
 
     /// @brief Swaps the current group of land with another group of land
     /// @param lot    The market that is going to be used
@@ -57,12 +47,12 @@ class Land{
     
     /// @brief Gets a list of all the currently free pieces of land
     /// @return Vector containing the list of free land indices
-    const std::vector<uint8_t> availableLand();
+    const std::vector<Land_ID> availableLand();
 
 
  private:
      // Market State and Storage
-     std::map<uint8_t, std::pair<uint64_t, std::unique_ptr<Market>>> _landMarkets { };
+     std::unordered_map<Land_ID, std::pair<Land_States, std::unique_ptr<Market>>> _landMarkets { };
 
 };
 

@@ -34,6 +34,7 @@ namespace TR {
 
     void Title_Screen::update() {
         if (gState.gInput->keyPressed(SDL_SCANCODE_SPACE)) {
+            this->clearGameTextString();
             this->setSceneNext(Scene_ID::CharS);
             gState.gECS->destroyEntity("BGO");
             gState.gECS->destroyEntity("TEXT");

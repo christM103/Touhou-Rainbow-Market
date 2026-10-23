@@ -31,8 +31,6 @@ Open markets can inflict a whole heap of buffs, debuffs, aliments and the like. 
 
 namespace TR {
 
-enum class Market_ID : uint8_t {MID_Null, MID_Myst, MID_Koga, MID_Wrig, MID_Kein, MID_Suwa, MID_Rema};
-
 class Market{
  public:
     // Constructor and Destuctor
@@ -49,19 +47,6 @@ class Market{
     inline void setTier(int tier) { _market_tier = tier; };
     inline void setSellPrice(float sell) { _market_sell = sell; };
 
-    inline static constexpr Market_ID marketStrToID(std::string str) {
-        if (str == "MID_Null") {return Market_ID::MID_Null;}
-        else if (str == "MID_Myst") { return Market_ID::MID_Myst; }
-        else if (str == "MID_Koga") { return Market_ID::MID_Koga; }
-        else if (str == "MID_Wrig") { return Market_ID::MID_Wrig; }
-        else if (str == "MID_Kein") { return Market_ID::MID_Kein; }
-        else if (str == "MID_Suwa") { return Market_ID::MID_Suwa; }
-        else if (str == "MID_Rema") { return Market_ID::MID_Rema; }
-
-        return Market_ID::MID_Null;
-    }
-    
-
     // Other Functions
     void marketReset();
     virtual float marketSell();
@@ -69,10 +54,10 @@ class Market{
     virtual float marketProfit();
 
  private:
-     Market_ID _market_ID{ Market_ID::MID_Null };
-     std::string _market_name{ "Null Market" }, _market_bio{ "" };
+    Market_ID _market_ID{ Market_ID::MID_Null };
     int _market_lvl{1}, _market_tier{1};
     float _market_sell{0.0}, _market_profit{0};
+    std::string _market_name{ "Null Market" }, _market_bio{ "" };
     
 };
 

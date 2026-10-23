@@ -8,10 +8,10 @@ namespace TR {
 Market::Market() {}
 
 Market::Market(Market_ID id) {
-    auto isMarket = [&](YAML::detail::iterator_value item) {return marketStrToID(item["ID"].as<std::string>()) == id;};
+    auto isMarket = [&](YAML::detail::iterator_value item) {return MarketStrToID(item["ID"].as<std::string>()) == id;};
     _market_ID = id;
 
-    YAML::Node market_data = YAML::LoadFile("assets/data/markets.json");                                                            // Replace literal with global variable for the location of the folder
+    YAML::Node market_data = YAML::LoadFile(PATH_JSON_MARKET);                                                            // Replace literal with global variable for the location of the folder
     for (const auto& market : market_data) {
         if (static_cast<Market_ID>(market["id"].as<int>()) == id) {
             _market_name = market["name"].as<std::string>();

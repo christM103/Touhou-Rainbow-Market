@@ -43,7 +43,7 @@
     "id": 33,
     "id_name": "A_MYST",
     "name": "Mystia's Gain",
-    "description": "Gain $500. If you have another market in play, gain $250 instead.",
+    "description": "Gain $5000. If you have another market in play, gain $2500 instead.",
     "aoe": "None",
     "type": ["Profit"]
   },

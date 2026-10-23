@@ -2,6 +2,7 @@
 
 #include <deque>
 
+#include "Game/Objects/Components/Market/MarketComponent.hpp"
 #include "Game/Logic/Player.hpp"
 
 namespace TR {
