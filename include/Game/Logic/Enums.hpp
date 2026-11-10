@@ -43,8 +43,7 @@ namespace TR {
         Immunity = 1ULL << 2,                    // (Land Immunity)
 
         Reimu_Orb = 1ULL << 16,                   // (Reimu Orb protection)
-        Reimu_TalisA = 1ULL << 17,                // (Reimu Talisman A (Seal), Shut down a select open market for 2 turns
-        Reimu_TalisB = 1ULL << 18,                // (Reimu Talisman B (Barrier), Grant immunity to a select open market for 2 turns
+        Reimu_Talis = 1ULL << 17,                // (Reimu Talisman A (Seal), Shut down a select open market for 2 turns
 
         Kogasa_Token = 1ULL << 32,
         Keine_Shutdown = 1ULL << 33,
@@ -199,12 +198,12 @@ namespace TR {
     }
 
     template <Bitmask E>
-    constexpr void enable_flag(E value, E flag) {
+    constexpr void enable_flag(E& value, E flag) {
         value |= flag;
     }
 
     template <Bitmask E>
-    constexpr void disable_flag(E value, E flag) {
+    constexpr void disable_flag(E& value, E flag) {
         value &= ~flag;
     }
 }
