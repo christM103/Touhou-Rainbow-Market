@@ -59,6 +59,29 @@ namespace TR {
         return {};
     }
 
+    /// @brief Action_ID to Entity Name
+    constexpr std::string_view ActionIDToStr(Action_ID id) noexcept
+    {
+        switch (id) {
+            case Action_ID::A_NULL: return "A_NULL";
+
+                // Player Character Actions
+            case Action_ID::A_REIA: return "A_REIA";
+            case Action_ID::A_REIB: return "A_REIB";
+            case Action_ID::A_MARA: return "A_MARA";
+            case Action_ID::A_MARB: return "A_MARB";
+
+                // Market Actions
+            case Action_ID::A_MYST: return "A_MYST";
+            case Action_ID::A_KOGA: return "A_KOGA";
+            case Action_ID::A_WRIG: return "A_WRIG";
+            case Action_ID::A_KEIN: return "A_KEIN";
+            case Action_ID::A_MORI: return "A_MORI";
+            case Action_ID::A_HIFU: return "A_HIFU";
+        }
+        return {};
+    }
+
     inline static constexpr std::string PlayerLandIDToStr(Player_ID p, Land_ID l) noexcept
     {
         return PlayerIDToStr(p) + LandIDToStr(l);
@@ -69,7 +92,7 @@ namespace TR {
         return PlayerLandIDToStr(p, static_cast<Land_ID>(l));
     }
 
-    inline static constexpr Market_ID MarketStrToID(std::string str) {
+    constexpr Market_ID MarketStrToID(std::string str) {
         if (str == "MID_Null") { return Market_ID::MID_Null; }
         else if (str == "MID_Myst") { return Market_ID::MID_Myst; }
         else if (str == "MID_Koga") { return Market_ID::MID_Koga; }
@@ -79,6 +102,27 @@ namespace TR {
         else if (str == "MID_Rema") { return Market_ID::MID_Rema; }
 
         return Market_ID::MID_Null;
+    }
+
+    constexpr Action_ID ActionStrToID(std::string_view str) noexcept
+    {
+        if (str == "A_NULL") return Action_ID::A_NULL;
+
+        // Player Character Actions
+        if (str == "A_REIA") return Action_ID::A_REIA;
+        else if (str == "A_REIB") { return Action_ID::A_REIB; }
+        else if (str == "A_MARA") { return Action_ID::A_MARA; }
+        else if (str == "A_MARB") { return Action_ID::A_MARB; }
+
+        // Market Actions
+        else if (str == "A_MYST") { return Action_ID::A_MYST; }
+        else if (str == "A_KOGA") { return Action_ID::A_KOGA; }
+        else if (str == "A_WRIG") { return Action_ID::A_WRIG; }
+        else if (str == "A_KEIN") { return Action_ID::A_KEIN; }
+        else if (str == "A_MORI") { return Action_ID::A_MORI; }
+        else if (str == "A_HIFU") { return Action_ID::A_HIFU; }
+
+        return Action_ID::A_NULL;
     }
 
     /// @brief YAML Placeholder dictionary
