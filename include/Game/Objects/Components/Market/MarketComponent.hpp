@@ -9,6 +9,7 @@ namespace TR {
 		Market_ID market_ID{ Market_ID::MID_Null };
         Land_ID land_ID{ Land_ID::Land_Null };
         Land_States states{ Land_States::Null };
+        Action_ID action_ID{ Action_ID::A_NULL };
 
         bool market_active{ false };
         bool market_hovered{ false };

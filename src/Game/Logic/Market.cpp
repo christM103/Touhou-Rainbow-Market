@@ -19,6 +19,7 @@ Market::Market(Market_ID id) {
             _market_tier = market["tier"].as<int>();
             _market_profit = market["profit"].as<float>();
             _market_sell = market["sell"].as<float>();
+            _market_action = market["special"].as<std::string>();
             return;
         }
         

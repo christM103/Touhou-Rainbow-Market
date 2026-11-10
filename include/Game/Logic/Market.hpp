@@ -40,9 +40,10 @@ class Market{
 
     // Accessors and Mutators
     inline const int getLevel() { return _market_lvl; };
-    inline std::string getName() { return _market_name; }
+    inline std::string getName() { return _market_name; };
     inline const int getTier() { return _market_tier; };
     inline const float getSellPrice() { return _market_sell; };
+    inline std::string getAction() { return _market_action; };
     inline void setLevel(int lvl) { _market_lvl = lvl; };
     inline void setTier(int tier) { _market_tier = tier; };
     inline void setSellPrice(float sell) { _market_sell = sell; };
@@ -57,7 +58,7 @@ class Market{
     Market_ID _market_ID{ Market_ID::MID_Null };
     int _market_lvl{1}, _market_tier{1};
     float _market_sell{0.0}, _market_profit{0};
-    std::string _market_name{ "Null Market" }, _market_bio{ "" };
+    std::string _market_name{ "Null Market" }, _market_bio{ "" }, _market_action{ "" };
     
 };
 
