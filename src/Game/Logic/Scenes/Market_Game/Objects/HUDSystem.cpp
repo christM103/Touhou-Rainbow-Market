@@ -1,6 +1,6 @@
-#include "Game/Objects/Systems/Market/HUDSystem.hpp"
 #include <format>
 
+#include "Game/Objects/Systems/MarketGameSystems.hpp"
 
 void TR::HUDSystem::initHUD(Engine::EntityManager* eM, Engine::ComponentManager* cM, Engine::Window* wM, Engine::AssetManager* aM) {
 	auto Player_Entity = eM->getEntity(PLAYER1_ENTITY_NAME.data());
@@ -48,7 +48,7 @@ void TR::HUDSystem::updateData(Engine::EntityManager* eM, Engine::ComponentManag
 	const auto& debug_component = Engine::DebugManager::instance();
 
 	assign_if_diff("player_char", 
-		CHAR_STATE_TO_STR.at(_player_component->current_char));
+		CharStateToStr(_player_component->current_char));
 	assign_if_diff("player_type", 
 		std::to_string(_player_component->char_type));
 	assign_if_diff("player_profit", 
@@ -63,9 +63,15 @@ void TR::HUDSystem::updateData(Engine::EntityManager* eM, Engine::ComponentManag
 		std::to_string(_player_component->market_actions));
 
 	if (has_flag(_HUD_Component->hudFlags, HUD_Flags::Focus_Market)) {
-		auto ent_name = LAND_STATE_TO_STR.at(_HUD_Component->highlightedLand);
-		_market_component = eM->getComponent<MarketComponent>(ent_name.data(), cM);
-
+		if (!_market_component) {
+			for (auto market : _player_component->player_lot) {
+				if (market->land_ID == _HUD_Component->highlightedLand) {
+					_market_component = market;
+					break;
+				}
+			}
+		}
+		
 		assign_if_diff("market_active",
 			std::to_string(_market_component->market_active));
 		assign_if_diff("market_id",
