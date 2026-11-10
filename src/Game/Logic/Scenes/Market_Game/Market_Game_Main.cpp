@@ -85,11 +85,16 @@ namespace TR {
 		/* Object Creation */
 
 		// Initialize Market Entities
-		for (int index = 0; index < 6; index++) {
-			Engine::Entity entity = gState.gECS->createEntity("MARKET" + std::to_string(index));
-			auto* market = gState.gPlayer->player_data->getLand()->getMarket(index);
-			auto& market_comp = gState.gECS->addComponent<MarketComponent>(entity, market);
-			market_comp.land_ID = static_cast<Land_ID>(index);
+		for (int index = 0; index < NUMBER_OF_LOTS; index++) {
+			auto land_id = static_cast<Land_ID>(index);
+			auto land_str = PlayerLandIDToStr(_state_data.current_player, land_id);
+			auto& land_data = gState.gPlayer->player_data->getLand(); // Replace gPlayer when changing over to a different way of managing players
+			auto* market = land_data->getMarket(static_cast<Land_ID>(index));
+
+			Engine::Entity entity = gState.gECS->createEntity(land_str.data());
+			auto* market_comp = &gState.gECS->addComponent<MarketComponent>(entity, market);
+			market_comp->land_ID = land_id;
+			gState.gPlayer->player_lot[index] = market_comp;
 		}
 
 		Engine::Entity TURNS = gState.gECS->createEntity("TURNS_TEST");

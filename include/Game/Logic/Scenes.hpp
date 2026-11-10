@@ -15,6 +15,8 @@ namespace TR {
         Player_ID selected_player{ Player_ID::Player_Null };
         Land_ID selected_land_index{ Land_ID::Land_Null };
         Market_ID selected_market{ Market_ID::MID_Null };
+        Action_ID selected_action{ Action_ID::A_NULL };
+        std::string selected_action_type{ "" };
 
         uint8_t text_index{ 0 };
         Prompt_Flags prompt_flags{ Prompt_Flags::Null };

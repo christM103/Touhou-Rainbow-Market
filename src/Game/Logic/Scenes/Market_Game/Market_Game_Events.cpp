@@ -108,14 +108,14 @@ namespace TR {
 			resetPromptAction();
 			uint8_t market_ind = static_cast<int>(_state_data.prompt_flags);
 			std::string market_name = _state_data.market_queue[market_ind];
-			_state_data.selected_market = Market::marketStrToID(market_name);
+			_state_data.selected_market = MarketStrToID(market_name);
 		};
 
 		const auto& selectLot = [=]() -> MarketComponent* {
 			resetPromptAction();
 			uint8_t land_num = static_cast<uint8_t>(_state_data.prompt_flags);
-			auto market_name = "MARKET" + std::to_string(land_num);
-			auto market_entity = gState.gECS->getEntity(market_name);
+			auto market_name = PlayerLandIDToStr(_state_data.current_player, land_num);
+			auto market_entity = gState.gECS->getEntity(market_name.data());
 
 			return gState.gECS->getComponent<MarketComponent>(market_entity);
 		};
@@ -162,11 +162,14 @@ namespace TR {
 	void Market_Game::addingMarket(Market_ID newMarket, MarketComponent* current_land) {
 		current_land->market_ID = newMarket;
 		current_land->market_active = true;
-		*(current_land->data) = Market(newMarket);
+		auto new_market = Market(newMarket);
+		*(current_land->data) = new_market;
+		current_land->action_ID = ActionStrToID(new_market.getAction());
 	}
 
 	void Market_Game::removingMarket(MarketComponent* current_land) {
 		current_land->market_ID = Market_ID::MID_Null;
+		current_land->action_ID = Action_ID::A_NULL;
 		current_land->market_active = false;
 		*(current_land->data) = Market(Market_ID::MID_Null);
 	}
@@ -197,6 +200,9 @@ namespace TR {
 			}
 			
 			if (gState.gInput->keyPressed(SDL_SCANCODE_X)) {
+				if (!_state_data.market_queue.empty()) {
+					_state_data.market_queue.clear();
+				}
 				swapState(Game_States::MG_Market_Prompt);
 				hideHUD();
 			}
@@ -224,7 +230,7 @@ namespace TR {
 		}
 
 		if (gState.gInput->keyPressed(SDL_SCANCODE_Z)) {
-			auto market_name = LAND_STATE_TO_STR.at(hud_comp->highlightedLand).data();
+			auto market_name = PlayerLandIDToStr(_state_data.current_player, hud_comp->highlightedLand);
 			auto market_entity = gState.gECS->getEntity(market_name);
 			MarketComponent* market = gState.gECS->getComponent<MarketComponent>(market_entity);
 
@@ -298,14 +304,11 @@ namespace TR {
 
 				if (prev_state == Game_States::MG_Highlight_Lot) {
 					gState.gPlayer->market_actions--;
-					hud_comp->highlightedLand = Land_ID::Land_Null;
-					hud_comp->hudFlags &= ~HUD_Flags::Focus_Market;
 				}
 				else if (prev_state == Game_States::MG_Highlight_Portrait) {
-					hud_comp->hudFlags &= ~HUD_Flags::Focus_Player;
 					gState.gPlayer->player_actions--;
 				}
-				swapState(Game_States::MG_Main_Game);
+				swapState(Game_States::MG_Land_Action_Event);
 			}
 			else {
 				swapState(prev_state);
@@ -316,6 +319,18 @@ namespace TR {
 
 	void Market_Game::actionManager() {
 		/* Actions happen here */
+		auto entity_name = gState.gECS->getEntity("HUD_DISPLAY");
+		HUDComponent* hud_comp = gState.gECS->getComponent<HUDComponent>(entity_name);
+
+		if (has_flag(hud_comp->hudFlags, HUD_Flags::Focus_Market)) {
+			hud_comp->highlightedLand = Land_ID::Land_Null;
+			disable_flag(hud_comp->hudFlags, HUD_Flags::Focus_Market);
+		}
+		else if (has_flag(hud_comp->hudFlags, HUD_Flags::Focus_Player)) {
+			disable_flag(hud_comp->hudFlags, HUD_Flags::Focus_Player);
+		}
+
+		swapState(Game_States::MG_Main_Game);
 	}
 	void Market_Game::actionFailed() {
 		/* In the case the action fails */
