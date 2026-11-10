@@ -108,3 +108,8 @@ action_debug_success:
   text: "Action Succeeded!"
 action_debug_failure:
   text: "Action Failed!"
+
+# Action Events
+act_plyr_any:
+  text: "Where do you want to do the action?"
+  action: *land_selection_prompt
